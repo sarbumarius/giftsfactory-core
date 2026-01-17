@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ShoppingCart, ChevronDown, Heart, ArrowLeft, Menu, Search } from 'lucide-react';
+import { ShoppingCart, Heart, ArrowLeft, Menu, Sparkles } from 'lucide-react';
 import logo from '@/assets/factorygifts.svg';
 
 interface MobileProductHeaderProps {
@@ -17,6 +17,7 @@ interface MobileProductHeaderProps {
   centerTitle?: boolean;
   onMenuClick?: () => void;
   showTopBanners?: boolean;
+  onAssistantClick?: () => void;
 }
 
 const MobileProductHeader = ({
@@ -34,6 +35,7 @@ const MobileProductHeader = ({
   centerTitle = false,
   onMenuClick,
   showTopBanners = false,
+  onAssistantClick,
 }: MobileProductHeaderProps) => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [bannerIndex, setBannerIndex] = useState(0);
@@ -86,7 +88,7 @@ const MobileProductHeader = ({
       </div>
       )}
 
-      <header className="gold-gradient sticky top-0 z-50 px-4 py-3  relative">
+      <header className="gold-gradient sticky top-0 z-50 px-4 py-1  relative">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             {onBackInlineClick && (
@@ -129,6 +131,18 @@ const MobileProductHeader = ({
 
           </div>
           <div className="flex items-center gap-3">
+            {onAssistantClick && (
+              <button
+                type="button"
+                onClick={onAssistantClick}
+                data-track-action="A deschis asistentul AI din header."
+                className="flex items-center gap-1 rounded-full border border-white/40 bg-transparent px-2 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-white/10"
+                aria-label="Asistent AI"
+              >
+                <Sparkles className="h-3 w-3" />
+                Asistent AI
+              </button>
+            )}
             <button
               type="button"
               className="relative transition-transform hover:scale-110 active:scale-95"

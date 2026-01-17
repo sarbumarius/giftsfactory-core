@@ -6,6 +6,7 @@ import MobileProductHeader from '@/components/mobile/MobileProductHeader';
 import { ArrowLeft, ArrowRight, Heart, ChevronDown, FileText, ListChecks, MessageCircle, Layers, ShoppingCart, Image as ImageIcon, X } from 'lucide-react';
 import MobileCategorySheet from '@/components/mobile/MobileCategorySheet';
 import MobileSearchSheet from '@/components/mobile/MobileSearchSheet';
+import MobileAssistantModal from '@/components/mobile/MobileAssistantModal';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { useShopContext } from '@/contexts/ShopContext';
 import { formatDimensions } from '@/utils/formatDimensions';
@@ -14,12 +15,19 @@ import { fbViewContent } from '@/utils/facebook';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
 
 const SHOW_PREVIEW_TOGGLE = false;
+const QUANTITY_DISCOUNTS = [
+  { min: 5, max: 15, discount: 10 },
+  { min: 16, max: 25, discount: 15 },
+  { min: 26, max: 50, discount: 20 },
+  { min: 51, max: 80, discount: 25 },
+  { min: 81, max: 400, discount: 30 },
+];
 
 const ProductPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setCurrentSlug, currentSlug } = useCategoryContext();
+  const { setCurrentSlug, currentSlug, data: categoryData } = useCategoryContext();
   const { cart, wishlist, addToCart, addToWishlist, removeFromWishlist } = useShopContext();
   const [data, setData] = useState<ProductDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,8 +36,9 @@ const ProductPage = () => {
   const [areTagsCollapsed, setAreTagsCollapsed] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [showCartConfirm, setShowCartConfirm] = useState(false);
-  const [openSection, setOpenSection] = useState<'descriere' | 'detalii' | 'simulare' | 'livrare' | 'led' | 'boxa' | null>('detalii');
+  const [openSection, setOpenSection] = useState<'descriere' | 'reduceri' | 'detalii' | 'simulare' | 'livrare' | 'led' | 'boxa' | null>('detalii');
   const [reviewPage, setReviewPage] = useState(1);
   const [shouldScrollToReviews, setShouldScrollToReviews] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -54,6 +63,10 @@ const ProductPage = () => {
   const titleThresholdRef = useRef(0);
   const formatRoDate = (date: Date) =>
     date.toLocaleDateString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const formatPrice = (value: number) => value.toFixed(2);
+  const baseUnitPrice = data
+    ? parseFloat(String(data.pret_redus || data.pret || '0').replace(',', '.'))
+    : 0;
   const addDays = (date: Date, days: number) => {
     const next = new Date(date);
     next.setDate(date.getDate() + days);
@@ -506,6 +519,7 @@ const ProductPage = () => {
         title={`Se incarca${loadingDots}`}
         onBack={() => navigate(-1)}
         onSearchClick={() => setIsSearchOpen(true)}
+        onAssistantClick={() => setIsAssistantOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
           navigate('/');
@@ -559,6 +573,7 @@ const ProductPage = () => {
         title="Produs"
         onBack={() => navigate(-1)}
         onSearchClick={() => setIsSearchOpen(true)}
+        onAssistantClick={() => setIsAssistantOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
           navigate('/');
@@ -669,6 +684,7 @@ const ProductPage = () => {
               title={data.titlu}
               onBack={() => navigate(-1)}
               onSearchClick={() => setIsSearchOpen(true)}
+              onAssistantClick={() => setIsAssistantOpen(true)}
               onLogoClick={() => {
                   setCurrentSlug('gifts-factory');
                   navigate('/');
@@ -1191,7 +1207,7 @@ const ProductPage = () => {
                   onClick={() => setOpenSection(openSection === 'led' ? null : 'led')}
                   data-track-action="A deschis informatii baza led."
                 >
-                  <span className="text-lg font-semibold text-[#5e4b37]">Informatii baza led</span>
+                  <span className="text-lg font-semibold text-[#6844c1]">Informatii baza led</span>
                   <div className="rounded-full p-1 transition-all">
                     <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'led' ? 'rotate-180' : ''}`} />
                   </div>
@@ -1295,6 +1311,67 @@ const ProductPage = () => {
                 ) : (
                   <p>Descriere indisponibila momentan.</p>
                 )}
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-t border-[#d0c6eb]" />
+
+          <div className="rounded-md">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between rounded-md py-2"
+              id="btn-reduceri-cantitati"
+              aria-expanded={openSection === 'reduceri'}
+              aria-controls="panel-reduceri-cantitati"
+              onClick={() => setOpenSection(openSection === 'reduceri' ? null : 'reduceri')}
+              data-track-action="A deschis reduceri cantitati."
+            >
+              <span className="text-lg font-semibold text-[#6844c1]">Reduceri cantitati</span>
+              <div className="rounded-full p-1 transition-all">
+                <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'reduceri' ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
+            <div
+              id="panel-reduceri-cantitati"
+              role="region"
+              aria-labelledby="btn-reduceri-cantitati"
+              style={{
+                maxHeight: openSection === 'reduceri' ? '1200px' : '0',
+                opacity: openSection === 'reduceri' ? 1 : 0,
+                transition: 'max-height 0.35s, opacity 0.25s',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="py-2">
+                <div className="rounded-xl border border-amber-100 bg-amber-50/60 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Pret 1 buc</p>
+                  <p className="mt-1 text-2xl font-semibold text-foreground">
+                    {formatPrice(baseUnitPrice)} lei
+                  </p>
+                </div>
+                <div className="mt-4 overflow-hidden rounded-xl border border-border bg-white">
+                  <div className="grid grid-cols-[1fr_auto] gap-3 border-b border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
+                    <span>Cantitate</span>
+                    <span>Pret / buc</span>
+                  </div>
+                  <div className="divide-y divide-border">
+                    {QUANTITY_DISCOUNTS.map((tier) => {
+                      const price = baseUnitPrice * (1 - tier.discount / 100);
+                      return (
+                        <div
+                          key={`${tier.min}-${tier.max}`}
+                          className="grid grid-cols-[1fr_auto] items-center gap-3 px-4 py-2 text-sm text-foreground"
+                        >
+                          <span>
+                            {tier.min}-{tier.max} buc (-{tier.discount}%)
+                          </span>
+                          <span className="font-semibold">{formatPrice(price)} lei</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1425,13 +1502,13 @@ const ProductPage = () => {
               </div>
           </div>
 
-        <div className="mt-2 text-center  font-serif">
+        <div className="mt-2 text-center  font-serif hidden">
           <p className="text-xl font-semibold text-foreground">Scenariu livrare</p>
 
         </div>
 
 
-        <div className="mt-3  bg-[#d0c6eb] px-3 py-3">
+        <div className="mt-3  bg-[#d0c6eb] px-3 py-3 hidden">
           <div className="flex justify-center">
             <button
               type="button"
@@ -2092,6 +2169,11 @@ const ProductPage = () => {
 
           <MobileCategorySheet isOpen={isCategoryOpen} onClose={() => setIsCategoryOpen(false)}/>
           <MobileSearchSheet isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)}/>
+          <MobileAssistantModal
+              isOpen={isAssistantOpen}
+              onClose={() => setIsAssistantOpen(false)}
+              products={categoryData?.produse || []}
+          />
           {showCartConfirm && (
               <>
                   <div

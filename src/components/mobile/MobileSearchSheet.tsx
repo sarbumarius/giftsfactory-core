@@ -1,6 +1,7 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Search } from 'lucide-react';
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import { useNavigate } from 'react-router-dom';
 import MobileMeiliProductCard from './MobileMeiliProductCard';
 
 interface MobileSearchSheetProps {
@@ -11,6 +12,7 @@ interface MobileSearchSheetProps {
 const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
   const { searchQuery, setSearchQuery, searchResults, searchLoading, setCurrentSlug } = useCategoryContext();
   const navigate = useNavigate();
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   const getSlugFromUrl = (url: string) => {
     try {
@@ -22,6 +24,16 @@ const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
       return parts[parts.length - 1] || '';
     }
   };
+
+  const filteredCategories = useMemo(
+    () => searchResults.categories.filter((category) => (category.count ?? 0) > 0),
+    [searchResults.categories]
+  );
+  const visibleCategories = showAllCategories ? filteredCategories : filteredCategories.slice(0, 4);
+
+  useEffect(() => {
+    setShowAllCategories(false);
+  }, [searchQuery]);
 
   if (!isOpen) return null;
 
@@ -67,11 +79,11 @@ const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
                 <p className="text-sm font-semibold text-amber-800">Categorii gasite</p>
                 {searchLoading ? (
                   <p className="mt-2 text-sm text-muted-foreground">Se cauta...</p>
-                ) : searchResults.categories.length === 0 ? (
+                ) : filteredCategories.length === 0 ? (
                   <p className="mt-2 text-sm text-muted-foreground">Nu am gasit categorii.</p>
                 ) : (
                   <div className="mt-2 space-y-2">
-                    {searchResults.categories.map((category) => (
+                    {visibleCategories.map((category) => (
                       <button
                         key={category.url}
                         type="button"
@@ -92,6 +104,16 @@ const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
                         )}
                       </button>
                     ))}
+                    {filteredCategories.length > 4 && !showAllCategories && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllCategories(true)}
+                        data-track-action="A apasat pe Vezi mai mult la categorii."
+                        className="w-full rounded-md border border-amber-200 bg-white px-3 py-2 text-center text-sm font-semibold text-amber-800 transition-colors hover:bg-amber-100"
+                      >
+                        Vezi mai mult
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, ShoppingCart, ChevronDown, ChevronUp, Heart, Menu, Sparkles } from 'lucide-react';
+import { User, ShoppingCart, Heart, Sparkles } from 'lucide-react';
 import logo from '@/assets/factorygifts.svg';
 import MobileCategorySheet from './MobileCategorySheet';
 import { useCategoryContext } from '@/contexts/CategoryContext';
@@ -49,18 +49,18 @@ const MobileHeader = ({ onSearchClick }: MobileHeaderProps) => {
     'Personalizare inclusa in pret!',
   ];
 
-  const headerPadding = isAtTop ? 'px-4 py-3' : 'px-3 py-2';
+  const headerPadding = isAtTop ? 'px-4 py-1' : 'px-3 py-2';
   const headerCorners = isAtTop ? '' : 'rounded-b-md';
   const logoSize = isAtTop ? 'h-16' : 'h-10';
-  const assistantText = isAtTop ? 'text-md' : 'text-xs';
+  const assistantText = isAtTop ? 'text-sm' : 'text-xs';
   const assistantPadding = isAtTop ? 'px-3 py-1' : 'px-2 py-1';
-  const iconSize = isAtTop ? 'h-8 w-8' : 'h-6 w-6';
+  const iconSize = isAtTop ? 'h-6 w-6' : 'h-6 w-6';
   const sparkleSize = isAtTop ? 'h-4 w-4' : 'h-3 w-3';
 
   return (
     <>
       {/* Info Bars - Hidden when scrolling */}
-      <div data-track-action="A apasat sa vada detalii din bara de informatii." className={`sticky top-0 z-50 transition-all duration-300 ${isAtTop ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+      <div data-track-action="A apasat sa vada detalii din bara de informatii." className={`sticky top-0 z-50 hidden transition-all duration-300 ${isAtTop ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'}`}>
         {/* Bar 1 - Personalizare */}
         <div className="bg-[#6e4514] py-2 px-4 text-center">
           <div className="text-white text-xs font-medium">
@@ -82,7 +82,7 @@ const MobileHeader = ({ onSearchClick }: MobileHeaderProps) => {
 
                   <button
                       type="button"
-
+                      onClick={() => setIsMenuOpen(true)}
                       className="transition-transform hover:scale-105 active:scale-95 mr-2"
                       aria-label="Daruri Alese"
                   >

@@ -136,7 +136,7 @@ const MobileProductHeader = ({
               onClick={onWishlistClick}
               data-track-action="A apasat pe wishlist din header."
             >
-              <Heart className="h-8 w-8  text-primary-foreground" />
+              <Heart className="h-6 w-6  text-primary-foreground" />
               {wishlistCount > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-card text-[10px] font-bold text-primary">
                   {wishlistCount}
@@ -150,7 +150,7 @@ const MobileProductHeader = ({
               onClick={onCartClick}
               data-track-action="A apasat pe cos din header."
             >
-              <ShoppingCart className="h-8 w-8  text-primary-foreground" />
+              <ShoppingCart className="h-6 w-6  text-primary-foreground" />
               {cartCount > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-card text-[10px] font-bold text-primary">
                   {cartCount}

@@ -48,7 +48,7 @@ const MobileCategoryPage = () => {
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="relative z-10 bg-[#d9b35e] py-2 px-4 text-center -ml-3 -mr-3 mb-3 rounded-b-2xl">
+          <div className="relative z-10 bg-[#d9b35e] py-2 px-4 text-center -ml-3 -mr-3 mb-3 rounded-b-2xl bg-[linear-gradient(135deg,#d9b35e,#c7a354)]">
               <a
                   href="/recenzii"
                   aria-label={`★★★★★ 5 din 5 din ${totalReviewsLabel} de reviewuri. Vezi recenzii`}

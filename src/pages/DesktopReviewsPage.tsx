@@ -56,7 +56,7 @@ const DesktopReviewsPage = () => {
     document.title = 'Recenzii clienti | Daruri Alese Catalog';
     let isMounted = true;
 
-    fetch('/cache_app/recenzii-default.json')
+    fetch('/cache_app/recenzii.json')
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to load reviews');

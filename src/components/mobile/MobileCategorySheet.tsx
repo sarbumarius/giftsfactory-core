@@ -43,6 +43,23 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
     };
   }, [isOpen, treeData]);
 
+  useEffect(() => {
+    if (!treeData) return;
+    const allExpanded = new Set<number>();
+
+    const walk = (nodes: SubcategoryTreeNode[]) => {
+      nodes.forEach((node) => {
+        if (node.subcategorii?.length) {
+          allExpanded.add(node.id);
+          walk(node.subcategorii);
+        }
+      });
+    };
+
+    walk(treeData.subcategorii);
+    setExpandedIds(allExpanded);
+  }, [treeData]);
+
   const getLevelBgClass = (level: number) => {
     if (level === 0) return 'bg-white';
     if (level === 1) return 'bg-muted/50';

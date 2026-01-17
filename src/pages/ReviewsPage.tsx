@@ -48,7 +48,7 @@ type ReviewTab = 'photos' | 'text';
 const ReviewsPage = () => {
   const navigate = useNavigate();
   const { cart, wishlist } = useShopContext();
-  const { setCurrentSlug } = useCategoryContext();
+  const { data: categoryData, setCurrentSlug, loading: categoryLoading } = useCategoryContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [data, setData] = useState<ReviewsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,11 +58,12 @@ const ReviewsPage = () => {
   const [zoomImage, setZoomImage] = useState<{ url: string; author: string } | null>(null);
   const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
   const productScrollTimerRef = useRef<number | null>(null);
+  const isLoading = loading || categoryLoading;
 
   useEffect(() => {
     let isMounted = true;
 
-    fetch('/cache_app/recenzii-default.json')
+    fetch('/cache_app/recenzii.json')
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to load reviews');
@@ -87,15 +88,30 @@ const ReviewsPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setCurrentSlug('gifts-factory');
+  }, [setCurrentSlug]);
+
+  const allowedProductIds = useMemo(
+    () => new Set((categoryData?.produse || []).map((product) => String(product.id))),
+    [categoryData?.produse]
+  );
+
   const reviewsByProduct = useMemo(() => {
     if (!data) return [];
-    const combined = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const combinedAll = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const combined = allowedProductIds.size
+      ? combinedAll.filter((review) => allowedProductIds.has(review.id_produs))
+      : combinedAll;
     const counts = new Map<string, number>();
     combined.forEach((review) => {
       counts.set(review.id_produs, (counts.get(review.id_produs) || 0) + 1);
     });
 
-    const base = activeTab === 'photos' ? data.recenzii_cu_poza : data.recenzii_text;
+    const baseAll = activeTab === 'photos' ? data.recenzii_cu_poza : data.recenzii_text;
+    const base = allowedProductIds.size
+      ? baseAll.filter((review) => allowedProductIds.has(review.id_produs))
+      : baseAll;
 
     const grouped = new Map<string, ReviewItem[]>();
     base.forEach((review) => {
@@ -104,7 +120,11 @@ const ReviewsPage = () => {
       grouped.set(review.id_produs, list);
     });
 
-    const products = [...data.produse_din_recenzii].sort((a, b) => {
+    const productsAll = allowedProductIds.size
+      ? data.produse_din_recenzii.filter((product) => allowedProductIds.has(String(product.id)))
+      : data.produse_din_recenzii;
+
+    const products = [...productsAll].sort((a, b) => {
       const aCount = counts.get(String(a.id)) || 0;
       const bCount = counts.get(String(b.id)) || 0;
       return bCount - aCount;
@@ -116,28 +136,38 @@ const ReviewsPage = () => {
         reviews: grouped.get(String(product.id)) || [],
       }))
       .filter((entry) => entry.reviews.length > 0);
-  }, [activeTab, data, selectedProductId]);
+  }, [activeTab, data, allowedProductIds, selectedProductId]);
 
   const summary = useMemo(() => {
     if (!data) return { total: 0, avg: 0 };
-    const allReviews = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const allReviewsAll = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const allReviews = allowedProductIds.size
+      ? allReviewsAll.filter((review) => allowedProductIds.has(review.id_produs))
+      : allReviewsAll;
     if (allReviews.length === 0) return { total: 0, avg: 0 };
     const sum = allReviews.reduce((acc, review) => acc + Number(review.rating || 0), 0);
     return { total: allReviews.length, avg: sum / allReviews.length };
-  }, [data]);
+  }, [data, allowedProductIds]);
 
   const bestSellers = useMemo(() => {
     if (!data) return [];
+    const allReviews = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const filteredReviews = allowedProductIds.size
+      ? allReviews.filter((review) => allowedProductIds.has(review.id_produs))
+      : allReviews;
     const counts = new Map<string, number>();
-    [...data.recenzii_cu_poza, ...data.recenzii_text].forEach((review) => {
+    filteredReviews.forEach((review) => {
       counts.set(review.id_produs, (counts.get(review.id_produs) || 0) + 1);
     });
-    return [...data.produse_din_recenzii].sort((a, b) => {
+    const products = allowedProductIds.size
+      ? data.produse_din_recenzii.filter((product) => allowedProductIds.has(String(product.id)))
+      : data.produse_din_recenzii;
+    return [...products].sort((a, b) => {
       const aCount = counts.get(String(a.id)) || 0;
       const bCount = counts.get(String(b.id)) || 0;
       return bCount - aCount;
     });
-  }, [data]);
+  }, [data, allowedProductIds]);
 
   const formatDate = (value: string) => {
     const [datePart] = value.split(' ');
@@ -184,7 +214,7 @@ const ReviewsPage = () => {
       <div className="px-0 pt-2 space-y-5">
 
 
-        {loading && (
+        {isLoading && (
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -224,13 +254,13 @@ const ReviewsPage = () => {
           </div>
         )}
 
-        {!loading && !error && reviewsByProduct.length === 0 && (
+        {!isLoading && !error && reviewsByProduct.length === 0 && (
           <div className="rounded-2xl border border-border bg-white p-4 text-sm text-muted-foreground">
             Nu exista recenzii disponibile.
           </div>
         )}
 
-        {!loading && !error && reviewsByProduct.length > 0 && (
+        {!isLoading && !error && reviewsByProduct.length > 0 && (
           <div className="space-y-2">
             {reviewsByProduct.map(({ product, reviews }) => (
               <div

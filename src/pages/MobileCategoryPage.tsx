@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import MobileCategoryCards from '@/components/mobile/MobileCategoryCards';
 import MobileDiscountBanner from '@/components/mobile/MobileDiscountBanner';
@@ -10,6 +10,7 @@ import MobileFAQ from '@/components/mobile/MobileFAQ';
 import MobileBottomNav, { MobileBottomNavRef } from '@/components/mobile/MobileBottomNav';
 import MobileScrollToTop from '@/components/mobile/MobileScrollToTop';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
 
 const MobileCategoryPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -18,6 +19,64 @@ const MobileCategoryPage = () => {
   const totalReviews =
     data?.produse?.reduce((sum, produs) => sum + (produs.nr_recenzii || 0), 0) || 0;
   const totalReviewsLabel = totalReviews.toLocaleString('ro-RO');
+
+  useEffect(() => {
+    if (!data?.info) return;
+    const origin = window.location.origin;
+    const categoryUrl = `${origin}/categorie/${data.info.slug}`;
+
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Acasa',
+          item: `${origin}/`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: data.info.titlu,
+          item: categoryUrl,
+        },
+      ],
+    };
+
+    const itemList = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      itemListElement: (data.produse || []).slice(0, 20).map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Product',
+          name: product.titlu,
+          url: `${origin}/produs/${product.slug}`,
+          image: product.imagine_principala?.full || product.imagine_principala?.['300x300'],
+        },
+      })),
+    };
+
+    const page = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: data.info.titlu,
+      url: categoryUrl,
+      mainEntity: itemList,
+    };
+
+    upsertJsonLd('category-breadcrumb', breadcrumb);
+    upsertJsonLd('category-carousel', itemList);
+    upsertJsonLd('category-page', page);
+
+    return () => {
+      removeJsonLd('category-breadcrumb');
+      removeJsonLd('category-carousel');
+      removeJsonLd('category-page');
+    };
+  }, [data?.info, data?.produse]);
 
   const handleSearchClick = () => {
     bottomNavRef.current?.openWheel();

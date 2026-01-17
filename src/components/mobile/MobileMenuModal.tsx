@@ -10,7 +10,7 @@ interface MobileMenuModalProps {
 }
 
 const menuItems = [
-  // { label: 'Categorii produse', href: '#', icon: Store, isDefaultCategory: true },
+  { label: 'Categorii produse', href: '#', icon: Store, isDefaultCategory: true },
   { label: 'Reduceri', href: '/recenzii', icon: Tag },
   // { label: 'Calendar Oferte', href: '#', icon: Calendar },
   { label: 'Recenzii clienti', href: '/recenzii', icon: MessageCircle },

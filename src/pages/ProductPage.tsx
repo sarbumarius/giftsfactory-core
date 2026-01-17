@@ -13,6 +13,7 @@ import { formatDimensions } from '@/utils/formatDimensions';
 import { tiktokViewContent } from '@/utils/tiktok';
 import { fbViewContent } from '@/utils/facebook';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
+import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
 
 const SHOW_PREVIEW_TOGGLE = false;
 const QUANTITY_DISCOUNTS = [
@@ -168,6 +169,70 @@ const ProductPage = () => {
       document.head.appendChild(meta);
     }
     meta.content = description;
+  }, [data]);
+
+  useEffect(() => {
+    if (!data) return;
+    const origin = window.location.origin;
+    const url = `${origin}/produs/${data.slug}`;
+    const rawDescription = data.descriere_scurta || data.descriere || '';
+    const cleanDescription = rawDescription
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const priceValue = String(data.pret_redus || data.pret || '0').replace(',', '.');
+    const reviews = (data.recenzii || []).slice(0, 10).map((review) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: review.autor },
+      datePublished: review.data,
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: review.rating,
+        bestRating: '5',
+        worstRating: '1',
+      },
+      reviewBody: review.continut,
+    }));
+
+    const productData: Record<string, unknown> = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: data.titlu,
+      image: data.imagine_principala?.full || data.imagine_principala?.['300x300'],
+      description: cleanDescription || data.titlu,
+      sku: String(data.id),
+      brand: {
+        '@type': 'Brand',
+        name: 'Daruri Alese',
+      },
+      offers: {
+        '@type': 'Offer',
+        url,
+        priceCurrency: 'RON',
+        price: priceValue,
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+      },
+    };
+
+    if (data.nr_recenzii > 0) {
+      productData.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: String(data.average_recenzii || '0'),
+        reviewCount: String(data.nr_recenzii || 0),
+      };
+    }
+
+    if (reviews.length > 0) {
+      productData.review = reviews;
+    }
+
+    upsertJsonLd('product', productData);
+
+    return () => {
+      removeJsonLd('product');
+    };
   }, [data]);
 
   useEffect(() => {

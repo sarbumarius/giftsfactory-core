@@ -6,6 +6,7 @@ import { useCategoryContext } from '@/contexts/CategoryContext';
 import { useShopContext } from '@/contexts/ShopContext';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
 import MobileProductCard from '@/components/mobile/MobileProductCard';
+import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
 
 interface ReviewImage {
   thumbnail: string;
@@ -96,6 +97,65 @@ const ReviewsPage = () => {
     () => new Set((categoryData?.produse || []).map((product) => String(product.id))),
     [categoryData?.produse]
   );
+
+  useEffect(() => {
+    if (!data) return;
+    const origin = window.location.origin;
+    const allReviews = [...data.recenzii_cu_poza, ...data.recenzii_text];
+    const filteredReviews = allowedProductIds.size
+      ? allReviews.filter((review) => allowedProductIds.has(review.id_produs))
+      : allReviews;
+    const productsById = new Map(data.produse_din_recenzii.map((product) => [String(product.id), product]));
+
+    const itemList = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      itemListElement: filteredReviews.slice(0, 20).map((review, index) => {
+        const product = productsById.get(review.id_produs);
+        const productUrl = product?.slug ? `${origin}/produs/${product.slug}` : undefined;
+        const reviewItem: Record<string, unknown> = {
+          '@type': 'Review',
+          author: { '@type': 'Person', name: review.autor },
+          datePublished: review.data,
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: review.rating,
+            bestRating: '5',
+            worstRating: '1',
+          },
+          reviewBody: review.continut,
+        };
+        if (product) {
+          reviewItem.itemReviewed = {
+            '@type': 'Product',
+            name: product.titlu,
+            url: productUrl,
+          };
+        }
+        return {
+          '@type': 'ListItem',
+          position: index + 1,
+          item: reviewItem,
+        };
+      }),
+    };
+
+    const page = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Recenzii clienti',
+      url: `${origin}/recenzii`,
+      mainEntity: itemList,
+    };
+
+    upsertJsonLd('reviews-list', itemList);
+    upsertJsonLd('reviews-page', page);
+
+    return () => {
+      removeJsonLd('reviews-list');
+      removeJsonLd('reviews-page');
+    };
+  }, [data, allowedProductIds]);
 
   const reviewsByProduct = useMemo(() => {
     if (!data) return [];

@@ -141,13 +141,34 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
     const description =
       cleanDescription.length > 0 ? cleanDescription.slice(0, 160) : defaultTitle;
 
-    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.name = 'description';
-      document.head.appendChild(meta);
+    const upsertMeta = (selector: string, attrs: Record<string, string>, content: string) => {
+      let meta = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!meta) {
+        meta = document.createElement('meta');
+        Object.entries(attrs).forEach(([key, value]) => {
+          meta.setAttribute(key, value);
+        });
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    upsertMeta('meta[name="description"]', { name: 'description' }, description);
+    upsertMeta('meta[property="og:title"]', { property: 'og:title' }, title);
+    upsertMeta('meta[property="og:description"]', { property: 'og:description' }, description);
+    upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'website');
+    if (data.info.imagine) {
+      upsertMeta('meta[property="og:image"]', { property: 'og:image' }, data.info.imagine);
     }
-    meta.content = description;
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary_large_image');
+    upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title' }, title);
+    upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description' }, description);
+    if (data.info.imagine) {
+      upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, data.info.imagine);
+    }
+    if (typeof window !== 'undefined') {
+      upsertMeta('meta[property="og:url"]', { property: 'og:url' }, window.location.href);
+    }
   }, [data, pathname]);
 
   useEffect(() => {

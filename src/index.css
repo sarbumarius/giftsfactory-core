@@ -1,0 +1,401 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 30 10% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 10% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 10% 20%;
+
+    --primary: 32 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 60% 92%;
+    --secondary-foreground: 30 10% 20%;
+
+    --muted: 35 30% 94%;
+    --muted-foreground: 30 10% 45%;
+
+    --accent: 32 75% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 35 25% 88%;
+    --input: 35 25% 88%;
+    --ring: 32 85% 55%;
+
+    --radius: 0.75rem;
+
+    --gold-start: 32 92% 76%;
+    --gold-mid: 30 70% 52%;
+    --gold-end: 35 90% 88%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 30 10% 10%;
+    --foreground: 35 30% 95%;
+
+    --card: 30 10% 12%;
+    --card-foreground: 35 30% 95%;
+
+    --popover: 30 10% 12%;
+    --popover-foreground: 35 30% 95%;
+
+    --primary: 32 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 20% 20%;
+    --secondary-foreground: 35 30% 95%;
+
+    --muted: 30 15% 18%;
+    --muted-foreground: 35 20% 60%;
+
+    --accent: 32 75% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 15% 25%;
+    --input: 30 15% 25%;
+    --ring: 32 85% 55%;
+    
+    --gold-start: 32 92% 76%;
+    --gold-mid: 30 70% 52%;
+    --gold-end: 35 90% 88%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .gold-gradient {
+    background: linear-gradient(90deg, #fa1353 0%,  #db0e43 100%);
+  }
+  
+  .gold-gradient-text {
+    background: linear-gradient(45deg, #faca8c 0%, #e0a35c 19%, #cf843b 61%, #f1bd81 81%, #f8ca95 88%, #fae3ca 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .animate-fade-up {
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+  
+  .animate-bounce-soft {
+    animation: bounceSoft 2s infinite;
+  }
+  
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.tag {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+a.tag:hover {
+  transform: translateY(-2px);
+  opacity: 0.8;
+}
+
+a.tag:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .tagsWrapper {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .tagsWrapper.collapsed {
+    max-height: 300px;
+  }
+
+  .tagsWrapper::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .tagsWrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .tagsWrapper::-webkit-scrollbar-thumb {
+    background: #c89b59;
+    border-radius: 10px;
+  }
+
+  .tagsWrapper::-webkit-scrollbar-thumb:hover {
+    background: #b8854a;
+  }
+}
+
+.expandTagsBtn {
+  display: none;
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #c89b59, #f5d5a8);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(200, 155, 89, 0.3);
+}
+
+.expandTagsBtn:hover {
+  background: linear-gradient(135deg, #b8854a, #e5c598);
+  box-shadow: 0 4px 12px rgba(200, 155, 89, 0.4);
+  transform: translateY(-2px);
+}
+
+.expandTagsBtn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .expandTagsBtn {
+    display: block;
+  }
+}
+
+.cloud-chaos {
+  position: relative;
+  overflow: hidden;
+}
+.cloud-chaos::before {
+  content: "";
+  position: absolute;
+  left: -40px;
+  right: 0;
+  bottom: -8px;   /* AICI e schimbarea */
+  height: 70px;
+  pointer-events: none;
+  z-index: 1;
+
+  background:
+          radial-gradient(circle 19px at 48px 60px, #fff 99%, transparent 100%),
+          radial-gradient(circle 17px at 80px 62px, #fff 99%, transparent 100%),
+          radial-gradient(circle 23px at 114px 59px, #fff 99%, transparent 100%),
+          radial-gradient(circle 25px  at 156px 74px, #fff 99%, transparent 100%),
+          radial-gradient(circle 22px at 197px 64px, #fff 99%, transparent 100%),
+          radial-gradient(circle 27px at 240px 64px, #fff 99%, transparent 100%),
+          radial-gradient(circle 40px at 298px 81px, #fff 99%, transparent 100%),
+          radial-gradient(circle 20px  at 341px 65px, #fff 99%, transparent 100%),
+          radial-gradient(circle 13px at 370px 64px, #fff 99%, transparent 100%),
+          radial-gradient(circle 24px at 404px 64px, #fff 99%, transparent 100%),
+          radial-gradient(circle 17px at 450px 56px, #eaf7fa 99%, transparent 100%),
+          radial-gradient(circle 9px  at 490px 46px, #eaf7fa 99%, transparent 100%),
+          radial-gradient(circle 15px at 530px 60px, #eaf7fa 99%, transparent 100%);
+
+  background-repeat: repeat-x;
+}
+
+
+
+
+.cloud-chaos-footer {
+  position: relative;
+  overflow: hidden;
+  padding-top:40px;
+}
+.cloud-chaos-footer::before {
+  content: "";
+  position: absolute;
+  rotate: -180deg;
+  left: 0px;
+  right: 0;
+  top: -2px; /* AICI e schimbarea */
+  height: 70px;
+  pointer-events: none;
+  z-index: 1;
+
+
+  background: radial-gradient(circle 19px at 18px 60px, #fff 99%, transparent 100%),
+  radial-gradient(circle 17px at 50px 62px, #fff 99%, transparent 100%),
+  radial-gradient(circle 23px at 84px 59px, #fff 99%, transparent 100%),
+  radial-gradient(circle 25px at 126px 74px, #fff 99%, transparent 100%),
+  radial-gradient(circle 22px at 167px 64px, #fff 99%, transparent 100%),
+  radial-gradient(circle 27px at 210px 64px, #fff 99%, transparent 100%),
+  radial-gradient(circle 40px at 268px 81px, #fff 99%, transparent 100%),
+  radial-gradient(circle 20px at 311px 65px, #fff 99%, transparent 100%),
+  radial-gradient(circle 13px at 340px 64px, #fff 99%, transparent 100%),
+  radial-gradient(circle 24px at 374px 64px, #fff 99%, transparent 100%),
+  radial-gradient(circle 17px at 450px 56px, #eaf7fa 99%, transparent 100%),
+  radial-gradient(circle 9px at 490px 46px, #eaf7fa 99%, transparent 100%),
+  radial-gradient(circle 15px at 530px 60px, #eaf7fa 99%, transparent 100%);
+
+  background-repeat: repeat-x;
+
+}
+
+.chaos-floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.chaos-row {
+  position: absolute;
+  left: -35%;
+  right: -35%;
+  transform: rotate(45deg);
+  opacity: 0.18;
+  filter: blur(1px);
+  overflow: hidden;
+}
+
+.chaos-track {
+  display: flex;
+  gap: 2px;
+  width: max-content;
+}
+.chaos-track-left {
+  animation: chaosSlideLeft 120s linear infinite;
+}
+.chaos-track-right {
+  animation: chaosSlideRight 120s linear infinite;
+}
+.chaos-img {
+  width: 242px;
+  height: 242px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  filter: blur(1.2px);
+  margin: 0;
+}
+
+@keyframes chaosSlideLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes chaosSlideRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+
+.bottomNou{
+  bottom: 53px;
+}
+
+.cta-cream {
+  background-image: linear-gradient(to right, #fff3e8, #fcddc8);
+  color: #5e4b37;
+  border: 1px solid #dfb695;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.cta-cream:hover {
+  filter: brightness(1.02);
+}

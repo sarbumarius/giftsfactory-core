@@ -1128,7 +1128,7 @@ const ProductPage = () => {
       <section className="relative isolate mt-6">
         <span
           aria-hidden="true"
-          className="pointer-events-none text-[#473420] absolute inset-y-0 left-[calc(50%-50vw)] right-[calc(50%-50vw)] -z-10 bg-[#fff3e8]"
+          className="pointer-events-none text-[#6844c1] absolute inset-y-0 left-[calc(50%-50vw)] right-[calc(50%-50vw)] -z-10 bg-[#ece8f7]"
         />
         <div className="space-y-2 px-4 py-4">
             <div className="rounded-md">
@@ -1141,7 +1141,7 @@ const ProductPage = () => {
                     onClick={() => setOpenSection(openSection === 'detalii' ? null : 'detalii')}
                     data-track-action="A deschis detaliile produsului."
                 >
-                    <span className="text-lg font-semibold text-[#5e4b37]">Detalii produs</span>
+                    <span className="text-lg font-semibold text-[#6844c1]">Detalii produs</span>
                     <div className="rounded-full p-1 transition-all">
                         <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'detalii' ? 'rotate-180' : ''}`} />
                     </div>
@@ -1161,8 +1161,8 @@ const ProductPage = () => {
                         {orderedAttributes.length > 0 ? (
                             <div className="overflow-hidden rounded-lg bg-white">
                                 {orderedAttributes.map((attr) => (
-                                    <div key={attr.slug} className="flex border-[#e6c5ae] border-b border-border last:border-b-0">
-                                        <div className="w-1/3 bg-[#fcddc8] px-3 py-2 text-xs font-medium text-foreground">
+                                    <div key={attr.slug} className="flex border-[#d0c6eb] border-b border-border last:border-b-0">
+                                        <div className="w-1/3 bg-[#e5dff4] px-3 py-2 text-xs font-medium text-[#6844c1]">
                                             {attr.name}
                                         </div>
                                         <div className="w-2/3 px-3 py-2 text-xs text-muted-foreground">
@@ -1178,7 +1178,7 @@ const ProductPage = () => {
                 </div>
             </div>
 
-            <hr className="border-t border-[#f5e3d2]" />
+            <hr className="border-t border-[#d0c6eb]" />
           {isLedProduct && (
             <>
               <div className="rounded-md">
@@ -1217,7 +1217,7 @@ const ProductPage = () => {
                   </div>
                 </div>
               </div>
-              <hr className="border-t border-[#e6e6e6]" />
+              <hr className="border-t border-[#d0c6eb]" />
             </>
           )}
 
@@ -1233,7 +1233,7 @@ const ProductPage = () => {
                   onClick={() => setOpenSection(openSection === 'boxa' ? null : 'boxa')}
                   data-track-action="A deschis informatii boxa."
                 >
-                  <span className="text-lg font-semibold text-[#5e4b37]">Informatii boxa</span>
+                  <span className="text-lg font-semibold text-[#6844c1]">Informatii boxa</span>
                   <div className="rounded-full p-1 transition-all">
                     <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'boxa' ? 'rotate-180' : ''}`} />
                   </div>
@@ -1259,7 +1259,7 @@ const ProductPage = () => {
                   </div>
                 </div>
               </div>
-              <hr className="border-t border-[#e6e6e6]" />
+              <hr className="border-t border-[#d0c6eb]" />
             </>
           )}
 
@@ -1273,7 +1273,7 @@ const ProductPage = () => {
               onClick={() => setOpenSection(openSection === 'descriere' ? null : 'descriere')}
               data-track-action="A deschis descrierea produsului."
             >
-              <span className="text-lg font-semibold text-[#5e4b37]">Descriere</span>
+              <span className="text-lg font-semibold text-[#6844c1]">Descriere</span>
               <div className="rounded-full p-1 transition-all">
                 <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'descriere' ? 'rotate-180' : ''}`} />
               </div>
@@ -1299,7 +1299,7 @@ const ProductPage = () => {
             </div>
           </div>
 
-          <hr className="border-t border-[#f5e3d2]" />
+          <hr className="border-t border-[#d0c6eb]" />
 
           <div className="rounded-md">
             <button
@@ -1311,7 +1311,7 @@ const ProductPage = () => {
               onClick={() => setOpenSection(openSection === 'simulare' ? null : 'simulare')}
               data-track-action="A deschis simularea grafica."
             >
-              <span className="text-lg font-semibold text-[#5e4b37]">Simulare Grafica</span>
+              <span className="text-lg font-semibold text-[#6844c1]">Simulare Grafica</span>
               <div className="rounded-full p-1 transition-all">
                 <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'simulare' ? 'rotate-180' : ''}`} />
               </div>
@@ -1338,7 +1338,7 @@ const ProductPage = () => {
             </div>
           </div>
 
-          <hr className="border-t border-[#f5e3d2]" />
+          <hr className="border-t border-[#d0c6eb]" />
 
 
 
@@ -1352,7 +1352,7 @@ const ProductPage = () => {
               onClick={() => setOpenSection(openSection === 'livrare' ? null : 'livrare')}
               data-track-action="A deschis informatii livrare si retur."
             >
-              <span className="text-lg font-semibold text-[#5e4b37]">Livrare & Retur</span>
+              <span className="text-lg font-semibold text-[#6844c1]">Livrare & Retur</span>
               <div className="rounded-full p-1 transition-all">
                 <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${openSection === 'livrare' ? 'rotate-180' : ''}`} />
               </div>
@@ -1411,15 +1411,15 @@ const ProductPage = () => {
           </div>
 
 
-          <div className="mx-4  overflow-hidden rounded-b-2xl border border-[#dfb695] bg-gradient-to-r from-[#fff3e8] to-[#fcddc8] px-4 py-3 shadow-card">
+          <div className="mx-4  overflow-hidden rounded-b-2xl border border-[#dfb695] bg-gradient-to-r from-[#db6f4a] to-[#db6f4a] px-4 py-3 shadow-card">
               <div className="flex items-center gap-3">
                   <div className="relative">
-                      <div className="rounded-lg bg-[#6e4514] px-3 py-1 text-xs font-semibold text-white">
+                      <div className="rounded-lg bg-[#6844c1] px-3 py-1 text-xs font-semibold text-white">
                           +{rewardPoints} puncte
                       </div>
-                      <span className="absolute -bottom-2 left-4 h-0 w-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-[#6e4514]" />
+                      <span className="absolute -bottom-2 left-4 h-0 w-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-[#6844c1]" />
                   </div>
-                  <p className="text-sm text-amber-900">
+                  <p className="text-sm text-[#fff]">
                       Achiziționează acum acest produs și primești <strong>{rewardPoints}</strong> puncte ce pot fi folosite la următoarea comandă!
                   </p>
               </div>
@@ -1431,27 +1431,27 @@ const ProductPage = () => {
         </div>
 
 
-        <div className="mt-3 border border-border bg-[#fff7ef] px-3 py-3">
+        <div className="mt-3  bg-[#d0c6eb] px-3 py-3">
           <div className="flex justify-center">
             <button
               type="button"
               onClick={() => setShowOrderDateModal(true)}
-              className="w-full text-center rounded-full border border-[#dfb695] bg-white px-3 py-1 text-[13px] font-semibold text-[#5e4b37] shadow-sm"
+              className="w-full text-center rounded-full  bg-white px-3 py-1 text-[13px] font-semibold text-[#5e4b37] shadow-sm"
             >
               Comanda plasata &bull; {formatRoDate(orderDate)} ({orderDateLabel})
             </button>
           </div>
 
-          <div className="relative mt-4 flex items-start text-[11px] font-semibold text-muted-foreground">
-            <div className="absolute left-0 right-0 top-[40px] h-[2px] bg-[#dfb695]/70" />
+          <div className="relative mt-4 flex items-start text-[11px] font-semibold text-[#6844c1]">
+            <div className="absolute left-0 right-0 top-[40px] h-[2px] bg-[#fff]/70" />
 
             <div className="flex flex-1 flex-col items-center text-center">
               <span className="mt-1 leading-tight">Confirmare</span>
-              <span className="text-[10px] text-[#5e4b37] leading-tight">telefonica</span>
+              <span className="text-[10px] text-[#6844c1] leading-tight">telefonica</span>
               <div className="relative z-10 mt-1">
-                <div className="h-2 w-2 rounded-full bg-[#e45757]" />
+                <div className="h-2 w-2 rounded-full bg-[#fff]" />
               </div>
-              <span className="mt-2 text-[10px] text-[#5e4b37] leading-tight">{formatRoDate(orderDate)}</span>
+              <span className="mt-2 text-[10px] text-[#6844c1] leading-tight">{formatRoDate(orderDate)}</span>
             </div>
 
             {weekendBetweenOrderAndProduction && (
@@ -1462,11 +1462,11 @@ const ProductPage = () => {
 
             <div className="flex flex-1 flex-col items-center text-center">
               <span className="mt-1 leading-tight">Productie</span>
-              <span className="text-[10px] text-[#5e4b37] leading-tight">Legatorie</span>
+              <span className="text-[10px] text-[#6844c1] leading-tight">Legatorie</span>
               <div className="relative z-10 mt-1">
-                <div className="h-2 w-2 rounded-full bg-[#8b5a2b]" />
+                <div className="h-2 w-2 rounded-full bg-[#fff]" />
               </div>
-              <span className="mt-2 text-[10px] text-[#5e4b37] leading-tight">{formatRoDate(productionDate)}</span>
+              <span className="mt-2 text-[10px] text-[#6844c1] leading-tight">{formatRoDate(productionDate)}</span>
             </div>
 
             {weekendBetweenProductionAndDelivery && (
@@ -1481,10 +1481,10 @@ const ProductPage = () => {
               <div className="relative z-10 mt-1">
                 <div className="h-2 w-2 rounded-full bg-[#2e9e5b]" />
               </div>
-              <span className="mt-2 text-[10px] text-[#5e4b37] leading-tight text-center">
-                <span className="font-semibold text-[#2e9e5b]">24h: {formatRoDate(deliveryStart)}</span>
+              <span className="mt-2 text-[10px] text-[#fff] leading-tight text-center">
+                <span className="font-semibold text-[#fff]">24h: {formatRoDate(deliveryStart)}</span>
                 <br />
-                <span className="font-semibold text-[#e45757]">48h: {formatRoDate(deliveryEnd)}</span>
+                <span className="font-semibold text-[#fff]">48h: {formatRoDate(deliveryEnd)}</span>
               </span>
             </div>
           </div>

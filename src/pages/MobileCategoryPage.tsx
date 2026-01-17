@@ -61,6 +61,10 @@ const MobileCategoryPage = () => {
           name: product.titlu,
           url: `${origin}/produs/${product.slug}`,
           image: product.imagine_principala?.full || product.imagine_principala?.['300x300'],
+          brand: {
+            '@type': 'Brand',
+            name: 'Daruri Alese',
+          },
           offers: {
             '@type': 'Offer',
             url: `${origin}/produs/${product.slug}`,
@@ -68,6 +72,11 @@ const MobileCategoryPage = () => {
             price: String(product.pret_redus || product.pret || '0').replace(',', '.'),
             availability: 'https://schema.org/InStock',
             itemCondition: 'https://schema.org/NewCondition',
+            seller: {
+              '@type': 'Organization',
+              name: 'Daruri Alese',
+              url: origin,
+            },
           },
           ...(product.nr_recenzii > 0
             ? {

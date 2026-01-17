@@ -107,53 +107,55 @@ const ReviewsPage = () => {
       : allReviews;
     const productsById = new Map(data.produse_din_recenzii.map((product) => [String(product.id), product]));
 
-    const itemList = {
+    const reviewItems = filteredReviews.slice(0, 20).map((review) => {
+      const product = productsById.get(review.id_produs);
+      const productUrl = product?.slug ? `${origin}/produs/${product.slug}` : undefined;
+      const reviewItem: Record<string, unknown> = {
+        '@type': 'Review',
+        author: { '@type': 'Person', name: review.autor },
+        datePublished: review.data,
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: review.rating,
+          bestRating: '5',
+          worstRating: '1',
+        },
+        reviewBody: review.continut,
+      };
+      if (product) {
+        reviewItem.itemReviewed = {
+          '@type': 'Product',
+          name: product.titlu,
+          url: productUrl,
+        };
+      }
+      return reviewItem;
+    });
+
+    const graph = {
       '@context': 'https://schema.org',
-      '@type': 'ItemList',
-      itemListElement: filteredReviews.slice(0, 20).map((review, index) => {
-        const product = productsById.get(review.id_produs);
-        const productUrl = product?.slug ? `${origin}/produs/${product.slug}` : undefined;
-        const reviewItem: Record<string, unknown> = {
-          '@type': 'Review',
-          author: { '@type': 'Person', name: review.autor },
-          datePublished: review.data,
-          reviewRating: {
-            '@type': 'Rating',
-            ratingValue: review.rating,
-            bestRating: '5',
-            worstRating: '1',
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          name: 'Recenzii clienti',
+          url: `${origin}/recenzii`,
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: reviewItems.map((review, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              item: review,
+            })),
           },
-          reviewBody: review.continut,
-        };
-        if (product) {
-          reviewItem.itemReviewed = {
-            '@type': 'Product',
-            name: product.titlu,
-            url: productUrl,
-          };
-        }
-        return {
-          '@type': 'ListItem',
-          position: index + 1,
-          item: reviewItem,
-        };
-      }),
+        },
+        ...reviewItems,
+      ],
     };
 
-    const page = {
-      '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Recenzii clienti',
-      url: `${origin}/recenzii`,
-      mainEntity: itemList,
-    };
-
-    upsertJsonLd('reviews-list', itemList);
-    upsertJsonLd('reviews-page', page);
+    upsertJsonLd('reviews', graph);
 
     return () => {
-      removeJsonLd('reviews-list');
-      removeJsonLd('reviews-page');
+      removeJsonLd('reviews');
     };
   }, [data, allowedProductIds]);
 

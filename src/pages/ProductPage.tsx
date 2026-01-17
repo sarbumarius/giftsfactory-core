@@ -196,8 +196,8 @@ const ProductPage = () => {
     }));
 
     const productData: Record<string, unknown> = {
-      '@context': 'https://schema.org',
       '@type': 'Product',
+      '@id': `${url}#product`,
       name: data.titlu,
       image: data.imagine_principala?.full || data.imagine_principala?.['300x300'],
       description: cleanDescription || data.titlu,
@@ -213,6 +213,11 @@ const ProductPage = () => {
         price: priceValue,
         availability: 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition',
+        seller: {
+          '@type': 'Organization',
+          name: 'Daruri Alese',
+          url: origin,
+        },
       },
     };
 
@@ -228,7 +233,20 @@ const ProductPage = () => {
       productData.review = reviews;
     }
 
-    upsertJsonLd('product', productData);
+    const graph = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebPage',
+          '@id': `${url}#webpage`,
+          url,
+          name: data.titlu,
+        },
+        productData,
+      ],
+    };
+
+    upsertJsonLd('product', graph);
 
     return () => {
       removeJsonLd('product');

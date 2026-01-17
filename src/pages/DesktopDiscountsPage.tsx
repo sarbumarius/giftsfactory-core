@@ -55,7 +55,7 @@ const DesktopDiscountsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [openCoupons, setOpenCoupons] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const defaultCategorySlug = 'cadouri-profesii';
+  const defaultCategorySlug = 'gifts-factory';
 
   const getCouponCategorySlug = (conditions: string[]) => {
     const match = conditions.find((cond) => cond.toLowerCase().includes('doar pentru'));

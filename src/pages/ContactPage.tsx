@@ -27,7 +27,7 @@ const ContactPage = () => {
         centerTitle
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-profesii');
+          setCurrentSlug('gifts-factory');
           navigate('/');
         }}
         cartCount={cart.length}

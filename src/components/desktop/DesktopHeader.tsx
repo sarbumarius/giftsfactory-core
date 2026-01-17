@@ -30,7 +30,7 @@ const DesktopHeader = () => {
           <button
             type="button"
             onClick={() => {
-              setCurrentSlug('cadouri-profesii');
+              setCurrentSlug('gifts-factory');
               navigate('/');
             }}
             data-track-action="A apasat pe logo din header desktop."

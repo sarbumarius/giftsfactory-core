@@ -183,7 +183,7 @@ const ThankYouPage = () => {
         onBack={() => navigate(-1)}
         centerTitle
         onLogoClick={() => {
-          setCurrentSlug('cadouri-profesii');
+          setCurrentSlug('gifts-factory');
           navigate('/');
         }}
         cartCount={cart.length}

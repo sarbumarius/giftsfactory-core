@@ -1379,7 +1379,7 @@ const CheckoutPage = () => {
         title="Date facturare"
         onBack={() => navigate(-1)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-profesii');
+          setCurrentSlug('gifts-factory');
           navigate('/');
         }}
         cartCount={cart.length}

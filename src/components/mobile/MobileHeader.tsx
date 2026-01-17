@@ -154,7 +154,7 @@ const MobileHeader = ({ onSearchClick }: MobileHeaderProps) => {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         onOpenCategories={() => {
-          setCurrentSlug('cadouri-profesii');
+          setCurrentSlug('gifts-factory');
           setIsCategoryOpen(true);
         }}
       />

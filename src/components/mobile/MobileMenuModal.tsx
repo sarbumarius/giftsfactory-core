@@ -66,7 +66,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                       onClose();
                       return;
                     }
-                    setCurrentSlug('cadouri-profesii');
+                    setCurrentSlug('gifts-factory');
                     navigate('/');
                     onClose();
                     window.scrollTo({ top: 0, behavior: 'smooth' });

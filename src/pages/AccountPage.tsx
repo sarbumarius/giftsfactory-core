@@ -18,7 +18,7 @@ const AccountPage = () => {
         onBack={() => navigate(-1)}
         onSearchClick={() => setIsSearchOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-profesii');
+          setCurrentSlug('gifts-factory');
           navigate('/');
         }}
         cartCount={cart.length}

@@ -1,12 +1,13 @@
-import { Menu, MessageSquare, Phone, Flame, Search } from 'lucide-react';
+import { Menu, MessageSquare, Phone, Search, LayoutGrid } from 'lucide-react';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MobileMenuModal from './MobileMenuModal';
 import MobileCategorySheet from './MobileCategorySheet';
+import MobileSearchSheet from './MobileSearchSheet';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 const navItems = [
   { icon: Menu, label: 'Meniu' },
-  { icon: Flame, label: 'Reduceri' },
+  { icon: LayoutGrid, label: 'Categorii' },
   { icon: Search, label: 'Cauta' },
   { icon: MessageSquare, label: 'Recenzii' },
   { icon: Phone, label: 'Suna' },
@@ -21,7 +22,8 @@ export interface MobileBottomNavRef {
 const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const { setCurrentSort, setCurrentSlug } = useCategoryContext();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { setCurrentSlug } = useCategoryContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,11 +59,8 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
                 key={item.label}
                 onClick={() => {
                   if (index === 0) openMenu();
-                  if (index === 1) {
-                    setCurrentSort('reduceri');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
-                  if (index === 2) openCategories();
+                  if (index === 1) openCategories();
+                  if (index === 2) setIsSearchOpen(true);
                   if (index === 3) {
                     if (isReviewsPage) {
                       setCurrentSlug('gifts-factory');
@@ -104,6 +103,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
         }}
       />
       <MobileCategorySheet isOpen={isCategoryOpen} onClose={() => setIsCategoryOpen(false)} />
+      <MobileSearchSheet isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 });

@@ -25,6 +25,12 @@ const MobileCategoryPage = () => {
     const origin = window.location.origin;
     const categoryUrl = `${origin}/categorie/${data.info.slug}`;
 
+    const rawDescription = data.info.descriere || '';
+    const cleanDescription = rawDescription
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     const breadcrumb = {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
@@ -80,6 +86,7 @@ const MobileCategoryPage = () => {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
       name: data.info.titlu,
+      description: cleanDescription || data.info.titlu,
       url: categoryUrl,
       mainEntity: itemList,
     };

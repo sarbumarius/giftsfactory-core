@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, ShoppingCart, ChevronDown, ChevronUp, Heart, Menu, Sparkles } from 'lucide-react';
-import logo from '@/assets/sweetgifts.svg';
+import logo from '@/assets/factorygifts.svg';
 import MobileCategorySheet from './MobileCategorySheet';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { useShopContext } from '@/contexts/ShopContext';
@@ -154,7 +154,7 @@ const MobileHeader = ({ onSearchClick }: MobileHeaderProps) => {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         onOpenCategories={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           setIsCategoryOpen(true);
         }}
       />

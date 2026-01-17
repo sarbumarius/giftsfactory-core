@@ -1,4 +1,4 @@
-import logo from '@/assets/sweetgifts.svg';
+import logo from '@/assets/factorygifts.svg';
 
 const DesktopWorkInProgressPage = () => {
   return (

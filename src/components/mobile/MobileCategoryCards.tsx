@@ -66,7 +66,7 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
   const totalCards =
     filteredSubcategories.length + (shouldShowParent ? 1 : 0) + (showOtherCategoriesCard ? 1 : 0);
   const tipuriSection = (
-    <div className="tipuri">
+    <div className="tipuri hidden">
       <MobileCategoryFilterSlide onOpenFilters={onOpenFilters} />
       <MobileCategoryTypeSlide />
     </div>
@@ -117,7 +117,7 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
 
       <div className={`mb-3 ${showDescription ? 'mt-8' : ''}`}>
         <div className="flex items-center gap-2 mb-1">
-          <h2 className="text-white text-2xl font-serif">{categoryTitle}</h2>
+          <h2 className="text-white text-xl font-serif">{categoryTitle}</h2>
           <button
             onClick={() => setShowDescription(!showDescription)}
             data-track-action="A apasat pe informatii categorie."
@@ -127,7 +127,7 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
             <Info className={`h-5 w-5 text-white transition-transform ${showDescription ? 'rotate-180' : ''}`} />
           </button>
         </div>
-        <p className="text-white/80 text-sm">
+        <p className="text-white/80 text-xl font-serif">
           {productCount} {productCount === 1 ? 'produs' : 'produse'}
         </p>
 

@@ -60,7 +60,7 @@ const DiscountsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [openCoupons, setOpenCoupons] = useState<Record<string, { conditions: boolean; products: boolean }>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const defaultCategorySlug = 'cadouri-ziua-indragostitilor';
+  const defaultCategorySlug = 'cadouri-profesii';
 
   const getCouponCategorySlug = (conditions: string[]) => {
     const match = conditions.find((cond) => cond.toLowerCase().includes('doar pentru'));
@@ -155,7 +155,7 @@ const DiscountsPage = () => {
         centerTitle
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           navigate('/');
         }}
         cartCount={cart.length}

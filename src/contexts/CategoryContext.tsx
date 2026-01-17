@@ -41,7 +41,7 @@ interface CategoryProviderProps {
   initialSlug?: string;
 }
 
-export const CategoryProvider = ({ children, initialSlug = 'cadouri-ziua-indragostitilor' }: CategoryProviderProps) => {
+export const CategoryProvider = ({ children, initialSlug = 'cadouri-profesii' }: CategoryProviderProps) => {
   const [pathname, setPathname] = useState(() => {
     if (typeof window === 'undefined') return '/';
     return window.location.pathname;

@@ -1,6 +1,6 @@
 import { X, Phone, Mail, Home, Store, Tag, Users, Calendar, BookOpen, MessageCircle, HelpCircle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import logo from '@/assets/sweetgifts.svg';
+import logo from '@/assets/factorygifts.svg';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 
 interface MobileMenuModalProps {
@@ -66,7 +66,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                       onClose();
                       return;
                     }
-                    setCurrentSlug('cadouri-ziua-indragostitilor');
+                    setCurrentSlug('cadouri-profesii');
                     navigate('/');
                     onClose();
                     window.scrollTo({ top: 0, behavior: 'smooth' });

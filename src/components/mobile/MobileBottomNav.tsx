@@ -54,7 +54,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
   };
 
   const openCategories = () => {
-    setCurrentSlug('cadouri-ziua-indragostitilor');
+    setCurrentSlug('cadouri-profesii');
     setIsCategoryOpen(true);
   };
 
@@ -84,7 +84,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
                   if (index === 2) setIsWheelOpen(true);
                   if (index === 3) {
                     if (isReviewsPage) {
-                      setCurrentSlug('cadouri-ziua-indragostitilor');
+                      setCurrentSlug('cadouri-profesii');
                       setIsCategoryOpen(true);
                     } else {
                       navigate('/recenzii');
@@ -122,7 +122,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
         isOpen={isMenuOpen}
         onClose={closeMenu}
         onOpenCategories={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           setIsCategoryOpen(true);
         }}
       />

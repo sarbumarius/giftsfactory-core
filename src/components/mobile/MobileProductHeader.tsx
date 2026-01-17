@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ShoppingCart, ChevronDown, Heart, ArrowLeft, Menu, Search } from 'lucide-react';
-import logo from '@/assets/sweetgifts.svg';
+import logo from '@/assets/factorygifts.svg';
 
 interface MobileProductHeaderProps {
   title: string;

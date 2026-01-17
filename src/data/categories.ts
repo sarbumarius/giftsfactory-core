@@ -212,7 +212,7 @@ export const categories: Category[] = [
     "parent_id": 87,
     "nivel": 1,
     "titlu": "Cadouri de ziua indragostitilor",
-    "slug": "cadouri-ziua-indragostitilor",
+    "slug": "cadouri-profesii",
     "count": 88,
     "icon": "https://darurialese.ro/wp-content/uploads/2022/05/indragostiti-01.svg"
   },
@@ -518,7 +518,7 @@ export const categories: Category[] = [
     "parent_id": 87,
     "nivel": 1,
     "titlu": "Cadouri pentru botez",
-    "slug": "cadouri-ziua-indragostitilor",
+    "slug": "cadouri-profesii",
     "count": 85,
     "icon": "https://darurialese.ro/wp-content/uploads/2022/05/botez-01.svg"
   },

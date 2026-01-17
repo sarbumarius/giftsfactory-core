@@ -1,6 +1,6 @@
 const GlobalFooter = () => {
   return (
-    <footer className="min-footer  cloud-chaos-footer bg-[linear-gradient(135deg,#fc134f,#780c20)] px-4 py-4 pb-24">
+    <footer className="min-footer  cloud-chaos-footer bg-[linear-gradient(135deg,#6844c1,#6844c1)] px-4 py-4 pb-24">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="col-left text-center set-cont-mb-s reset-last-child text-xs text-white">
           <small>©2017 Perfect Gift SRL (CUI: RO37811834). Toate drepturile rezervate. Marca inregistrata nr.160868</small>

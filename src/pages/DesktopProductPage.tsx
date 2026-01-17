@@ -452,7 +452,7 @@ const DesktopProductPage = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setCurrentSlug(data.categorii?.[0]?.slug || 'cadouri-ziua-indragostitilor');
+                    setCurrentSlug(data.categorii?.[0]?.slug || 'cadouri-profesii');
                     navigate('/cos');
                     window.setTimeout(() => {
                       window.scrollTo({ top: 0, behavior: 'smooth' });

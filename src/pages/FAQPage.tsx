@@ -105,7 +105,7 @@ const FAQPage = () => {
         centerTitle
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           navigate('/');
         }}
         cartCount={cart.length}

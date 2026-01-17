@@ -507,7 +507,7 @@ const ProductPage = () => {
         onBack={() => navigate(-1)}
         onSearchClick={() => setIsSearchOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           navigate('/');
         }}
         categoryTitle={data?.categorii?.[0]?.titlu}
@@ -560,7 +560,7 @@ const ProductPage = () => {
         onBack={() => navigate(-1)}
         onSearchClick={() => setIsSearchOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           navigate('/');
         }}
         categoryTitle={data?.categorii?.[0]?.titlu}
@@ -670,7 +670,7 @@ const ProductPage = () => {
               onBack={() => navigate(-1)}
               onSearchClick={() => setIsSearchOpen(true)}
               onLogoClick={() => {
-                  setCurrentSlug('cadouri-ziua-indragostitilor');
+                  setCurrentSlug('cadouri-profesii');
                   navigate('/');
               }}
               categoryTitle={data.categorii?.[0]?.titlu}

@@ -262,7 +262,7 @@ const CartPage = () => {
         title="Cos de cumparaturi"
         onSearchClick={() => setIsSearchOpen(true)}
         onLogoClick={() => {
-          setCurrentSlug('cadouri-ziua-indragostitilor');
+          setCurrentSlug('cadouri-profesii');
           navigate('/');
         }}
         cartCount={cart.length}
@@ -350,7 +350,7 @@ const CartPage = () => {
             <button
               type="button"
               onClick={() => {
-                setCurrentSlug('cadouri-ziua-indragostitilor');
+                setCurrentSlug('cadouri-profesii');
                 navigate('/');
               }}
               data-track-action="A mers la categorii din cos gol."

@@ -55,6 +55,23 @@ const MobileCategoryPage = () => {
           name: product.titlu,
           url: `${origin}/produs/${product.slug}`,
           image: product.imagine_principala?.full || product.imagine_principala?.['300x300'],
+          offers: {
+            '@type': 'Offer',
+            url: `${origin}/produs/${product.slug}`,
+            priceCurrency: 'RON',
+            price: String(product.pret_redus || product.pret || '0').replace(',', '.'),
+            availability: 'https://schema.org/InStock',
+            itemCondition: 'https://schema.org/NewCondition',
+          },
+          ...(product.nr_recenzii > 0
+            ? {
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: String(product.average_recenzii || '0'),
+                  reviewCount: String(product.nr_recenzii || 0),
+                },
+              }
+            : {}),
         },
       })),
     };

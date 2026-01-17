@@ -261,12 +261,7 @@ const MobileProductCard = ({
         >
           <span className="line-clamp-2">{product.titlu}</span>
         </button>
-          <div className="mt-1 flex items-center justify-center gap-2">
-            <span className="text-base font-bold text-red-700">{discountedPrice.toFixed(2)} lei</span>
-            {hasDiscount && (
-              <span className="text-xs text-muted-foreground line-through">{originalPrice.toFixed(2)} lei</span>
-            )}
-          </div>
+
         </div>
       </div>
       {isModalOpen && (() => {

@@ -17,6 +17,8 @@ import ContactPageEntry from "./pages/ContactPageEntry";
 import ReviewsPageEntry from "./pages/ReviewsPageEntry";
 import ThankYouPage from "./pages/ThankYouPage";
 import CategoryLandingPage from "./pages/CategoryLandingPage";
+import AboutPageEntry from "./pages/AboutPageEntry";
+import CreateUniqueProductPageEntry from "./pages/CreateUniqueProductPageEntry";
 import NotFound from "./pages/NotFound";
 import GlobalFooter from "./components/common/GlobalFooter";
 import { useIsMobile } from "./hooks/use-mobile";
@@ -45,6 +47,8 @@ const App = () => {
               <Route path="/intrebari-frecvente" element={<FAQPageEntry />} />
               <Route path="/contact" element={<ContactPageEntry />} />
               <Route path="/recenzii" element={<ReviewsPageEntry />} />
+              <Route path="/despre-mine" element={<AboutPageEntry />} />
+              <Route path="/creeaza-produs" element={<CreateUniqueProductPageEntry />} />
                 <Route path="/plata-cos/order-received/:orderNumber" element={<ThankYouPage />} />
                 <Route path="/categorie/:slug" element={<CategoryLandingPage />} />
                 <Route path="/en" element={<Index />} />
@@ -57,6 +61,8 @@ const App = () => {
                 <Route path="/en/intrebari-frecvente" element={<FAQPageEntry />} />
                 <Route path="/en/contact" element={<ContactPageEntry />} />
                 <Route path="/en/recenzii" element={<ReviewsPageEntry />} />
+                <Route path="/en/about-me" element={<AboutPageEntry />} />
+                <Route path="/en/create-unique-product" element={<CreateUniqueProductPageEntry />} />
                 <Route path="/en/plata-cos/order-received/:orderNumber" element={<ThankYouPage />} />
                 <Route path="/en/categorie/:slug" element={<CategoryLandingPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

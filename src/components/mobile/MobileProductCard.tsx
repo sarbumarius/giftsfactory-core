@@ -46,6 +46,7 @@ const MobileProductCard = ({
     if (normalized === 'tip') return t('attr.type');
     if (normalized === 'material') return t('attr.material');
     if (normalized === 'personalizare') return t('attr.personalization');
+    if (normalized === 'relatie') return t('attr.relation');
     return name;
   };
 
@@ -201,7 +202,7 @@ const MobileProductCard = ({
                   hasCleanImage ? 'bg-[#6844c1]' : 'bg-foreground/20'
                 }`}
               >
-                {product.nr_recenzii} recenzii
+                {product.nr_recenzii} {t('product.reviews')}
               </div>
             )
           )}

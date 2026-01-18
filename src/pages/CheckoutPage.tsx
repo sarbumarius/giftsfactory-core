@@ -9,7 +9,7 @@ import { termsHtml, privacyHtml } from '@/content/legal';
 import { tiktokInitiateCheckout, tiktokIdentify } from '@/utils/tiktok';
 import { fbInitiateCheckout } from '@/utils/facebook';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
-import { withLocalePath } from '@/utils/locale';
+import { getLocale, withLocalePath } from '@/utils/locale';
 import { t } from '@/utils/translations';
 
 type DeliveryMethod = 'sameday' | 'dpd' | 'fan' | 'easybox' | 'pickup';
@@ -198,6 +198,7 @@ const CheckoutPage = () => {
   const [billingLocalityOpen, setBillingLocalityOpen] = useState(false);
   const [shippingLocalityOpen, setShippingLocalityOpen] = useState(false);
   const [lockerOpen, setLockerOpen] = useState(false);
+  const locale = getLocale();
 
   const toBase64 = (value: Uint8Array) => {
     let binary = '';
@@ -2197,7 +2198,7 @@ const CheckoutPage = () => {
                 );
               })}
             </div>
-            {SHOW_PROMO_CODE && (
+            {SHOW_PROMO_CODE && locale !== 'en' && (
               <div className="mt-4">
                 <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
                 <div className="bg-white">

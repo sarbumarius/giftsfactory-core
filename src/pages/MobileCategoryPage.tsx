@@ -12,19 +12,20 @@ import MobileScrollToTop from '@/components/mobile/MobileScrollToTop';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
 import { getLocale, withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
 const MobileCategoryPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const bottomNavRef = useRef<MobileBottomNavRef>(null);
   const { data } = useCategoryContext();
+  const locale = getLocale();
   const totalReviews =
     data?.produse?.reduce((sum, produs) => sum + (produs.nr_recenzii || 0), 0) || 0;
-  const totalReviewsLabel = totalReviews.toLocaleString('ro-RO');
+  const totalReviewsLabel = totalReviews.toLocaleString(locale === 'en' ? 'en-GB' : 'ro-RO');
 
   useEffect(() => {
     if (!data?.info) return;
     const origin = window.location.origin;
-    const locale = getLocale();
     const categorySlug = locale === 'en' ? data.info.slug_en || data.info.slug : data.info.slug;
     const categoryUrl = `${origin}${withLocalePath(`/categorie/${categorySlug}`)}`;
     const rawDescription =
@@ -148,12 +149,12 @@ const MobileCategoryPage = () => {
           <div className="relative z-10 bg-[#d9b35e] py-2 px-4 text-center -ml-3 -mr-3 mb-3 rounded-b-2xl bg-[linear-gradient(135deg,#d9b35e,#c7a354)]">
               <a
                   href={withLocalePath('/recenzii')}
-                  aria-label={`★★★★★ 5 din 5 din ${totalReviewsLabel} de reviewuri. Vezi recenzii`}
+                  aria-label={t('category.reviewsBannerAria', { total: totalReviewsLabel })}
                   data-track-action="A apasat pe linkul catre recenzii."
                   className="block text-xs text-white no-underline whitespace-nowrap overflow-hidden text-ellipsis"
               >
                   <span className="text-yellow-300">★★★★★</span>
-                  <span className="mx-2">5 / 5 din {totalReviewsLabel} de reviewuri • Vezi recenzii</span>
+                  <span className="mx-2">{t('category.reviewsBannerText', { total: totalReviewsLabel })}</span>
               </a>
           </div>
         <div className="relative z-10 mt-6 ">

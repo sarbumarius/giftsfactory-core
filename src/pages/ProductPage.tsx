@@ -78,6 +78,7 @@ const ProductPage = () => {
     if (normalized === 'dimensiuni' || normalized === 'dimensiune') return t('attr.dimension');
     if (normalized === 'tip') return t('attr.type');
     if (normalized === 'material') return t('attr.material');
+    if (normalized === 'relatie') return t('attr.relation');
     if (normalized === 'personalizare') return t('attr.personalization');
     return name;
   };

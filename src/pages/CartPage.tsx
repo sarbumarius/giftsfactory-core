@@ -7,7 +7,7 @@ import { useCategoryContext } from '@/contexts/CategoryContext';
 import { ArrowLeft, ChevronRight, X, Info, Phone, ChevronUp } from 'lucide-react';
 import productImage from '@/assets/product-image.jpg';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
-import { withLocalePath } from '@/utils/locale';
+import { getLocale, withLocalePath } from '@/utils/locale';
 import { t } from '@/utils/translations';
 
 const SHOW_GIFT_OPTION = false;
@@ -35,6 +35,7 @@ const CartPage = () => {
     invalidProducts: Array<{ title: string; reason: string }>;
   } | null>(null);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+  const locale = getLocale();
   const hasItems = cart.length > 0;
   const skipNextRevalidateRef = useRef(false);
   const lastValidatedSignatureRef = useRef<string | null>(null);
@@ -541,87 +542,87 @@ const CartPage = () => {
               })}
             </div>
 
-            <div className="mt-6 space-y-3 rounded-2xl border border-border p-4">
-              <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
-              <div className="rounded-2xl bg-white ">
-                <div className="flex items-center gap-2 rounded-full border border-border bg-muted/20 px-3 py-2">
-
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(event) => setPromoCode(event.target.value)}
-                    data-track-action="A introdus cod de cupon in cos"
-                    placeholder={t('cart.promoCodePlaceholder')}
-                    className="flex-1 bg-transparent text-sm focus:outline-none"
-                  />
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button
-                      type="button"
-                      onClick={() => {
-                        setPromoCode('');
-                        setAppliedCouponCode(null);
-                        setCouponTotals(null);
-                        setCouponStatus(null);
-                        setCouponDetails(null);
-                      }}
-                      data-track-action="A resetat cuponul in cos."
-                      disabled={!appliedCouponCode || isApplyingCoupon}
-                      className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
-                  >
-                    {t('cart.reset')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleApplyCoupon}
-                    data-track-action="A aplicat cupon in cos."
-                    disabled={isApplyingCoupon}
-                    className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
-                  >
-                    {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
-                  </button>
-
-                </div>
-                {couponStatus && (
-                  <div className="mt-2 space-y-2 text-xs font-semibold">
-                    {couponStatus.type === 'success' ? (
-                      <p className="text-center text-emerald-600">{couponStatus.message}</p>
-                    ) : (
-                      <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-left text-red-600">
-                        <p className="font-semibold">{couponStatus.message}</p>
-                        {couponDetails && !couponDetails.hasApplicableProducts && (
-                          <p className="mt-1 text-[11px] font-semibold text-red-500">
-                            {t('cart.couponNoProducts')}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    {couponDetails?.invalidProducts?.length > 0 && (
-                      <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
-                        {couponDetails.invalidProducts.map((item) => (
-                          <li key={`${item.title}-${item.reason}`} className="flex gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                            <span>
-                              {item.title}: {item.reason}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {couponDetails?.conditions?.length > 0 && (
-                      <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
-                        {couponDetails.conditions.map((item) => (
-                          <li key={item} className="flex gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+            {locale !== 'en' && (
+              <div className="mt-6 space-y-3 rounded-2xl border border-border p-4">
+                <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
+                <div className="rounded-2xl bg-white ">
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-muted/20 px-3 py-2">
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={(event) => setPromoCode(event.target.value)}
+                      data-track-action="A introdus cod de cupon in cos"
+                      placeholder={t('cart.promoCodePlaceholder')}
+                      className="flex-1 bg-transparent text-sm focus:outline-none"
+                    />
                   </div>
-                )}
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button
+                        type="button"
+                        onClick={() => {
+                          setPromoCode('');
+                          setAppliedCouponCode(null);
+                          setCouponTotals(null);
+                          setCouponStatus(null);
+                          setCouponDetails(null);
+                        }}
+                        data-track-action="A resetat cuponul in cos."
+                        disabled={!appliedCouponCode || isApplyingCoupon}
+                        className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
+                    >
+                      {t('cart.reset')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      data-track-action="A aplicat cupon in cos."
+                      disabled={isApplyingCoupon}
+                      className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
+                    >
+                      {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
+                    </button>
+                  </div>
+                  {couponStatus && (
+                    <div className="mt-2 space-y-2 text-xs font-semibold">
+                      {couponStatus.type === 'success' ? (
+                        <p className="text-center text-emerald-600">{couponStatus.message}</p>
+                      ) : (
+                        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-left text-red-600">
+                          <p className="font-semibold">{couponStatus.message}</p>
+                          {couponDetails && !couponDetails.hasApplicableProducts && (
+                            <p className="mt-1 text-[11px] font-semibold text-red-500">
+                              {t('cart.couponNoProducts')}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      {couponDetails?.invalidProducts?.length > 0 && (
+                        <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
+                          {couponDetails.invalidProducts.map((item) => (
+                            <li key={`${item.title}-${item.reason}`} className="flex gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                              <span>
+                                {item.title}: {item.reason}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {couponDetails?.conditions?.length > 0 && (
+                        <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
+                          {couponDetails.conditions.map((item) => (
+                            <li key={item} className="flex gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {totals.cost >= 400 && (
               <div className="mt-6 rounded-2xl border border-border bg-amber-50/60 p-4">

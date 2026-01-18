@@ -1,8 +1,8 @@
-import { X, Phone, Mail, Home, Store, Tag, Users, Calendar, BookOpen, MessageCircle, HelpCircle, ChevronRight } from 'lucide-react';
+import { X, Phone, Mail, Home, Store, Tag, Users, Calendar, BookOpen, MessageCircle, HelpCircle, ChevronRight, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/factorygifts.svg';
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import { withLocalePath } from '@/utils/locale';
+import { getLocale, withLocalePath } from '@/utils/locale';
 import { t } from '@/utils/translations';
 
 interface MobileMenuModalProps {
@@ -17,12 +17,15 @@ const menuItems = [
   // { labelKey: 'menu.calendar', href: '#', icon: Calendar },
   { labelKey: 'menu.reviews', href: '/recenzii', icon: MessageCircle },
   { labelKey: 'menu.faq', href: '/intrebari-frecvente', icon: HelpCircle },
+  { labelKey: 'menu.about', href: '/despre-mine', hrefEn: '/about-me', icon: Users },
+  { labelKey: 'menu.createProduct', href: '/creeaza-produs', hrefEn: '/create-unique-product', icon: Plus },
   { labelKey: 'menu.contact', href: '/contact', icon: Phone },
 ];
 
 const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalProps) => {
   const navigate = useNavigate();
   const { setCurrentSlug } = useCategoryContext();
+  const locale = getLocale();
 
   if (!isOpen) return null;
 
@@ -62,6 +65,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
                 const label = t(item.labelKey);
+                const targetHref = locale === 'en' && item.hrefEn ? item.hrefEn : item.href;
                 const handleClick = () => {
                   if (item.isDefaultCategory) {
                     if (onOpenCategories) {
@@ -76,13 +80,13 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                     return;
                   }
 
-                  if (item.href.startsWith('/')) {
-                    navigate(withLocalePath(item.href));
+                  if (targetHref.startsWith('/')) {
+                    navigate(withLocalePath(targetHref));
                     onClose();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
                 };
-                const isButton = Boolean(item.isDefaultCategory) || item.href.startsWith('/');
+                const isButton = Boolean(item.isDefaultCategory) || targetHref.startsWith('/');
 
                 return (
                   isButton ? (
@@ -123,14 +127,16 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
             <div className=" my-2"></div>
 
             {/* Conecteaza-te */}
-            <a
-              href="tel:0748777776"
-              data-track-action="A apasat pe telefon in meniu."
-              className="mb-3 flex items-center gap-2 py-3 px-4 text-left bg-white text-[#6844c1] font-semibold rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
-            >
-              <Phone className="h-4 w-4" />
-              {t('menu.call')}
-            </a>
+            {locale !== 'en' && (
+              <a
+                href="tel:0748777776"
+                data-track-action="A apasat pe telefon in meniu."
+                className="mb-3 flex items-center gap-2 py-3 px-4 text-left bg-white text-[#6844c1] font-semibold rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+              >
+                <Phone className="h-4 w-4" />
+                {t('menu.call')}
+              </a>
+            )}
 
             <a
               href="mailto:hello@sweetgifts.ro"

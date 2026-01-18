@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { t } from '@/utils/translations';
 
 interface MobileFilterButtonProps {
   onClick: () => void;
@@ -47,7 +48,7 @@ const MobileFilterButton = ({ onClick }: MobileFilterButtonProps) => {
       <div className="flex flex-col items-center gap-1">
         <SlidersHorizontal className="h-5 w-5 text-primary" />
         <span className="text-xs font-medium text-foreground" style={{ writingMode: 'vertical-rl' }}>
-          FILTRE
+          {t('filters.button')}
         </span>
       </div>
       {hasActiveFilters && (
@@ -59,7 +60,7 @@ const MobileFilterButton = ({ onClick }: MobileFilterButtonProps) => {
           }}
           data-track-action="A resetat filtrele din butonul lateral."
           className="absolute -left-3 -top-2 rounded-full bg-destructive p-1 shadow-md"
-          aria-label="Reseteaza filtrele"
+          aria-label={t('filters.reset')}
         >
           <X className="h-3 w-3 text-white" />
         </button>

@@ -1,4 +1,4 @@
-User-agent: Googlebot
+﻿User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
@@ -12,3 +12,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://giftsfactory.ro/sitemap.xml
+
+

@@ -2,6 +2,7 @@ import { X, Phone, Mail, Home, Store, Tag, Users, Calendar, BookOpen, MessageCir
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/factorygifts.svg';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { withLocalePath } from '@/utils/locale';
 
 interface MobileMenuModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface MobileMenuModalProps {
 
 const menuItems = [
   { label: 'Categorii produse', href: '#', icon: Store, isDefaultCategory: true },
-  { label: 'Reduceri', href: '/recenzii', icon: Tag },
+  { label: 'Reduceri', href: '/reduceri', icon: Tag },
   // { label: 'Calendar Oferte', href: '#', icon: Calendar },
   { label: 'Recenzii clienti', href: '/recenzii', icon: MessageCircle },
   { label: 'Intrebari frecvente', href: '/intrebari-frecvente', icon: HelpCircle },
@@ -41,7 +42,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
               onClick={onClose}
               className="p-2 hover:bg-muted rounded-full transition-colors"
             >
-              <X className="h-5 w-5 text-foreground" />
+              <X className="h-5 w-5 text-white" />
             </button>
           </div>
 
@@ -74,7 +75,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                   }
 
                   if (item.href.startsWith('/')) {
-                    navigate(item.href);
+                    navigate(withLocalePath(item.href));
                     onClose();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
@@ -117,13 +118,13 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
 
           {/* Separator */}
           <div className="px-6 pb-4">
-            <div className="border-t border-border my-2"></div>
+            <div className=" my-2"></div>
 
             {/* Conecteaza-te */}
             <a
               href="tel:0748777776"
               data-track-action="A apasat pe telefon in meniu."
-              className="mb-3 flex items-center gap-2 py-3 px-4 text-left bg-white text-red-700 font-semibold rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+              className="mb-3 flex items-center gap-2 py-3 px-4 text-left bg-white text-[#6844c1] font-semibold rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
             >
               <Phone className="h-4 w-4" />
               Suna la 0748.777.776

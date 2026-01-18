@@ -4,6 +4,7 @@ import { X, Search, ChevronRight } from 'lucide-react';
 import { fetchSubcategoriesCached } from '@/services/api';
 import { SubcategoriesResponse, SubcategoryTreeNode } from '@/types/api';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { withLocalePath } from '@/utils/locale';
 
 interface MobileCategorySheetProps {
   isOpen: boolean;
@@ -105,7 +106,7 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
           data-track-action={`A apasat pe categoria ${category.titlu}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
-            navigate(`/categorie/${category.slug}`);
+            navigate(withLocalePath(`/categorie/${category.slug}`));
             onClose();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}

@@ -11,6 +11,7 @@ import MobileBottomNav, { MobileBottomNavRef } from '@/components/mobile/MobileB
 import MobileScrollToTop from '@/components/mobile/MobileScrollToTop';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
+import { withLocalePath } from '@/utils/locale';
 
 const MobileCategoryPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -142,7 +143,7 @@ const MobileCategoryPage = () => {
           </div>
           <div className="relative z-10 bg-[#d9b35e] py-2 px-4 text-center -ml-3 -mr-3 mb-3 rounded-b-2xl bg-[linear-gradient(135deg,#d9b35e,#c7a354)]">
               <a
-                  href="/recenzii"
+                  href={withLocalePath('/recenzii')}
                   aria-label={`★★★★★ 5 din 5 din ${totalReviewsLabel} de reviewuri. Vezi recenzii`}
                   data-track-action="A apasat pe linkul catre recenzii."
                   className="block text-xs text-white no-underline whitespace-nowrap overflow-hidden text-ellipsis"

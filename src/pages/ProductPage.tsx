@@ -14,6 +14,7 @@ import { tiktokViewContent } from '@/utils/tiktok';
 import { fbViewContent } from '@/utils/facebook';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
 import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
+import { getLocale, withLocalePath } from '@/utils/locale';
 
 const SHOW_PREVIEW_TOGGLE = false;
 const QUANTITY_DISCOUNTS = [
@@ -151,10 +152,15 @@ const ProductPage = () => {
   useEffect(() => {
     if (!data) return;
     const defaultTitle = 'Daruri Alese Catalog';
-    const title = data.titlu ? `${data.titlu} | ${defaultTitle}` : defaultTitle;
+    const locale = getLocale();
+    const displayTitle = locale === 'en' ? data.title_en ?? '' : data.titlu;
+    const title = displayTitle ? `${displayTitle} | ${defaultTitle}` : defaultTitle;
     document.title = title;
 
-    const rawDescription = data.descriere_scurta || data.descriere || '';
+    const rawDescription =
+      locale === 'en'
+        ? data.descriere_en || data.descriere_scurta || data.descriere || ''
+        : data.descriere_scurta || data.descriere || '';
     const cleanDescription = rawDescription
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
@@ -175,7 +181,12 @@ const ProductPage = () => {
     if (!data) return;
     const origin = window.location.origin;
     const url = `${origin}/produs/${data.slug}`;
-    const rawDescription = data.descriere_scurta || data.descriere || '';
+    const locale = getLocale();
+    const displayTitle = locale === 'en' ? data.title_en ?? '' : data.titlu;
+    const rawDescription =
+      locale === 'en'
+        ? data.descriere_en || data.descriere_scurta || data.descriere || ''
+        : data.descriere_scurta || data.descriere || '';
     const cleanDescription = rawDescription
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
@@ -198,9 +209,9 @@ const ProductPage = () => {
     const productData: Record<string, unknown> = {
       '@type': 'Product',
       '@id': `${url}#product`,
-      name: data.titlu,
+      name: displayTitle,
       image: data.imagine_principala?.full || data.imagine_principala?.['300x300'],
-      description: cleanDescription || data.titlu,
+      description: cleanDescription || displayTitle,
       sku: String(data.id),
       brand: {
         '@type': 'Brand',
@@ -240,7 +251,7 @@ const ProductPage = () => {
           '@type': 'WebPage',
           '@id': `${url}#webpage`,
           url,
-          name: data.titlu,
+          name: displayTitle,
         },
         productData,
       ],
@@ -605,14 +616,14 @@ const ProductPage = () => {
         onAssistantClick={() => setIsAssistantOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         categoryTitle={data?.categorii?.[0]?.titlu}
         onCategoryClick={() => setIsCategoryOpen(true)}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
       />
         <div className="animate-pulse">
           <div className="h-[45vh] w-full bg-muted/60" />
@@ -659,20 +670,22 @@ const ProductPage = () => {
         onAssistantClick={() => setIsAssistantOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         categoryTitle={data?.categorii?.[0]?.titlu}
         onCategoryClick={() => setIsCategoryOpen(true)}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
       />
         <p className="text-destructive">Nu am putut incarca produsul.</p>
       </div>
     );
   }
 
+  const locale = getLocale();
+  const displayTitle = locale === 'en' ? data.title_en ?? '' : data.titlu;
   const price = parseFloat(data.pret);
   const reducedPrice = data.pret_redus ? parseFloat(data.pret_redus) : null;
   const hasDiscount = typeof reducedPrice === 'number' && reducedPrice !== price;
@@ -712,7 +725,7 @@ const ProductPage = () => {
   };
   const goToCategory = (slug: string) => {
     setCurrentSlug(slug);
-    navigate(`/categorie/${slug}`);
+    navigate(withLocalePath(`/categorie/${slug}`));
     scrollToTopSmooth();
   };
 
@@ -764,26 +777,26 @@ const ProductPage = () => {
   return (
       <div className="min-h-screen bg-white pb-4">
           <MobileProductHeader
-              title={data.titlu}
+              title={displayTitle}
               onBack={() => navigate(-1)}
               onSearchClick={() => setIsSearchOpen(true)}
               onAssistantClick={() => setIsAssistantOpen(true)}
               onLogoClick={() => {
                   setCurrentSlug('gifts-factory');
-                  navigate('/');
+                  navigate(withLocalePath('/'));
               }}
               categoryTitle={data.categorii?.[0]?.titlu}
               onCategoryClick={() => setIsCategoryOpen(true)}
               cartCount={cart.length}
               wishlistCount={wishlist.length}
-              onCartClick={() => navigate('/cos')}
-              onWishlistClick={() => navigate('/wishlist')}
+              onCartClick={() => navigate(withLocalePath('/cos'))}
+              onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
           />
 
           <div id="product-photo" className="-mt-3 relative ">
               <img
                   src={galleryImages[activeImageIndex] || data.imagine_principala.full || data.imagine_principala['300x300']}
-                  alt={data.titlu}
+                  alt={displayTitle}
                   className="w-full object-cover rounded-br-3xl "
                   loading="lazy"
               />
@@ -918,7 +931,7 @@ const ProductPage = () => {
           )}
 
           <div className="px-4 pt-4">
-          <h1 id="product-title" className="text-3xl font-serif font-bold text-foreground">{data.titlu}</h1>
+          <h1 id="product-title" className="text-3xl font-serif font-bold text-foreground">{displayTitle}</h1>
           <div className="mt-2 flex items-center gap-2">
             {hasDiscount && (
               <span className="text-sm text-amber-700 line-through">{originalPrice.toFixed(2)} lei</span>
@@ -2051,7 +2064,7 @@ const ProductPage = () => {
                         <button
                           key={produs.id}
                           type="button"
-                          onClick={() => navigate(`/produs/${produs.slug}`)}
+                          onClick={() => navigate(withLocalePath(`/produs/${produs.slug}`))}
                           data-track-action={`A deschis produsul ${produs.titlu} din carusel categorie.`}
                           className="w-[46%] shrink-0 snap-start rounded-2xl border border-border bg-white text-left shadow-sm"
                         >
@@ -2289,7 +2302,7 @@ const ProductPage = () => {
                             type="button"
                             onClick={() => {
                                 setShowCartConfirm(false);
-                                navigate('/cos');
+                                navigate(withLocalePath('/cos'));
                                 window.setTimeout(() => {
                                   window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }, 50);

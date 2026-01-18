@@ -7,8 +7,10 @@ export interface ParentCategory {
 
 export interface CategoryInfo {
   titlu: string;
+  title_en?: string;
   slug: string;
   descriere: string;
+  descriere_en?: string;
   imagine: string;
   nr_produse: number;
   parinte?: ParentCategory;
@@ -136,9 +138,12 @@ export interface ProductReview {
 export interface ApiProduct {
   id: number;
   titlu: string;
+  title_en?: string;
+  clean_image?: string;
   slug: string;
   descriere?: string;
   descriere_scurta?: string;
+  descriere_en?: string;
   personalizare?: ProductPersonalizareField[];
   ['texte-produs']?: string[];
   pret: string;

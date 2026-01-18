@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, Search } from 'lucide-react';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import MobileMeiliProductCard from './MobileMeiliProductCard';
+import { withLocalePath } from '@/utils/locale';
 
 interface MobileSearchSheetProps {
   isOpen: boolean;
@@ -92,7 +93,7 @@ const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
                           if (slug) {
                             setCurrentSlug(slug);
                             onClose();
-                            navigate(`/categorie/${slug}`);
+                            navigate(withLocalePath(`/categorie/${slug}`));
                           }
                         }}
                         data-track-action={`A deschis categoria ${category.name} din cautare.`}
@@ -134,7 +135,7 @@ const MobileSearchSheet = ({ isOpen, onClose }: MobileSearchSheetProps) => {
                             const slug = getSlugFromUrl(product.url);
                             if (slug) {
                               onClose();
-                              navigate(`/produs/${slug}`);
+                              navigate(withLocalePath(`/produs/${slug}`));
                             }
                           }}
                           trackAction={`A deschis produsul ${product.title} din cautare.`}

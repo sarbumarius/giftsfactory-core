@@ -47,6 +47,18 @@ const App = () => {
               <Route path="/recenzii" element={<ReviewsPageEntry />} />
                 <Route path="/plata-cos/order-received/:orderNumber" element={<ThankYouPage />} />
                 <Route path="/categorie/:slug" element={<CategoryLandingPage />} />
+                <Route path="/en" element={<Index />} />
+                <Route path="/en/produs/:slug" element={<ProductPageEntry />} />
+                <Route path="/en/cos" element={<CartPageEntry />} />
+                <Route path="/en/plata-cos" element={<CheckoutPageEntry />} />
+                <Route path="/en/wishlist" element={<WishlistPageEntry />} />
+                <Route path="/en/cont" element={<AccountPage />} />
+                <Route path="/en/reduceri" element={<DiscountsPageEntry />} />
+                <Route path="/en/intrebari-frecvente" element={<FAQPageEntry />} />
+                <Route path="/en/contact" element={<ContactPageEntry />} />
+                <Route path="/en/recenzii" element={<ReviewsPageEntry />} />
+                <Route path="/en/plata-cos/order-received/:orderNumber" element={<ThankYouPage />} />
+                <Route path="/en/categorie/:slug" element={<CategoryLandingPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

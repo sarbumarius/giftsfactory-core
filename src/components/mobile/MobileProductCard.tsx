@@ -7,6 +7,7 @@ import { prefetchProductDetails } from '@/services/api';
 import { useShopContext } from '@/contexts/ShopContext';
 import { Heart } from 'lucide-react';
 import { formatDimensions } from '@/utils/formatDimensions';
+import { getLocale, withLocalePath } from '@/utils/locale';
 
 interface MobileProductCardProps {
   product: ApiProduct;
@@ -86,8 +87,14 @@ const MobileProductCard = ({
   const discountPercent = hasDiscount ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
   const hasReviewsBadge = !badge && product.nr_recenzii > 0;
   const dimensions = formatDimensions(product.dimensiune);
-  const imageUrl = product.imagine_principala['300x300'] || product.imagine_principala.full || productImage;
+  const getImageUrl = (item: ApiProduct) =>
+    item.clean_image || item.imagine_principala['300x300'] || item.imagine_principala.full || productImage;
+  const imageUrl = getImageUrl(product);
+  const hasCleanImage = Boolean(product.clean_image);
   const isInWishlist = wishlist.some((item) => item.id === product.id);
+  const locale = getLocale();
+  const getTitle = (item: ApiProduct) =>
+    locale === 'en' ? item.title_en ?? '' : item.titlu;
 
 
   const getBorderColor = (badge?: string) => {
@@ -151,9 +158,9 @@ const MobileProductCard = ({
         <div
           className={`relative overflow-hidden rounded-xl bg-card ${
             badge || hasDiscount ? 'border-4' : 'border'
-          } ${hasDiscount ? 'border-transparent' : getBorderColor(badge)} ${!badge && !hasDiscount ? 'border-border' : ''} transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer`}
+          } ${hasDiscount ? (hasCleanImage ? 'border-border border-[#6844c1]' : 'border-transparent') : getBorderColor(badge)} ${!badge && !hasDiscount ? 'border-border' : ''} transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer`}
           style={
-            hasDiscount
+            hasDiscount && !hasCleanImage
               ? {
                   backgroundImage:
                     'linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(62, 39, 35, 0.4)), linear-gradient(90deg, #faca8c 0%, #e0a35c 15%, #cf843b 30%, #f1bd81 45%, #f8ca95 60%, #fae3ca 75%, #faca8c 100%)',
@@ -163,12 +170,14 @@ const MobileProductCard = ({
               : undefined
           }
           onClick={() => setIsModalOpen(true)}
-          data-track-action={`A deschis cardul produsului ${product.titlu}.`}
+          data-track-action={`A deschis cardul produsului ${getTitle(product)}.`}
         >
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center backdrop-blur blur-md scale-110 "
-            style={{ backgroundImage: `url(${imageUrl})` }}
-          />
+          {!hasCleanImage && (
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center backdrop-blur blur-md scale-110 "
+              style={{ backgroundImage: `url(${imageUrl})` }}
+            />
+          )}
 
           {badge ? (
             <div className={`absolute top-1 left-1 z-10 inline-flex items-center gap-1 rounded-2xl px-3 py-1 text-[9px] font-medium ${getBadgeStyles(badge)}`}>
@@ -176,7 +185,11 @@ const MobileProductCard = ({
             </div>
           ) : (
             hasReviewsBadge && (
-              <div className="absolute top-1 left-1 z-10 inline-flex items-center gap-1 rounded-2xl bg-foreground/20 px-3 py-1 text-[11px] font-medium text-white">
+              <div
+                className={`absolute top-1 left-1 z-10 inline-flex items-center gap-1 rounded-2xl px-3 py-1 text-[11px] font-medium text-white ${
+                  hasCleanImage ? 'bg-[#6844c1]' : 'bg-foreground/20'
+                }`}
+              >
                 {product.nr_recenzii} recenzii
               </div>
             )
@@ -197,7 +210,7 @@ const MobileProductCard = ({
             <div className="relative h-full w-full flex items-center justify-center rounded-md overflow-hidden ">
               <img
                 src={imageUrl}
-                alt={product.titlu}
+                alt={getTitle(product)}
                 className="max-h-full max-w-full object-contain transition-transform duration-500 hover:scale-110 "
                 loading="lazy"
               />
@@ -245,7 +258,7 @@ const MobileProductCard = ({
 
           {dimensions && (
             <div className="relative z-10 px-3 py-2">
-              <p className="text-center text-[14px] font-bold text-white font-serif">
+              <p className={`text-center text-[14px] font-bold font-serif ${hasCleanImage ? 'text-slate-700' : 'text-white'}`}>
                 {dimensions}
               </p>
             </div>
@@ -256,10 +269,10 @@ const MobileProductCard = ({
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          data-track-action={`A deschis cardul produsului ${product.titlu}.`}
+          data-track-action={`A deschis cardul produsului ${getTitle(product)}.`}
           className="w-full text-center text-sm font-serif text-foreground leading-tight"
         >
-          <span className="line-clamp-2">{product.titlu}</span>
+          <span className="line-clamp-2">{getTitle(product)}</span>
         </button>
 
         </div>
@@ -275,7 +288,8 @@ const MobileProductCard = ({
         const discountPercent = hasDiscount ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
         const hasReviewsBadge = !badge && product.nr_recenzii > 0;
         const dimensions = formatDimensions(product.dimensiune);
-        const imageUrl = product.imagine_principala['300x300'] || product.imagine_principala.full || productImage;
+        const imageUrl = getImageUrl(product);
+        const title = getTitle(product);
         const isInWishlist = wishlist.some((item) => item.id === product.id);
         const reviews = product.recenzii ?? [];
         const zoomItems = reviews.flatMap((recenzie) =>
@@ -290,7 +304,7 @@ const MobileProductCard = ({
           <div
             className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in "
             onClick={() => setIsModalOpen(false)}
-            data-track-action={`A inchis modalul produsului ${product.titlu}.`}
+            data-track-action={`A inchis modalul produsului ${title}.`}
           />
           <div
             className={`fixed inset-x-0 bottom-0 z-50 ${
@@ -300,7 +314,7 @@ const MobileProductCard = ({
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              data-track-action={`A inchis modalul produsului ${product.titlu}.`}
+              data-track-action={`A inchis modalul produsului ${title}.`}
               className="absolute left-1/2 -top-10 -translate-x-1/2 rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-foreground shadow-lg md:-top-16 md:border-white md:bg-white/20 md:text-white"
               aria-label="Inchide"
             >
@@ -316,14 +330,14 @@ const MobileProductCard = ({
                     <button
                       type="button"
                       onClick={() => setIsProductZoomOpen(true)}
-                      data-track-action={`A deschis zoom pentru ${product.titlu}.`}
+                      data-track-action={`A deschis zoom pentru ${title}.`}
                       className="h-full w-full"
                       aria-label="Zoom produs"
                     >
                       <img
                         key={imageUrl}
                         src={imageUrl}
-                        alt={product.titlu}
+                        alt={title}
                         className="h-full w-full object-cover transition-opacity duration-300"
                         loading="lazy"
                       />
@@ -335,7 +349,7 @@ const MobileProductCard = ({
                   </div>
                   <div className="flex-1">
                     <h3 className="text-sm font-semibold text-foreground mb-1">
-                      {product.titlu}
+                      {title}
                       {(() => {
                         const tip = product.attributes?.find((attr) => attr.name === 'Tip' && attr.options.length > 0);
 
@@ -357,9 +371,9 @@ const MobileProductCard = ({
                       type="button"
                       onClick={() => {
                         setIsModalOpen(false);
-                        navigate(`/produs/${product.slug}`);
+                        navigate(withLocalePath(`/produs/${product.slug}`));
                       }}
-                      data-track-action={`A deschis produsul ${product.titlu}.`}
+                      data-track-action={`A deschis produsul ${title}.`}
                       className="gold-gradient mt-3 flex w-full items-center justify-center gap-2 rounded-full py-2 text-xs font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                       Personalizeaza
@@ -525,9 +539,9 @@ const MobileProductCard = ({
                 type="button"
                 onClick={() => {
                   setIsModalOpen(false);
-                  navigate(`/produs/${product.slug}`);
+                  navigate(withLocalePath(`/produs/${product.slug}`));
                 }}
-                data-track-action={`A deschis informatii suplimentare pentru ${product.titlu}.`}
+                data-track-action={`A deschis informatii suplimentare pentru ${title}.`}
                 className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
               >
                 <Info className="h-4 w-4" />
@@ -558,8 +572,7 @@ const MobileProductCard = ({
               <div className="relative h-28 w-28 overflow-hidden rounded-2xl shadow-lg ring-1 ring-white/10 bg-black/30">
                 <img
                   src={
-                    prevProduct.imagine_principala['300x300'] ||
-                    prevProduct.imagine_principala.full
+                    getImageUrl(prevProduct)
                   }
                   alt={prevProduct.titlu}
                   className="h-full w-full object-cover"
@@ -597,8 +610,7 @@ const MobileProductCard = ({
               <div className="relative h-28 w-28 overflow-hidden rounded-2xl shadow-lg ring-1 ring-white/10 bg-black/30">
                 <img
                   src={
-                    nextProduct.imagine_principala['300x300'] ||
-                    nextProduct.imagine_principala.full
+                    getImageUrl(nextProduct)
                   }
                   alt={nextProduct.titlu}
                   className="h-full w-full object-cover"

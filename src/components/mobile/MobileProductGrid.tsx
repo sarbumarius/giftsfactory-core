@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import MobileProductCard from './MobileProductCard';
 import MobileMeiliProductCard from './MobileMeiliProductCard';
 import PromoBanner, {SHOW_PROMO_BANNER} from "@/components/PromoBanner.tsx";
+import { withLocalePath } from '@/utils/locale';
 
 const MobileProductGrid = () => {
   const navigate = useNavigate();
@@ -45,7 +46,21 @@ const MobileProductGrid = () => {
     }
   };
 
-  if (loading) {
+  if (error) {
+    return (
+      <div className="px-2 py-4 productGridDaruri">
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="text-center text-destructive">
+            <p>Eroare la analizarea produselor: {error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isFiltersReady = data ? (priceBounds.max === 0 ? true : priceFilterMax > 0) : false;
+
+  if (loading || !data || !isFiltersReady) {
     return (
       <div className="px-2 py-4 productGridDaruri">
         <div className="grid grid-cols-2 gap-3">
@@ -63,18 +78,6 @@ const MobileProductGrid = () => {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="px-2 py-4 productGridDaruri">
-        <div className="flex items-center justify-center min-h-[200px]">
-          <div className="text-center text-destructive">
-            <p>Eroare la analizarea produselor: {error}</p>
-          </div>
         </div>
       </div>
     );
@@ -190,7 +193,7 @@ const MobileProductGrid = () => {
                       const slug = getSlugFromUrl(category.url);
                       if (!slug) return;
                       setCurrentSlug(slug);
-                      navigate(`/categorie/${slug}`);
+                      navigate(withLocalePath(`/categorie/${slug}`));
                     }}
                     className="block w-full rounded-md bg-white px-3 py-2 text-left text-sm text-foreground shadow-sm transition-colors hover:bg-amber-100"
                   >
@@ -228,7 +231,7 @@ const MobileProductGrid = () => {
                       onClick={() => {
                         const slug = getSlugFromUrl(product.url);
                         if (!slug) return;
-                        navigate(`/produs/${slug}`);
+                        navigate(withLocalePath(`/produs/${slug}`));
                       }}
                     />
                   ))}

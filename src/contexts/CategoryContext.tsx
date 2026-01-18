@@ -3,6 +3,7 @@ import { ApiResponse, ApiProduct, MeiliCategoryHit, MeiliProductHit } from '@/ty
 import { fetchCategoryDataCached, searchMeili, prefetchSubcategories, prefetchCategoryData } from '@/services/api';
 import { tiktokSearch } from '@/utils/tiktok';
 import { fbSearch } from '@/utils/facebook';
+import { getLocale, stripLocalePrefix } from '@/utils/locale';
 
 export type SortType = 'popularitate' | 'cele-mai-noi' | 'pret-crescator' | 'pret-descrescator' | 'reduceri';
 
@@ -48,7 +49,8 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
   });
   const resolveInitialSlug = () => {
     if (typeof window === 'undefined') return initialSlug;
-    const match = window.location.pathname.match(/^\/categorie\/([^/]+)/);
+    const normalizedPath = stripLocalePrefix(window.location.pathname);
+    const match = normalizedPath.match(/^\/categorie\/([^/]+)/);
     if (match?.[1]) {
       return decodeURIComponent(match[1]);
     }
@@ -124,15 +126,18 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
 
   useEffect(() => {
     if (!data?.info) return;
-    const path = pathname;
+    const path = stripLocalePrefix(pathname);
     if (path !== '/' && !path.startsWith('/categorie')) {
       return;
     }
     const defaultTitle = 'Daruri Alese Catalog';
-    const title = data.info.titlu ? `${data.info.titlu} | ${defaultTitle}` : defaultTitle;
+    const locale = getLocale();
+    const titleValue = locale === 'en' ? data.info.title_en : data.info.titlu;
+    const descriptionValue = locale === 'en' ? data.info.descriere_en : data.info.descriere;
+    const title = titleValue ? `${titleValue} | ${defaultTitle}` : defaultTitle;
     document.title = title;
 
-    const rawDescription = data.info.descriere || '';
+    const rawDescription = descriptionValue || '';
     const cleanDescription = rawDescription
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')

@@ -5,6 +5,7 @@ import MobileMenuModal from './MobileMenuModal';
 import MobileCategorySheet from './MobileCategorySheet';
 import MobileSearchSheet from './MobileSearchSheet';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { stripLocalePrefix, withLocalePath } from '@/utils/locale';
 const navItems = [
   { icon: Menu, label: 'Meniu' },
   { icon: LayoutGrid, label: 'Categorii' },
@@ -51,7 +52,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card">
         <div className="flex items-center justify-around">
           {navItems.map((item, index) => {
-            const isReviewsPage = location.pathname === '/recenzii';
+            const isReviewsPage = stripLocalePrefix(location.pathname) === '/recenzii';
             const label = index === 3 && isReviewsPage ? 'Categorii' : item.label;
 
             return (
@@ -67,7 +68,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
                       setIsCategoryOpen(true);
                     } else {
                       setCurrentSlug('gifts-factory');
-                      navigate('/recenzii');
+                      navigate(withLocalePath('/recenzii'));
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }

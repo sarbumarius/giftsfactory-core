@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ShoppingCart, Heart, ArrowLeft, Menu, Sparkles } from 'lucide-react';
 import logo from '@/assets/factorygifts.svg';
+import { withLocalePath } from '@/utils/locale';
 
 interface MobileProductHeaderProps {
   title: string;
@@ -76,7 +77,7 @@ const MobileProductHeader = ({
 
         <div className="bg-[#ce843b] py-2 px-4 text-center">
           <a
-            href="/recenzii"
+            href={withLocalePath('/recenzii')}
             aria-label="★★★★★ 5 din 5 din 5.094 de reviewuri. Vezi recenzii"
             data-track-action="A apasat pe linkul catre recenzii."
             className="block text-xs text-white no-underline whitespace-nowrap overflow-hidden text-ellipsis"

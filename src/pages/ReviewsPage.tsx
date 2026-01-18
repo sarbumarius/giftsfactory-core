@@ -7,6 +7,7 @@ import { useShopContext } from '@/contexts/ShopContext';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
 import MobileProductCard from '@/components/mobile/MobileProductCard';
 import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
+import { withLocalePath } from '@/utils/locale';
 
 interface ReviewImage {
   thumbnail: string;
@@ -265,12 +266,12 @@ const ReviewsPage = () => {
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
       />
 
       <div className="px-0 pt-2 space-y-5">

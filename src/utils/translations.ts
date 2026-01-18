@@ -311,7 +311,7 @@ const translations: Record<LocaleCode, Record<string, string>> = {
     'menu.faq': 'FAQ',
     'menu.contact': 'Contact',
     'menu.about': 'About me',
-    'menu.createProduct': 'Create unique product',
+    'menu.createProduct': 'Create  product',
     'menu.call': 'Call 0748.777.776',
     'menu.email': 'Email hello@sweetgifts.ro',
     'category.loading': 'Loading...',

@@ -9,6 +9,8 @@ import { termsHtml, privacyHtml } from '@/content/legal';
 import { tiktokInitiateCheckout, tiktokIdentify } from '@/utils/tiktok';
 import { fbInitiateCheckout } from '@/utils/facebook';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
+import { withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
 type DeliveryMethod = 'sameday' | 'dpd' | 'fan' | 'easybox' | 'pickup';
 type PaymentMethod = 'ramburs' | 'transfer';
@@ -1292,7 +1294,7 @@ const CheckoutPage = () => {
     async (code: string, { showSuccess }: { showSuccess: boolean }) => {
       const trimmed = code.trim();
       if (!trimmed) {
-        setCouponStatus({ type: 'error', message: 'Introdu un cod de cupon.' });
+        setCouponStatus({ type: 'error', message: t('cart.couponEnter') });
         return;
       }
 
@@ -1326,31 +1328,31 @@ const CheckoutPage = () => {
         const invalidProducts = products
           .filter((prod: { valabil_cupon?: boolean }) => !prod?.valabil_cupon)
           .map((prod: { titlu?: string; reason?: string }) => ({
-            title: prod?.titlu || 'Produs',
-            reason: prod?.reason || 'Cuponul nu este valabil pentru acest produs.',
+            title: prod?.titlu || t('cart.productFallback'),
+            reason: prod?.reason || t('cart.couponInvalidProduct'),
           }));
         if (!response.ok || !isValid) {
           setCouponTotals(null);
           setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
-          setCouponStatus({ type: 'error', message: data?.cupon?.reason || 'Cupon invalid.' });
+          setCouponStatus({ type: 'error', message: data?.cupon?.reason || t('cart.couponInvalid') });
           return;
         }
         if (!hasApplicableProducts) {
           setCouponTotals(null);
           setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
-          setCouponStatus({ type: 'error', message: 'Cuponul nu este valabil pentru niciun produs din cos.' });
+          setCouponStatus({ type: 'error', message: t('cart.couponNoProducts') });
           return;
         }
         const totalDiscount = Number(data?.totals?.total_discount ?? 0);
         setCouponTotals({ totalDiscount });
         setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
         if (showSuccess) {
-          setCouponStatus({ type: 'success', message: data?.cupon?.discount_text || 'Cupon aplicat.' });
+          setCouponStatus({ type: 'success', message: data?.cupon?.discount_text || t('cart.couponApplied') });
         }
       } catch {
         setCouponTotals(null);
         setCouponDetails(null);
-        setCouponStatus({ type: 'error', message: 'Nu am putut verifica cuponul.' });
+        setCouponStatus({ type: 'error', message: t('cart.couponCheckFail') });
       } finally {
         setIsApplyingCoupon(false);
       }
@@ -1376,16 +1378,16 @@ const CheckoutPage = () => {
   return (
     <div className="min-h-screen bg-white pb-24">
       <MobileProductHeader
-        title="Date facturare"
+        title={t('checkout.title')}
         onBack={() => navigate(-1)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
         centerTitle
         showTopBanners={false}
       />
@@ -1395,15 +1397,15 @@ const CheckoutPage = () => {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => navigate('/cos')}
+              onClick={() => navigate(withLocalePath('/cos'))}
               className="flex flex-1 items-center gap-2 rounded-xl px-3 py-3"
             >
               <span className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-white text-[11px] font-semibold text-muted-foreground">
                 1
               </span>
               <div className="text-[11px] font-semibold text-muted-foreground text-left">
-                <div>Pasul 1</div>
-                <div className="text-[10px] font-medium text-muted-foreground">Cos cumparaturi</div>
+                <div>{t('checkout.step', { step: 1 })}</div>
+                <div className="text-[10px] font-medium text-muted-foreground">{t('checkout.stepCart')}</div>
               </div>
             </button>
 
@@ -1415,8 +1417,8 @@ const CheckoutPage = () => {
                 2
               </span>
               <div className="text-[11px] font-semibold text-amber-900">
-                <div>Pasul 2</div>
-                <div className="text-[10px] font-medium text-amber-900/60">Date facturare</div>
+                <div>{t('checkout.step', { step: 2 })}</div>
+                <div className="text-[10px] font-medium text-amber-900/60">{t('checkout.stepBilling')}</div>
               </div>
             </div>
           </div>
@@ -1426,7 +1428,7 @@ const CheckoutPage = () => {
           type="button"
           onClick={() => navigate(-1)}
           className="fixed left-0 top-[70%] z-40 flex h-12 w-10 items-center justify-center rounded-r-md border-r border-border bg-white text-muted-foreground shadow"
-          aria-label="Inapoi"
+          aria-label={t('common.back')}
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -1434,7 +1436,7 @@ const CheckoutPage = () => {
         <div className="mt-4 space-y-4">
           <div className="rounded-2xl  p-1">
             <div className="flex items-center justify-between rounded-xl border border-border px-3 py-2">
-              <span className="text-sm font-semibold font-serif text-foreground">Esti companie?</span>
+              <span className="text-sm font-semibold font-serif text-foreground">{t('checkout.companyQuestion')}</span>
               <button
                 type="button"
                 role="switch"
@@ -1465,7 +1467,7 @@ const CheckoutPage = () => {
 
                 <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                   <div className="space-y-1 col-span-2">
-                    <label className="font-semibold text-foreground">Nume firma</label>
+                    <label className="font-semibold text-foreground">{t('checkout.companyName')}</label>
                   <input
                     type="text"
                     value={companyData.companyName}
@@ -1480,7 +1482,7 @@ const CheckoutPage = () => {
 
                 <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                   <div className="space-y-1">
-                    <label className="font-semibold text-foreground">CUI</label>
+                    <label className="font-semibold text-foreground">{t('checkout.companyCui')}</label>
                     <input
                       type="text"
                       value={companyData.cui}
@@ -1492,7 +1494,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="font-semibold text-foreground">Nr. registru</label>
+                    <label className="font-semibold text-foreground">{t('checkout.companyReg')}</label>
                     <input
                       type="text"
                       value={companyData.registry}
@@ -1507,10 +1509,10 @@ const CheckoutPage = () => {
           </div>
 
           <div className="rounded-2xl border border-border p-4">
-            <p className="text-sm font-semibold text-foreground">Date facturare</p>
+            <p className="text-sm font-semibold text-foreground">{t('checkout.billingTitle')}</p>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Prenume</label>
+                <label className="font-semibold text-foreground">{t('checkout.firstName')}</label>
                 <input
                   type="text"
                   value={billingData.billing_first_name}
@@ -1524,7 +1526,7 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Nume</label>
+                <label className="font-semibold text-foreground">{t('checkout.lastName')}</label>
                 <input
                   type="text"
                   value={billingData.billing_last_name}
@@ -1538,7 +1540,7 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Email</label>
+                <label className="font-semibold text-foreground">{t('checkout.email')}</label>
                 <input
                   type="email"
                   value={billingData.billing_email}
@@ -1551,17 +1553,17 @@ const CheckoutPage = () => {
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_email))}
                 />
                 {customerCheck.response?.verificari?.email?.found && (
-                  <p className="text-[11px] font-semibold text-emerald-600">Email existent in sistem.</p>
+                  <p className="text-[11px] font-semibold text-emerald-600">{t('checkout.emailExists')}</p>
                 )}
               </div>
               {customerCheck.response?.verificari?.email?.found && (
                   <div className="col-span-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700">
-                    Comanda va fi atasata contului existent.
+                    {t('checkout.emailAttached')}
                   </div>
               )}
 
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Telefon</label>
+                <label className="font-semibold text-foreground">{t('checkout.phone')}</label>
                 <input
                   type="tel"
                   value={billingData.billing_phone}
@@ -1576,12 +1578,12 @@ const CheckoutPage = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Judet</label>
+                <label className="font-semibold text-foreground">{t('checkout.county')}</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={billingCountyQuery || (billingData.billing_county ? countyNameByCode.get(billingData.billing_county) ?? '' : '')}
-                    placeholder="Alege judet"
+                    placeholder={t('checkout.selectCounty')}
                     onFocus={() => {
                       setBillingCountyOpen(true);
                       if (!billingCountyQuery && billingData.billing_county) {
@@ -1654,12 +1656,12 @@ const CheckoutPage = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Localitate</label>
+                <label className="font-semibold text-foreground">{t('checkout.locality')}</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={billingData.billing_locality}
-                    placeholder="Alege localitatea"
+                    placeholder={t('checkout.selectLocality')}
                     onFocus={() => setBillingLocalityOpen(true)}
                     onBlur={() => {
                       setTimeout(() => setBillingLocalityOpen(false), 120);
@@ -1708,20 +1710,20 @@ const CheckoutPage = () => {
                   )}
                 </div>
                 {isSamedayLoading && (
-                  <p className="text-[11px] text-muted-foreground">Se incarca localitatile...</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.localitiesLoading')}</p>
                 )}
 
               </div>
               {billingComunas.length > 0 && (
                   <div className="col-span-2  space-y-1">
-                    <label className="text-[11px] font-semibold text-muted-foreground">Comuna</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground">{t('checkout.commune')}</label>
                     <select
                         value={billingComuna}
                         onChange={(event) => setBillingComuna(event.target.value)}
                         data-track-action="Date facturare: Comuna"
                         className="h-9 w-full rounded-lg border border-border px-2 text-xs"
                     >
-                      <option value="">Alege comuna</option>
+                      <option value="">{t('checkout.selectCommune')}</option>
                       {billingComunas.map((item) => (
                           <option key={item} value={item}>
                             {item}
@@ -1731,7 +1733,7 @@ const CheckoutPage = () => {
                   </div>
               )}
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Adresa</label>
+                <label className="font-semibold text-foreground">{t('checkout.address')}</label>
                 <input
                     type="text"
                     value={billingData.billing_address_1}
@@ -1745,7 +1747,7 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Adresa 2 (Bloc / Scara / Apartament)</label>
+                <label className="font-semibold text-foreground">{t('checkout.address2')}</label>
                 <input
                   type="text"
                   value={billingData.billing_address_2}
@@ -1757,7 +1759,7 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Cod postal (Pune 0000 daca nu stii)</label>
+                <label className="font-semibold text-foreground">{t('checkout.postcodeHint')}</label>
                 <input
                   type="text"
                   value={billingData.billing_postcode}
@@ -1771,7 +1773,7 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-1 col-span-2">
-                <label className="font-semibold text-foreground">Tara</label>
+                <label className="font-semibold text-foreground">{t('checkout.country')}</label>
                 <input
                   type="text"
                   value={billingData.billing_country}
@@ -1785,10 +1787,10 @@ const CheckoutPage = () => {
 
           {SHOW_SURPRISE_GIFT && (
             <div className="cadoucomanda rounded-2xl border border-border p-4">
-              <p className="text-xl text-center font-semibold font-serif text-foreground">Produsele sunt cadou surpriza?</p>
+              <p className="text-xl text-center font-semibold font-serif text-foreground">{t('checkout.surpriseQuestion')}</p>
               <div className="mt-3 flex items-center justify-center gap-3 text-sm font-semibold text-foreground">
                 <span className={`${!isSurpriseGift ? 'text-foreground' : 'text-muted-foreground'} text-base font-bold`}>
-                  NU
+                  {t('checkout.no')}
                 </span>
                 <button
                   type="button"
@@ -1806,29 +1808,29 @@ const CheckoutPage = () => {
                   />
                 </button>
                 <span className={`${isSurpriseGift ? 'text-foreground' : 'text-muted-foreground'} text-base font-bold`}>
-                  DA
+                  {t('checkout.yes')}
                 </span>
               </div>
               <div className="mt-3 text-center">
                 {isSurpriseGift ? (
                   <div className="cadou-status-message status-da" id="cadouStatusMessage">
-                    Comanda <strong>este cadou surpriza</strong>. Nu vom trimite notificari (SMS, email, detalii AWB sau
-                    suma) catre destinatar. Acesta va trebui doar sa ridice coletul.
+                    {t('checkout.surpriseYesPrefix')}{' '}
+                    <strong>{t('checkout.surpriseYesStrong')}</strong>. {t('checkout.surpriseYesBody')}
                   </div>
                 ) : (
                   <div className="cadou-status-message status-nu" id="cadouStatusMessage">
-                    Comanda <strong>nu este cadou surpriza</strong>. Destinatarul va primi toate notificarile de informare
-                    (SMS, email) privind cursul comenzii, inclusiv detalii despre AWB si suma coletului.
+                    {t('checkout.surpriseNoPrefix')}{' '}
+                    <strong>{t('checkout.surpriseNoStrong')}</strong>. {t('checkout.surpriseNoBody')}
                   </div>
                 )}
               </div>
-              <img src="/client-vizual.png" alt="Cadou surpriza" className="mt-3 w-full rounded-xl object-cover" />
+              <img src="/client-vizual.png" alt={t('checkout.surpriseAlt')} className="mt-3 w-full rounded-xl object-cover" />
             </div>
           )}
 
           <div className="rounded-2xl border border-border p-4">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-foreground">Livrezi la o alta adresa</p>
+              <p className="text-sm font-semibold text-foreground">{t('checkout.shipToDifferent')}</p>
               <button
                 type="button"
                 role="switch"
@@ -1859,16 +1861,16 @@ const CheckoutPage = () => {
             </div>
             {isSurpriseGift && (
               <p className="mt-2 text-xs font-semibold text-amber-800">
-                Este necesara adresa persoanei care va primi cadoul surpriza.
+                {t('checkout.surpriseAddressHint')}
               </p>
             )}
 
             {useDifferentShipping && (
                 <div className="rounded-2xl mt-4">
-                  <p className="text-sm font-semibold text-foreground">Date livrare</p>
+                  <p className="text-sm font-semibold text-foreground">{t('checkout.shippingTitle')}</p>
                   <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Prenume</label>
+                      <label className="font-semibold text-foreground">{t('checkout.firstName')}</label>
                   <input
                     type="text"
                     value={shippingData.firstName}
@@ -1880,7 +1882,7 @@ const CheckoutPage = () => {
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Nume</label>
+                      <label className="font-semibold text-foreground">{t('checkout.lastName')}</label>
                   <input
                     type="text"
                     value={shippingData.lastName}
@@ -1892,7 +1894,7 @@ const CheckoutPage = () => {
                   />
                     </div>
                     <div className="space-y-1 col-span-2">
-                      <label className="font-semibold text-foreground">Telefon</label>
+                      <label className="font-semibold text-foreground">{t('checkout.phone')}</label>
                   <input
                     type="tel"
                     value={shippingData.phone}
@@ -1904,12 +1906,12 @@ const CheckoutPage = () => {
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Judet</label>
+                      <label className="font-semibold text-foreground">{t('checkout.county')}</label>
                   <div className="relative">
                     <input
                       type="text"
                       value={shippingCountyQuery || (shippingData.county ? countyNameByCode.get(shippingData.county) ?? '' : '')}
-                      placeholder="Alege judet"
+                      placeholder={t('checkout.selectCounty')}
                       onFocus={() => {
                         setShippingCountyOpen(true);
                         if (!shippingCountyQuery && shippingData.county) {
@@ -1983,12 +1985,12 @@ const CheckoutPage = () => {
                   </div>
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Localitate</label>
+                      <label className="font-semibold text-foreground">{t('checkout.locality')}</label>
                       <div className="relative">
                         <input
                           type="text"
                           value={shippingData.locality}
-                          placeholder="Alege localitatea"
+                          placeholder={t('checkout.selectLocality')}
                           onFocus={() => setShippingLocalityOpen(true)}
                           onBlur={() => {
                             setTimeout(() => setShippingLocalityOpen(false), 120);
@@ -2039,21 +2041,21 @@ const CheckoutPage = () => {
                         )}
                       </div>
                       {isSamedayLoading && (
-                        <p className="text-[11px] text-muted-foreground">Se incarca localitatile...</p>
+                        <p className="text-[11px] text-muted-foreground">{t('checkout.localitiesLoading')}</p>
                       )}
 
                     </div>
 
                     {shippingComunas.length > 0 && (
                         <div className="col-span-2  space-y-1">
-                          <label className="text-[11px] font-semibold text-muted-foreground">Comuna</label>
+                          <label className="text-[11px] font-semibold text-muted-foreground">{t('checkout.commune')}</label>
                           <select
                               value={shippingComuna}
                               onChange={(event) => setShippingComuna(event.target.value)}
                               data-track-action="Date livrare: Comuna"
                               className="h-9 w-full rounded-lg border border-border px-2 text-xs"
                           >
-                            <option value="">Alege comuna</option>
+                            <option value="">{t('checkout.selectCommune')}</option>
                             {shippingComunas.map((item) => (
                                 <option key={item} value={item}>
                                   {item}
@@ -2063,7 +2065,7 @@ const CheckoutPage = () => {
                         </div>
                     )}
                     <div className="space-y-1 col-span-2">
-                      <label className="font-semibold text-foreground">Adresa</label>
+                      <label className="font-semibold text-foreground">{t('checkout.address')}</label>
                   <input
                     type="text"
                     value={shippingData.address1}
@@ -2075,7 +2077,7 @@ const CheckoutPage = () => {
                   />
                     </div>
                     <div className="space-y-1 col-span-2">
-                      <label className="font-semibold text-foreground">Adresa 2 (Bloc / Scara / Apartament)</label>
+                      <label className="font-semibold text-foreground">{t('checkout.address2')}</label>
                       <input
                         type="text"
                         value={shippingData.address2}
@@ -2085,7 +2087,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div className="space-y-1 col-span-2">
-                      <label className="font-semibold text-foreground">Cod postal</label>
+                      <label className="font-semibold text-foreground">{t('checkout.postcode')}</label>
                   <input
                     type="text"
                     value={shippingData.postcode}
@@ -2097,7 +2099,7 @@ const CheckoutPage = () => {
                   />
                     </div>
                     <div className="space-y-1 col-span-2">
-                      <label className="font-semibold text-foreground">Tara</label>
+                      <label className="font-semibold text-foreground">{t('checkout.country')}</label>
                       <input
                           type="text"
                           value={shippingData.country}
@@ -2138,8 +2140,10 @@ const CheckoutPage = () => {
           </div>
           <div className="rounded-2xl border border-border p-4">
             <div className="flex w-full items-center justify-between">
-              <span className="text-sm font-semibold text-foreground">Produse</span>
-              <span className="text-xs font-semibold text-muted-foreground">{totals.totalItems} produse</span>
+              <span className="text-sm font-semibold text-foreground">{t('checkout.productsTitle')}</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t('checkout.productsCount', { count: totals.totalItems })}
+              </span>
             </div>
             <div className="mt-3 space-y-3">
               {cart.map((item) => {
@@ -2153,7 +2157,7 @@ const CheckoutPage = () => {
                       <div className="flex-1">
                         <p className="text-xs font-semibold text-foreground">{item.title}</p>
                         <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Cantitate: {item.quantity ?? 1}</span>
+                          <span>{t('checkout.quantity')}: {item.quantity ?? 1}</span>
                           <span>
                             {parseFloat(item.priceReduced ?? item.price).toFixed(2)} lei
                           </span>
@@ -2166,7 +2170,7 @@ const CheckoutPage = () => {
                             }
                             className="mt-2 text-[11px] font-semibold text-primary"
                           >
-                            {showPersonalizare ? 'Ascunde personalizare' : 'Vezi personalizare'}
+                            {showPersonalizare ? t('checkout.customizationHide') : t('checkout.customizationShow')}
                           </button>
                         )}
                       </div>
@@ -2183,7 +2187,7 @@ const CheckoutPage = () => {
                             ) : Array.isArray(entry.value) ? (
                               entry.value.join(', ')
                             ) : (
-                              entry.value || '-'
+                              entry.value || t('cart.notAvailable')
                             )}
                           </div>
                         ))}
@@ -2195,7 +2199,7 @@ const CheckoutPage = () => {
             </div>
             {SHOW_PROMO_CODE && (
               <div className="mt-4">
-                <p className="text-sm font-semibold text-foreground">Cod promotional</p>
+                <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
                 <div className="bg-white">
                   <div className="flex items-center gap-2 rounded-md mt-2 bg-muted/20 px-3 py-2 border border-1 border-[#ccc]">
 
@@ -2203,7 +2207,7 @@ const CheckoutPage = () => {
                       type="text"
                       value={promoCode}
                       onChange={(event) => setPromoCode(event.target.value)}
-                      placeholder="Introdu codul"
+                      placeholder={t('cart.promoCodePlaceholder')}
                       className="flex-1 bg-transparent text-sm focus:outline-none"
                     />
                   </div>
@@ -2220,7 +2224,7 @@ const CheckoutPage = () => {
                         disabled={!appliedCouponCode || isApplyingCoupon}
                         className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
                     >
-                      Reset
+                      {t('cart.reset')}
                     </button>
                     <button
                       type="button"
@@ -2228,7 +2232,7 @@ const CheckoutPage = () => {
                       disabled={isApplyingCoupon}
                       className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
                     >
-                      {isApplyingCoupon ? 'Se verifica...' : 'Aplica cuponul'}
+                      {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
                     </button>
 
                   </div>
@@ -2241,7 +2245,7 @@ const CheckoutPage = () => {
                           <p className="font-semibold">{couponStatus.message}</p>
                           {couponDetails && !couponDetails.hasApplicableProducts && (
                             <p className="mt-1 text-[11px] font-semibold text-red-500">
-                              Cuponul nu se aplica la niciun produs din cos.
+                              {t('cart.couponNoProducts')}
                             </p>
                           )}
                         </div>
@@ -2277,11 +2281,13 @@ const CheckoutPage = () => {
           <div className="rounded-2xl border border-border p-4">
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">
-                {mapLocality ? `Metoda de livrare pentru ${mapLocality}` : 'Metoda de livrare'}
+                {mapLocality
+                  ? t('checkout.shippingMethodFor', { locality: mapLocality })
+                  : t('checkout.shippingMethod')}
               </p>
 
               <p className="text-[11px] text-muted-foreground">
-                Judet selectat: {mapCountyName || '-'}
+                {t('checkout.selectedCounty', { county: mapCountyName || '-' })}
               </p>
             </div>
             {deliveryInstanceId !== null && (
@@ -2290,16 +2296,16 @@ const CheckoutPage = () => {
             <div className="mt-3 space-y-2">
               {[
                 ...(SHOW_SAMEDAY
-                  ? [{ key: 'sameday', label: 'Livrare la adresa Sameday', logo: '/sameday.jpg', price: 17, instanceId: 4 }]
+                  ? [{ key: 'sameday', label: t('checkout.shippingSameday'), logo: '/sameday.jpg', price: 17, instanceId: 4 }]
                   : []),
                 ...(SHOW_DPD
-                  ? [{ key: 'dpd', label: 'Livrare la adresa DPD', logo: '/dpd.jpg', price: 20, instanceId: 2 }]
+                  ? [{ key: 'dpd', label: t('checkout.shippingDpd'), logo: '/dpd.jpg', price: 20, instanceId: 2 }]
                   : []),
                 ...(SHOW_EASYBOX
-                  ? [{ key: 'easybox', label: 'Ridicare Easybox Locker', logo: '/sameday.jpg', price: 13, instanceId: 3 }]
+                  ? [{ key: 'easybox', label: t('checkout.shippingEasybox'), logo: '/sameday.jpg', price: 13, instanceId: 3 }]
                   : []),
                 ...(isLocalPickupEligible
-                  ? [{ key: 'pickup', label: 'Ridicare de la sediu', logo: '/logo-gold.svg', price: 0, instanceId: 1 }]
+                  ? [{ key: 'pickup', label: t('checkout.shippingPickup'), logo: '/logo-gold.svg', price: 0, instanceId: 1 }]
                   : []),
               ].map((method) => {
                 const active = deliveryMethod === method.key;
@@ -2319,12 +2325,16 @@ const CheckoutPage = () => {
                       <div>
                         <div>{method.label}</div>
                         <div className="text-[11px] font-medium text-muted-foreground">
-                          {method.key === 'pickup' ? 'Programare telefonica' : '1-3 zile lucratoare'}
+                          {method.key === 'pickup' ? t('checkout.pickupSchedule') : t('checkout.shippingDays')}
                         </div>
                       </div>
                     </div>
                     <span className="text-[11px] font-semibold">
-                      {method.key === 'pickup' ? 'Gratuit' : totals.discountedCost >= 200 ? 'Gratuit' : `${method.price} lei`}
+                      {method.key === 'pickup'
+                        ? t('cart.free')
+                        : totals.discountedCost >= 200
+                          ? t('cart.free')
+                          : `${method.price} lei`}
                     </span>
                   </button>
                 );
@@ -2332,19 +2342,19 @@ const CheckoutPage = () => {
             </div>
             {deliveryMethod === 'easybox' && (
               <div className="mt-3 rounded-xl border border-border bg-white p-3 text-xs">
-                <p className="font-semibold text-foreground">Alege lockerul Sameday</p>
+                <p className="font-semibold text-foreground">{t('checkout.selectLocker')}</p>
                 {!mapCountyName || !mapLocality ? (
                   <p className="mt-2 text-[11px] text-muted-foreground">
-                    Selecteaza judetul si localitatea pentru a vedea locker-ele disponibile.
+                    {t('checkout.selectLockerHint')}
                   </p>
                 ) : (
                   <>
                     {isLockerLoading ? (
-                      <p className="mt-2 text-[11px] text-muted-foreground">Se incarca locker-ele...</p>
+                      <p className="mt-2 text-[11px] text-muted-foreground">{t('checkout.lockersLoading')}</p>
                     ) : (
                       <>
                         <p className="mt-2 text-[11px] text-muted-foreground">
-                          Gasite: {lockerOptions.length} locker-e
+                          {t('checkout.lockersFound', { count: lockerOptions.length })}
                         </p>
                         {lockerOptions.length > 0 ? (
                           <>
@@ -2370,7 +2380,7 @@ const CheckoutPage = () => {
                                 }
                                 setSelectedLockerId('');
                               }}
-                              placeholder="Cauta locker"
+                              placeholder={t('checkout.searchLocker')}
                               className="mt-2 h-9 w-full rounded-lg border border-border px-2 text-xs"
                             />
                             {lockerOpen && (
@@ -2404,23 +2414,23 @@ const CheckoutPage = () => {
                           </>
                         ) : (
                           <p className="mt-2 text-[11px] text-muted-foreground">
-                            Nu exista locker-e disponibile pentru localitatea selectata.
+                            {t('checkout.lockersUnavailable')}
                           </p>
                         )}
                         {selectedLocker ? (
                           <div className="mt-3 rounded-lg border border-border bg-muted/20 p-2 text-[11px] text-muted-foreground">
                             <p className="font-semibold text-foreground">{selectedLocker.name}</p>
                             {selectedLocker.address && <p>{selectedLocker.address}</p>}
-                            {selectedLocker.postal_code && <p>Cod postal: {selectedLocker.postal_code}</p>}
+                            {selectedLocker.postal_code && <p>{t('checkout.postalCode')}: {selectedLocker.postal_code}</p>}
                             {(() => {
                               const boxes = parseLockerBoxes(selectedLocker.boxes);
                               if (!boxes.total) return null;
                               if (boxes.sizes.length === 0) {
-                                return <p>Boxe: {boxes.total}</p>;
+                                return <p>{t('checkout.boxes')}: {boxes.total}</p>;
                               }
                               return (
                                 <p>
-                                  Boxe:{' '}
+                                  {t('checkout.boxes')}:{' '}
                                   {boxes.sizes.map((item) => `${item.size}: ${item.count}`).join(', ')}
                                 </p>
                               );
@@ -2429,7 +2439,7 @@ const CheckoutPage = () => {
                         ) : (
                           lockerOptions.length > 0 && (
                             <p className="mt-2 text-[11px] text-muted-foreground">
-                              Alege un locker pentru pin pe harta.
+                              {t('checkout.selectLockerPin')}
                             </p>
                           )
                         )}
@@ -2443,7 +2453,7 @@ const CheckoutPage = () => {
               <div className="mt-3 space-y-2">
                 {mapKm > 0 && deliveryMethod === 'sameday' && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">
-                    Km aditionali: {mapKm}. Pot fi intarzieri fiind in afara ariei de livrare.
+                    {t('checkout.extraKm', { km: mapKm })}
                   </div>
                 )}
                 {deliveryMethod === 'easybox' && lockerOptions.length > 0 ? (
@@ -2453,7 +2463,7 @@ const CheckoutPage = () => {
                 ) : (
                   <div className="overflow-hidden rounded-xl border border-border">
                     <iframe
-                      title="Harta livrare"
+                      title={t('checkout.mapTitle')}
                       src={mapEmbedUrl}
                       className="h-44 w-full border-0"
                       loading="lazy"
@@ -2462,16 +2472,16 @@ const CheckoutPage = () => {
                   </div>
                 )}
                 {mapComuna ? (
-                  <p className="text-[11px] text-muted-foreground">Comuna: {mapComuna}</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.communeLabel', { name: mapComuna })}</p>
                 ) : !mapLocality && mapCountyName ? (
-                  <p className="text-[11px] text-muted-foreground">Judet: {mapCountyName}</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.countyLabel', { name: mapCountyName })}</p>
                 ) : null}
               </div>
             )}
           </div>
 
           <div className="rounded-2xl border border-border p-4">
-            <p className="text-sm font-semibold text-foreground">Metoda de plata</p>
+            <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
             <input type="hidden" name="payment_method" value={paymentMethodId} />
             <div className="mt-3 space-y-2">
               <button
@@ -2488,8 +2498,8 @@ const CheckoutPage = () => {
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />
                   <div>
-                    <div>Ramburs</div>
-                    <div className="text-[11px] font-medium text-muted-foreground">Plata la livrare</div>
+                    <div>{t('checkout.paymentCod')}</div>
+                    <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentCodHint')}</div>
                   </div>
                 </div>
                 <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
@@ -2515,8 +2525,8 @@ const CheckoutPage = () => {
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />
                   <div>
-                    <div>Transfer bancar</div>
-                    <div className="text-[11px] font-medium text-muted-foreground">OP/IBAN</div>
+                    <div>{t('checkout.paymentBank')}</div>
+                    <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentBankHint')}</div>
                   </div>
                 </div>
                 <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
@@ -2534,10 +2544,7 @@ const CheckoutPage = () => {
                 <p>RO74INGB0000999906973879</p>
                 <p className="font-semibold text-foreground">Trezorerie operativa Sector5</p>
                 <p>RO65TREZ7055069XXX012556</p>
-                <p>
-                  Fa plata direct in contul nostru bancar. Te rog foloseste ID-ul comenzii tale ca referinta de plata.
-                  Comanda nu va fi livrata pana cand fondurile nu vor fi varsate in contul nostru.
-                </p>
+                <p>{t('checkout.paymentBankInfo')}</p>
               </div>
             )}
           </div>
@@ -2547,47 +2554,47 @@ const CheckoutPage = () => {
           <div className="rounded-2xl border border-border p-4">
 
             <div className="rounded-2xl mb-3" id="checkout-summary">
-              <p className="text-sm font-semibold text-foreground">Note comanda (optional)</p>
+              <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
               <div className="mt-3">
               <textarea
                   value={orderNote}
                   onChange={(event) => setOrderNote(event.target.value)}
                   data-track-action="Note comanda"
                   className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
-                  placeholder="Mentiuni pentru comanda..."
+                  placeholder={t('checkout.orderNotesPlaceholder')}
               />
               </div>
             </div>
             <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
-              Contul tau va fi alimentat cu <b>{Math.round(totals.total)}</b> puncte si pot fi folosite la urmatoarele comenzi.
+              {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
             </div>
             {SHOW_PROMO_BANNER && <PromoBanner />}
-            <p className="text-sm font-semibold text-foreground">Sumar comanda</p>
+            <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
             <div className="mt-3 space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center justify-between">
-                <span>Cost produse ({totals.totalItems})</span>
+                <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
                 <span>{totals.cost.toFixed(2)} lei</span>
               </div>
               {totals.couponDiscount > 0 && (
                 <div className="flex items-center justify-between text-emerald-600">
-                  <span>Reducere cupon</span>
+                  <span>{t('cart.couponDiscount')}</span>
                   <span>-{totals.couponDiscount.toFixed(2)} lei</span>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span>Transport curier</span>
+                <span>{t('cart.shipping')}</span>
                 {totals.shipping === 0 ? (
-                  <span className="font-semibold text-emerald-600">Gratuit</span>
+                  <span className="font-semibold text-emerald-600">{t('cart.free')}</span>
                 ) : (
                   <span>{totals.shipping.toFixed(2)} lei</span>
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <span>Subtotal</span>
+                <span>{t('cart.subtotal')}</span>
                 <span>{totals.discountedCost.toFixed(2)} lei</span>
               </div>
               <div className="flex items-center justify-between text-base font-semibold text-foreground">
-                <span>Total (TVA inclus)</span>
+                <span>{t('cart.totalVat')}</span>
                 <span>{totals.total.toFixed(2)} lei</span>
               </div>
             </div>
@@ -2599,8 +2606,7 @@ const CheckoutPage = () => {
             data-invalid={attemptedSubmit && !termsAccepted}
           >
             <p>
-              Datele personale vor fi folosite pentru a procesa comanda, pentru a-ti sustine experienta pe acest site web
-              si pentru alte scopuri descrise in{' '}
+              {t('checkout.privacyIntro')}{' '}
               <a
                 href="https://darurialese.ro/politica-de-confidentialitate/"
                 className="text-primary underline"
@@ -2609,13 +2615,13 @@ const CheckoutPage = () => {
                   setActiveLegalModal('privacy');
                 }}
               >
-                politica de confidentialitate
+                {t('checkout.privacyLink')}
               </a>
               .
             </p>
             <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2">
               <span className="text-xs font-semibold text-foreground">
-                Am citit si sunt de acord cu{' '}
+                {t('checkout.termsAccept')}{' '}
                 <a
                   href="https://darurialese.ro/termeni-si-conditii-daruri-alese/"
                   className="text-primary underline"
@@ -2624,7 +2630,7 @@ const CheckoutPage = () => {
                     setActiveLegalModal('terms');
                   }}
                 >
-                  termeni si conditii
+                  {t('checkout.termsLink')}
                 </a>
               </span>
               <button
@@ -2645,7 +2651,7 @@ const CheckoutPage = () => {
               </button>
             </div>
             {attemptedSubmit && !termsAccepted && (
-              <p className="mt-2 text-xs font-semibold text-red-500">Trebuie sa accepti termenii si conditiile.</p>
+              <p className="mt-2 text-xs font-semibold text-red-500">{t('checkout.termsRequired')}</p>
             )}
           </div>
 
@@ -2658,7 +2664,7 @@ const CheckoutPage = () => {
             onClick={() => window.open('tel:0748777776', '_self')}
             data-track-action="A apasat pe suna din checkout."
             className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground"
-            aria-label="Suna"
+            aria-label={t('nav.call')}
           >
             <Phone className="h-4 w-4" />
           </button>
@@ -2686,7 +2692,7 @@ const CheckoutPage = () => {
               style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
             >
               <span className="flex items-center gap-2">
-                {isSubmitting ? 'Se trimite...' : 'Trimite'}
+                {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
                 <ChevronRight className="h-4 w-4 text-white" />
               </span>
             </button>
@@ -2704,12 +2710,12 @@ const CheckoutPage = () => {
               type="button"
               onClick={() => setActiveLegalModal(null)}
               className="absolute right-4 top-4 rounded-full border border-border bg-white p-2 text-muted-foreground shadow-sm"
-              aria-label="Inchide"
+              aria-label={t('common.close')}
             >
               ×
             </button>
             <h3 className="text-base font-semibold text-foreground">
-              {activeLegalModal === 'privacy' ? 'Politica de confidentialitate' : 'Termeni si conditii'}
+              {activeLegalModal === 'privacy' ? t('checkout.privacyTitle') : t('checkout.termsTitle')}
             </h3>
             {activeLegalModal === 'terms' ? (
               <div
@@ -2722,7 +2728,7 @@ const CheckoutPage = () => {
                 dangerouslySetInnerHTML={{ __html: privacyHtml }}
               />
             ) : (
-              <div className="mt-3 text-sm text-muted-foreground">Continut in lucru.</div>
+              <div className="mt-3 text-sm text-muted-foreground">{t('checkout.contentPending')}</div>
             )}
           </div>
         </>

@@ -5,6 +5,7 @@ import MobileProductCard from './MobileProductCard';
 import MobileMeiliProductCard from './MobileMeiliProductCard';
 import PromoBanner, {SHOW_PROMO_BANNER} from "@/components/PromoBanner.tsx";
 import { withLocalePath } from '@/utils/locale';
+import { getSortLabel, t } from '@/utils/translations';
 
 const MobileProductGrid = () => {
   const navigate = useNavigate();
@@ -89,22 +90,16 @@ const MobileProductGrid = () => {
   const activeFilters: { key: string; label: string }[] = [];
 
   if (currentSort !== 'popularitate') {
-    const sortLabels: Record<string, string> = {
-      'cele-mai-noi': 'Cele mai noi',
-      'pret-crescator': 'Pret crescator',
-      'pret-descrescator': 'Pret descrescator',
-      reduceri: 'Reduceri primele',
-    };
     activeFilters.push({
       key: 'sort',
-      label: `Sortare: ${sortLabels[currentSort] || currentSort}`,
+      label: `${t('filters.sort')}: ${getSortLabel(currentSort)}`,
     });
   }
 
   if (priceFilterMin !== priceBounds.min || priceFilterMax !== priceBounds.max) {
     activeFilters.push({
       key: 'price',
-      label: `Pret: ${priceFilterMin} - ${priceFilterMax} RON`,
+      label: `${t('filters.price')}: ${priceFilterMin} - ${priceFilterMax} RON`,
     });
   }
 
@@ -113,7 +108,7 @@ const MobileProductGrid = () => {
       data?.info.tipuri?.find((tip) => tip.slug === selectedTypeSlug)?.nume || selectedTypeSlug;
     activeFilters.push({
       key: 'type',
-      label: `Tip: ${typeLabel}`,
+      label: `${t('filters.type')}: ${typeLabel}`,
     });
   }
 
@@ -158,7 +153,7 @@ const MobileProductGrid = () => {
       {shouldShowEmptyState ? (
         <div className="flex items-center justify-center min-h-[160px]">
           <p className="text-muted-foreground">
-            {selectedTypeSlug ? 'Nu exista produse pentru tipul selectat.' : 'Nu exista produse disponibile.'}
+            {selectedTypeSlug ? t('filters.noneType') : t('filters.none')}
           </p>
         </div>
       ) : (
@@ -178,11 +173,11 @@ const MobileProductGrid = () => {
       {hasSearchQuery && (
         <div className="mt-4 space-y-4">
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-sm font-semibold text-amber-800">Categorii sugerate</p>
+            <p className="text-sm font-semibold text-amber-800">{t('search.suggestedCategories')}</p>
             {searchLoading ? (
-              <p className="mt-2 text-sm text-muted-foreground">Se cauta...</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('search.searching')}</p>
             ) : suggestedCategories.length === 0 ? (
-              <p className="mt-2 text-sm text-muted-foreground">Nu am gasit categorii.</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('search.noCategories')}</p>
             ) : (
               <div className="mt-2 space-y-2">
                 {visibleCategories.map((category) => (
@@ -209,7 +204,7 @@ const MobileProductGrid = () => {
                     onClick={() => setShowAllCategories(true)}
                     className="block w-full rounded-md border border-amber-200 px-3 py-2 text-left text-sm text-amber-800 transition-colors hover:bg-amber-100"
                   >
-                    Vezi restul sugestiilor
+                    {t('search.moreSuggestions')}
                   </button>
                 )}
               </div>
@@ -218,9 +213,9 @@ const MobileProductGrid = () => {
 
           {(searchLoading || searchResults.products.length > 0) && (
             <div className="rounded-lg border border-border bg-white p-3">
-              <p className="text-sm font-semibold text-foreground">Produse sugerate</p>
+              <p className="text-sm font-semibold text-foreground">{t('search.suggestedProducts')}</p>
               {searchLoading ? (
-                <p className="mt-2 text-sm text-muted-foreground">Se cauta...</p>
+                <p className="mt-2 text-sm text-muted-foreground">{t('search.searching')}</p>
               ) : (
                 <div className="mt-2 grid grid-cols-2 gap-3">
                   {searchResults.products.map((product, index) => (

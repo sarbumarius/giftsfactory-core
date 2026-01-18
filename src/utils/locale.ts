@@ -26,7 +26,15 @@ export const withLocalePath = (path: string, locale?: LocaleCode) => {
   if (lang !== 'en') {
     return stripLocalePrefix(path);
   }
-  if (path === '/') return '/en';
-  if (path.startsWith('/en/')) return path;
-  return path.startsWith('/') ? `/en${path}` : `/en/${path}`;
+  const normalized = stripLocalePrefix(path);
+  const productPrefix = '/produs/';
+  let mappedPath = normalized;
+  if (normalized === '/produs') {
+    mappedPath = '/product';
+  } else if (normalized.startsWith(productPrefix)) {
+    mappedPath = `/product/${normalized.slice(productPrefix.length)}`;
+  }
+  if (mappedPath === '/') return '/en';
+  if (path.startsWith('/en/')) return mappedPath.startsWith('/en/') ? mappedPath : `/en${mappedPath}`;
+  return mappedPath.startsWith('/') ? `/en${mappedPath}` : `/en/${mappedPath}`;
 };

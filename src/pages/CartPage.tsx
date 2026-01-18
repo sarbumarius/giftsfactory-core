@@ -7,6 +7,8 @@ import { useCategoryContext } from '@/contexts/CategoryContext';
 import { ArrowLeft, ChevronRight, X, Info, Phone, ChevronUp } from 'lucide-react';
 import productImage from '@/assets/product-image.jpg';
 import PromoBanner, { SHOW_PROMO_BANNER } from '@/components/PromoBanner';
+import { withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
 const SHOW_GIFT_OPTION = false;
 const SHOW_PACKING_OPTION = false;
@@ -51,7 +53,7 @@ const CartPage = () => {
 
   useEffect(() => {
     const defaultTitle = 'Daruri Alese Catalog';
-    document.title = `Cos | ${defaultTitle}`;
+    document.title = `${t('cart.title')} | ${defaultTitle}`;
   }, []);
 
   const updateQuantity = useCallback(
@@ -71,7 +73,7 @@ const CartPage = () => {
   const applyCoupon = useCallback(
     async (code: string, { showSuccess }: { showSuccess: boolean }) => {
       if (!code) {
-        setCouponStatus({ type: 'error', message: 'Introdu un cod de cupon.' });
+        setCouponStatus({ type: 'error', message: t('cart.couponEnter') });
         return;
       }
 
@@ -105,17 +107,17 @@ const CartPage = () => {
         const invalidProducts = products
           .filter((prod: { valabil_cupon?: boolean }) => !prod?.valabil_cupon)
           .map((prod: { titlu?: string; reason?: string }) => ({
-            title: prod?.titlu || 'Produs',
-            reason: prod?.reason || 'Cuponul nu este valabil pentru acest produs.',
+            title: prod?.titlu || t('cart.productFallback'),
+            reason: prod?.reason || t('cart.couponInvalidProduct'),
           }));
         if (!response.ok || !isValid) {
           setCouponTotals(null);
           setAppliedCouponCode(null);
           setPromoCode('');
           setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
-          setCouponStatus({ type: 'error', message: data?.cupon?.reason || 'Cupon invalid.' });
+          setCouponStatus({ type: 'error', message: data?.cupon?.reason || t('cart.couponInvalid') });
           if (window.rybbit?.event && code) {
-            window.rybbit.event(`Raspuns cupon: ${code} | ${data?.cupon?.reason || 'Cupon invalid.'}`);
+            window.rybbit.event(`Raspuns cupon: ${code} | ${data?.cupon?.reason || t('cart.couponInvalid')}`);
           }
           return;
         }
@@ -124,9 +126,9 @@ const CartPage = () => {
           setAppliedCouponCode(null);
           setPromoCode('');
           setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
-          setCouponStatus({ type: 'error', message: 'Cuponul nu este valabil pentru niciun produs din cos.' });
+          setCouponStatus({ type: 'error', message: t('cart.couponNoProducts') });
           if (window.rybbit?.event && code) {
-            window.rybbit.event(`Raspuns cupon: ${code} | Cuponul nu este valabil pentru niciun produs din cos.`);
+            window.rybbit.event(`Raspuns cupon: ${code} | ${t('cart.couponNoProducts')}`);
           }
           return;
         }
@@ -134,7 +136,7 @@ const CartPage = () => {
         setCouponTotals({ totalDiscount });
         setCouponDetails({ conditions, hasApplicableProducts, invalidProducts });
         if (showSuccess) {
-          const successMessage = data?.cupon?.discount_text || 'Cupon aplicat.';
+          const successMessage = data?.cupon?.discount_text || t('cart.couponApplied');
           setCouponStatus({ type: 'success', message: successMessage });
           if (window.rybbit?.event && code) {
             window.rybbit.event(`Raspuns cupon: ${code} | ${successMessage}`);
@@ -145,9 +147,9 @@ const CartPage = () => {
         setAppliedCouponCode(null);
         setPromoCode('');
         setCouponDetails(null);
-        setCouponStatus({ type: 'error', message: 'Nu am putut verifica cuponul.' });
+        setCouponStatus({ type: 'error', message: t('cart.couponCheckFail') });
         if (window.rybbit?.event && code) {
-          window.rybbit.event(`Raspuns cupon: ${code} | Nu am putut verifica cuponul.`);
+          window.rybbit.event(`Raspuns cupon: ${code} | ${t('cart.couponCheckFail')}`);
         }
       } finally {
         setIsApplyingCoupon(false);
@@ -259,16 +261,16 @@ const CartPage = () => {
   return (
     <div className="min-h-screen bg-white pb-4">
       <MobileProductHeader
-        title="Cos de cumparaturi"
+        title={t('cart.title')}
         onSearchClick={() => setIsSearchOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
         centerTitle
         showTopBanners={false}
       />
@@ -278,20 +280,20 @@ const CartPage = () => {
             {bannerIndex === 0 && totals.discountedProducts < 200 && (
               <div className="bg-gradient-to-r from-[#f7e6c8] to-[#f1d3a3] px-4 py-3 text-center">
                 <p className="text-xs font-semibold text-amber-900">
-                  Mai adauga{' '}
+                  {t('cart.freeShippingPrefix')}{' '}
                   <span className="font-bold text-amber-950">
                     {Math.max(0, 200 - totals.discountedProducts).toFixed(2)} lei
                   </span>{' '}
-                  in cos si ai transport gratuit.
+                  {t('cart.freeShippingSuffix')}
                 </p>
               </div>
             )}
             {bannerIndex === 1 && (
               <div className="bg-gradient-to-r from-[#f7e6c8] to-[#f1d3a3] px-4 py-3 text-center">
                 <p className="text-xs font-semibold text-amber-900">
-                   Comanda si primesti{' '}
+                  {t('cart.pointsPrefix')}{' '}
                   <span className="font-bold text-amber-950">{Math.round(totals.total)}</span>{' '}
-                  pct la urmatoarele comenzi.
+                  {t('cart.pointsSuffix')}
                 </p>
               </div>
             )}
@@ -307,8 +309,8 @@ const CartPage = () => {
                   1
                 </span>
                 <div className="text-[11px] font-semibold text-amber-900"> 
-                  <div>Pasul 1</div>
-                  <div className="text-[10px] font-medium text-amber-900/60">Cos cumparaturi</div>
+                  <div>{t('cart.step', { step: 1 })}</div>
+                  <div className="text-[10px] font-medium text-amber-900/60">{t('cart.stepCart')}</div>
                 </div>
               </div>
 
@@ -317,8 +319,8 @@ const CartPage = () => {
                   2
                 </span>
                 <div className="text-[11px] font-semibold text-muted-foreground">
-                  <div>Pasul 2</div>
-                  <div className="text-[10px] font-medium text-muted-foreground">Date facturare</div>
+                  <div>{t('cart.step', { step: 2 })}</div>
+                  <div className="text-[10px] font-medium text-muted-foreground">{t('cart.stepBilling')}</div>
                 </div>
               </div>
             </div>
@@ -330,34 +332,34 @@ const CartPage = () => {
           onClick={() => navigate(-1)}
           data-track-action="A apasat inapoi din cos."
           className="fixed left-0 top-[70%] z-40 flex h-12 w-10 items-center rounded-r-md  justify-center border-r border-border bg-white text-muted-foreground shadow"
-          aria-label="Inapoi"
+          aria-label={t('common.back')}
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
 
         {!isCartLoaded ? (
           <div className="flex min-h-[60vh] items-center justify-center text-sm text-muted-foreground">
-            Se incarca...
+            {t('cart.loading')}
           </div>
         ) : cart.length === 0 ? (
           <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-sm text-muted-foreground">
-            <span>Cosul este gol.</span>
+            <span>{t('cart.empty')}</span>
             <img
               src="/no-results.png"
-              alt="Cos gol"
+              alt={t('cart.emptyAlt')}
               className="h-100 w-100 rounded-2xl object-cover"
             />
             <button
               type="button"
               onClick={() => {
                 setCurrentSlug('gifts-factory');
-                navigate('/');
+                navigate(withLocalePath('/'));
               }}
               data-track-action="A mers la categorii din cos gol."
               className="rounded-full px-5 py-2 text-xs font-semibold text-white"
               style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
             >
-              Vezi categorii
+              {t('cart.viewCategories')}
             </button>
           </div>
         ) : (
@@ -376,10 +378,10 @@ const CartPage = () => {
                       <div className="relative w-[134px]">
                         <button
                           type="button"
-                          onClick={() => navigate(`/produs/${item.slug}`)}
+                          onClick={() => navigate(withLocalePath(`/produs/${item.slug}`))}
                           data-track-action={`A deschis produsul ${item.title} din cos.`}
                           className="block"
-                          aria-label={`Vezi produsul ${item.title}`}
+                          aria-label={t('cart.viewProductAria', { title: item.title })}
                         >
                           <img src={item.image} alt={item.title} className="h-[134px] w-[134px] rounded-xl object-cover" />
                         </button>
@@ -388,7 +390,7 @@ const CartPage = () => {
                           onClick={() => removeFromCart(cartKey)}
                           data-track-action={`A sters produsul ${item.title} din cos.`}
                           className="absolute right-2 top-2 rounded-md bg-red-500 p-1.5 text-white shadow-sm"
-                          aria-label="Sterge produs"
+                          aria-label={t('cart.removeProduct')}
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -430,7 +432,7 @@ const CartPage = () => {
                     {item.personalizare && item.personalizare.length > 0 && (
                       <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/30 p-3">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-foreground">Personalizare</p>
+                          <p className="text-xs font-semibold text-foreground">{t('cart.customization')}</p>
                           <button
                             type="button"
                             onClick={() => {
@@ -440,7 +442,7 @@ const CartPage = () => {
                             data-track-action={`A deschis personalizarea pentru ${item.title}.`}
                             className="text-[11px] font-semibold text-primary"
                           >
-                            Editeaza
+                            {t('cart.edit')}
                           </button>
                         </div>
                         {item.personalizare.map((entry) => (
@@ -453,7 +455,7 @@ const CartPage = () => {
                             ) : Array.isArray(entry.value) ? (
                               entry.value.join(', ')
                             ) : (
-                              entry.value || '—'
+                              entry.value || t('cart.notAvailable')
                             )}
                           </div>
                         ))}
@@ -464,7 +466,7 @@ const CartPage = () => {
                         type="button"
                         onClick={() => {
                           if (giftEnabled) {
-                            const shouldRemove = window.confirm('Vrei sa stergi felicitarea?');
+                            const shouldRemove = window.confirm(t('cart.giftRemoveConfirm'));
                             if (shouldRemove) {
                                   updateCartItem(cartKey, { giftSelected: false, giftMessage: '' });
                             }
@@ -480,22 +482,22 @@ const CartPage = () => {
                         style={giftEnabled ? { backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' } : undefined}
                       >
                         <div>
-                          <p className={`font-semibold ${giftEnabled ? 'text-white' : 'text-foreground'}`}>Felicitare</p>
+                          <p className={`font-semibold ${giftEnabled ? 'text-white' : 'text-foreground'}`}>{t('cart.giftTitle')}</p>
                           <p className={`text-[11px] ${giftEnabled ? 'text-white/80' : 'text-muted-foreground'}`}>
-                            Adauga un mesaj personalizat
+                            {t('cart.giftSubtitle')}
                           </p>
                           <p className={`text-[11px] font-semibold ${giftEnabled ? 'text-white' : 'text-primary'}`}>
-                            + 10 lei
+                            {t('cart.giftPrice')}
                           </p>
                           {giftEnabled && (
                             <span className="mt-2 inline-flex rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                              Felicitare adaugata
+                              {t('cart.giftAdded')}
                             </span>
                           )}
                         </div>
                         <img
                           src={productImage}
-                          alt="Felicitare"
+                          alt={t('cart.giftTitle')}
                           className="h-14 w-14 rounded-lg object-cover"
                         />
                       </button>
@@ -513,23 +515,23 @@ const CartPage = () => {
                         style={packingEnabled ? { backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' } : undefined}
                       >
                         <div>
-                          <p className={`font-semibold ${packingEnabled ? 'text-white' : 'text-foreground'}`}>Impachetare</p>
+                          <p className={`font-semibold ${packingEnabled ? 'text-white' : 'text-foreground'}`}>{t('cart.packingTitle')}</p>
                           <span className={`mt-1 inline-flex rounded-full px-3 py-1 text-[11px] font-semibold ${
                             packingEnabled ? 'bg-white/20 text-white' : 'bg-muted text-foreground'
                           }`}>
-                            {packingEnabled ? 'Premium (cadou)' : 'Standard de transport'}
+                            {packingEnabled ? t('cart.packingPremiumLabel') : t('cart.packingStandard')}
                           </span>
                           {packingEnabled ? (
                             <span className="mt-2 inline-flex rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                              Impachetare selectata
+                              {t('cart.packingSelected')}
                             </span>
                           ) : (
-                            <p className="mt-2 text-[11px] text-muted-foreground">+ 20 ron impachetare premium</p>
+                            <p className="mt-2 text-[11px] text-muted-foreground">{t('cart.packingPrice')}</p>
                           )}
                         </div>
                         <img
                           src={productImage}
-                          alt={packingEnabled ? 'Impachetare premium' : 'Impachetare'}
+                          alt={packingEnabled ? t('cart.packingPremiumAlt') : t('cart.packingTitle')}
                           className="h-14 w-14 rounded-lg object-cover"
                         />
                       </button>
@@ -540,7 +542,7 @@ const CartPage = () => {
             </div>
 
             <div className="mt-6 space-y-3 rounded-2xl border border-border p-4">
-              <p className="text-sm font-semibold text-foreground">Cod promotional</p>
+              <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
               <div className="rounded-2xl bg-white ">
                 <div className="flex items-center gap-2 rounded-full border border-border bg-muted/20 px-3 py-2">
 
@@ -549,7 +551,7 @@ const CartPage = () => {
                     value={promoCode}
                     onChange={(event) => setPromoCode(event.target.value)}
                     data-track-action="A introdus cod de cupon in cos"
-                    placeholder="Introdu codul"
+                    placeholder={t('cart.promoCodePlaceholder')}
                     className="flex-1 bg-transparent text-sm focus:outline-none"
                   />
                 </div>
@@ -567,7 +569,7 @@ const CartPage = () => {
                       disabled={!appliedCouponCode || isApplyingCoupon}
                       className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
                   >
-                    Reset
+                    {t('cart.reset')}
                   </button>
                   <button
                     type="button"
@@ -576,7 +578,7 @@ const CartPage = () => {
                     disabled={isApplyingCoupon}
                     className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
                   >
-                    {isApplyingCoupon ? 'Se verifica...' : 'Aplica cuponul'}
+                    {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
                   </button>
 
                 </div>
@@ -589,7 +591,7 @@ const CartPage = () => {
                         <p className="font-semibold">{couponStatus.message}</p>
                         {couponDetails && !couponDetails.hasApplicableProducts && (
                           <p className="mt-1 text-[11px] font-semibold text-red-500">
-                            Cuponul nu se aplica la niciun produs din cos.
+                            {t('cart.couponNoProducts')}
                           </p>
                         )}
                       </div>
@@ -628,37 +630,38 @@ const CartPage = () => {
                     <Info className="h-4 w-4" />
                   </div>
                   <div className="flex-1 text-xs text-amber-900">
-                    Pentru realizarea produselor indicate va fi necesara achitarea unui avans de minim{' '}
-                    <span className="font-semibold">30%</span> din valoarea acestora dupa confirmarea telefonica.
+                    {t('cart.advanceIntroPrefix')}{' '}
+                    <span className="font-semibold">30%</span>{' '}
+                    {t('cart.advanceIntroSuffix')}
                     <button
                       type="button"
                       onClick={() => setShowAdvanceInfo((prev) => !prev)}
                       data-track-action="A afisat detaliile avansului."
                       className="ml-2 text-[11px] font-semibold text-amber-800"
                     >
-                      {showAdvanceInfo ? 'Ascunde detalii' : 'Mai multe detalii'}
+                      {showAdvanceInfo ? t('cart.advanceHide') : t('cart.advanceMore')}
                     </button>
                     {showAdvanceInfo && (
                       <div className="mt-3 space-y-2 text-[11px] text-amber-900/90">
                         <p>
-                          Dupa transmiterea comenzii vei primi un email automat de confirmare cu produsele si datele de personalizare completate.
+                          {t('cart.advanceDetailEmail')}
                         </p>
                         <p>
-                          Cel tarziu, in urmatoarea zi lucratoare un reprezentat Daruri Alese te va contacta pentru confirmarea datelor.
+                          {t('cart.advanceDetailContact')}
                         </p>
                         <p>
-                          Pentru procesarea comenzii cu produsele selectate personalizate conform cerintelor, va fi necesara plata unui avans de minim 30% din valoarea acestora dupa confirmarea telefonica.
+                          {t('cart.advanceDetailPayment')}
                         </p>
                         <p>
-                          <span className="font-semibold">ATENTIE:</span> Grafica personalizata va fi realizata doar dupa achitarea avansului.
+                          <span className="font-semibold">{t('cart.advanceAttentionLabel')}</span> {t('cart.advanceDetailAttention')}
                         </p>
                         <p>
-                          Plata poate fi realizata prin urmatoarele metode:
-                          <br />- Online cu cardul;
-                          <br />- Transfer bancar;
+                          {t('cart.advanceDetailMethods')}
+                          <br />- {t('cart.advanceMethodCard')};
+                          <br />- {t('cart.advanceMethodBank')};
                         </p>
                         <p>
-                          Informatiile bancare pentru realizarea platii vor fi transmise pe email dupa confirmarea telefonica a comenzii.
+                          {t('cart.advanceDetailBank')}
                         </p>
                       </div>
                     )}
@@ -669,7 +672,7 @@ const CartPage = () => {
 
             {SHOW_PROMO_BANNER && <PromoBanner />}
             <div className="mt-4 rounded-2xl border border-border p-4" id="cart-summary">
-              <p className="text-sm font-semibold text-foreground">Sumar comanda</p>
+              <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
               <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                 {(() => {
                   const productsCost = totals.cost;
@@ -681,41 +684,41 @@ const CartPage = () => {
                   return (
                     <>
                 <div className="flex items-center justify-between">
-                  <span>Cost produse ({totals.totalItems})</span>
+                  <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
                   <span>{productsCost.toFixed(2)} lei</span>
                 </div>
                 {couponDiscount > 0 && (
                   <div className="flex items-center justify-between text-emerald-600">
-                    <span>Reducere cupon</span>
+                    <span>{t('cart.couponDiscount')}</span>
                     <span>-{couponDiscount.toFixed(2)} lei</span>
                   </div>
                 )}
                 {totals.giftTotal > 0 && (
                   <div className="flex items-center justify-between text-emerald-600">
-                    <span>Felicitari</span>
+                    <span>{t('cart.gifts')}</span>
                     <span>{totals.giftTotal.toFixed(2)} lei</span>
                   </div>
                 )}
                 {totals.packingTotal > 0 && (
                   <div className="flex items-center justify-between text-emerald-600">
-                    <span>Impachetare premium</span>
+                    <span>{t('cart.packingPremiumSummary')}</span>
                     <span>{totals.packingTotal.toFixed(2)} lei</span>
                   </div>
                 )}
                 <div className="flex items-center justify-between">
-                  <span>Subtotal</span>
+                  <span>{t('cart.subtotal')}</span>
                   <span>{subtotal.toFixed(2)} lei</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Transport curier</span>
+                  <span>{t('cart.shipping')}</span>
                   {totals.shipping === 0 ? (
-                    <span className="font-semibold text-emerald-600">Gratuit</span>
+                    <span className="font-semibold text-emerald-600">{t('cart.free')}</span>
                   ) : (
                     <span>{totals.shipping.toFixed(2)} lei</span>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-base font-semibold text-foreground">
-                  <span>Total (TVA inclus)</span>
+                  <span>{t('cart.totalVat')}</span>
                   <span>{total.toFixed(2)} lei</span>
                 </div>
                     </>
@@ -735,7 +738,7 @@ const CartPage = () => {
               onClick={() => window.open('tel:0748777776', '_self')}
               data-track-action="A apasat pe suna din cos."
               className="flex h-11 w-11 items-center justify-center rounded-full  text-foreground"
-              aria-label="Suna"
+              aria-label={t('nav.call')}
             >
               <Phone className="h-4 w-4" />
             </button>
@@ -761,13 +764,13 @@ const CartPage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/plata-cos')}
+                onClick={() => navigate(withLocalePath('/plata-cos'))}
                 data-track-action="A mers la finalizare comanda din cos."
                 className="flex flex-col items-center justify-center gap-1 rounded-full py-2 text-xs font-semibold text-white shadow-lg"
                 style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
               >
                 <span className="flex items-center gap-2">
-                  Continua
+                  {t('cart.continue')}
                   <ChevronRight className="h-4 w-4 text-white" />
                 </span>
               </button>
@@ -784,7 +787,7 @@ const CartPage = () => {
             data-track-action="A inchis personalizarea din cos."
           />
           <div className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="text-sm font-semibold text-foreground">Editeaza personalizare</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('cart.editCustomization')}</h3>
             <div className="mt-4 max-h-[55vh] space-y-4 overflow-y-auto pr-1">
               {draftPersonalizare?.map((entry, index) => (
                 <div key={`${entry.name}-${index}`} className="space-y-1">
@@ -856,7 +859,7 @@ const CartPage = () => {
                         )
                       }
                       className="h-10 w-full rounded-lg border border-border px-3 text-sm"
-                      placeholder="Optiuni separate prin virgula"
+                      placeholder={t('cart.optionsComma')}
                     />
                   ) : null}
 
@@ -869,7 +872,7 @@ const CartPage = () => {
                         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
                           📷
                         </span>
-                        <span>Incarca o poza noua</span>
+                        <span>{t('cart.uploadNewPhoto')}</span>
                       </label>
                       <input
                         id={`cart-upload-${entry.name}`}
@@ -907,7 +910,7 @@ const CartPage = () => {
                 data-track-action="A anulat personalizarea din cos."
                 className="flex-1 rounded-full border border-border py-2 text-xs font-semibold text-foreground"
               >
-                Anuleaza
+                {t('cart.cancel')}
               </button>
               <button
                 type="button"
@@ -919,7 +922,7 @@ const CartPage = () => {
                 data-track-action="A salvat personalizarea din cos."
                 className="flex-1 rounded-full bg-primary py-2 text-xs font-semibold text-white"
               >
-                Salveaza
+                {t('cart.save')}
               </button>
             </div>
           </div>
@@ -933,29 +936,29 @@ const CartPage = () => {
             data-track-action="A inchis felicitarea din cos."
           />
           <div className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="text-sm font-semibold text-foreground">Felicitare cu mesaj personalizat</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('cart.giftModalTitle')}</h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Scrie un mesaj scurt si noi il imprimam pe felicitare, langa cadoul tau.
+              {t('cart.giftModalHint')}
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3">
               {[0, 1].map((index) => (
                 <div key={`gift-${index}`} className="overflow-hidden rounded-xl border border-border">
-                  <img src={productImage} alt="Felicitare" className="h-32 w-full object-cover" />
+                  <img src={productImage} alt={t('cart.giftTitle')} className="h-32 w-full object-cover" />
                 </div>
               ))}
             </div>
             <div className="mt-4">
-              <label className="text-xs font-semibold text-foreground">Mesajul tau (max 250 de caractere)</label>
+              <label className="text-xs font-semibold text-foreground">{t('cart.giftMessageLabel')}</label>
               <textarea
                 value={draftMessage}
                 maxLength={250}
                 onChange={(event) => setDraftMessage(event.target.value)}
                 data-track-action="A completat mesajul de felicitare."
                 className="mt-2 h-28 w-full rounded-xl border border-border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Scrie mesajul aici..."
+                placeholder={t('cart.giftMessagePlaceholder')}
               />
               <div className="mt-1 text-right text-[11px] text-muted-foreground">
-                {draftMessage.length}/250 caractere
+                {t('cart.giftCharacters', { count: draftMessage.length })}
               </div>
             </div>
             <div className="mt-4 flex gap-2">
@@ -965,7 +968,7 @@ const CartPage = () => {
                 data-track-action="A anulat felicitarea din cos."
                 className="flex-1 rounded-full border border-border py-2 text-xs font-semibold text-foreground"
               >
-                Anuleaza
+                {t('cart.cancel')}
               </button>
               <button
                 type="button"
@@ -977,7 +980,7 @@ const CartPage = () => {
                 data-track-action="A salvat felicitarea din cos."
                 className="flex-1 rounded-full bg-primary py-2 text-xs font-semibold text-white"
               >
-                Salveaza felicitare
+                {t('cart.giftSave')}
               </button>
             </div>
           </div>
@@ -987,7 +990,7 @@ const CartPage = () => {
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/60 backdrop-blur-sm">
           <div className="flex items-center gap-3 rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-foreground shadow">
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#c89b59] border-t-transparent" />
-            Verificam cuponul...
+            {t('cart.couponOverlay')}
           </div>
         </div>
       )}
@@ -996,3 +999,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+

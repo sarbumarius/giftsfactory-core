@@ -1,6 +1,8 @@
 export interface ParentCategory {
   titlu: string;
+  title_en?: string;
   slug: string;
+  slug_en?: string;
   count_produse: number;
   imagine: string;
 }
@@ -9,8 +11,9 @@ export interface CategoryInfo {
   titlu: string;
   title_en?: string;
   slug: string;
+  slug_en?: string;
   descriere: string;
-  descriere_en?: string;
+  desc_en?: string;
   imagine: string;
   nr_produse: number;
   parinte?: ParentCategory;
@@ -66,7 +69,9 @@ export interface ProductReference {
 
 export interface Subcategory {
   titlu: string;
+  title_en?: string;
   slug: string;
+  slug_en?: string;
   count_produse: number;
   imagine: string;
 }
@@ -185,6 +190,8 @@ export interface ProductDetailResponse extends ApiProduct {
 export interface ApiResponse {
   info: CategoryInfo;
   produse: ApiProduct[];
+  title_en?: string;
+  desc_en?: string;
 }
 
 export interface MeiliCategoryHit {

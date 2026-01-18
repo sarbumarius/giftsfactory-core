@@ -8,6 +8,7 @@ import { useShopContext } from '@/contexts/ShopContext';
 import { Heart } from 'lucide-react';
 import { formatDimensions } from '@/utils/formatDimensions';
 import { getLocale, withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
 interface MobileProductCardProps {
   product: ApiProduct;
@@ -34,6 +35,19 @@ const MobileProductCard = ({
   const [activeIndex, setActiveIndex] = useState(index);
   const navigate = useNavigate();
   const { wishlist, addToWishlist, removeFromWishlist } = useShopContext();
+  const locale = getLocale();
+  const getTitle = (item: ApiProduct) =>
+    locale === 'en' ? item.title_en ?? '' : item.titlu;
+  const getSlug = (item: ApiProduct) =>
+    locale === 'en' ? item.slug_en || item.slug : item.slug;
+  const translateAttributeName = (name: string) => {
+    const normalized = name.toLowerCase();
+    if (normalized === 'dimensiune') return t('attr.dimension');
+    if (normalized === 'tip') return t('attr.type');
+    if (normalized === 'material') return t('attr.material');
+    if (normalized === 'personalizare') return t('attr.personalization');
+    return name;
+  };
 
   const hasSequence = Boolean(desktopSequence && desktopSequence.length > 1);
   const activeProduct = hasSequence
@@ -47,8 +61,8 @@ const MobileProductCard = ({
 
   useEffect(() => {
     if (!isModalOpen) return;
-    prefetchProductDetails(activeProduct.slug);
-  }, [isModalOpen, activeProduct.slug]);
+    prefetchProductDetails(getSlug(activeProduct));
+  }, [isModalOpen, activeProduct.slug, activeProduct.slug_en, locale]);
   useEffect(() => {
     if (!isModalOpen) {
       setShowReviews(false);
@@ -92,9 +106,6 @@ const MobileProductCard = ({
   const imageUrl = getImageUrl(product);
   const hasCleanImage = Boolean(product.clean_image);
   const isInWishlist = wishlist.some((item) => item.id === product.id);
-  const locale = getLocale();
-  const getTitle = (item: ApiProduct) =>
-    locale === 'en' ? item.title_en ?? '' : item.titlu;
 
 
   const getBorderColor = (badge?: string) => {
@@ -362,7 +373,7 @@ const MobileProductCard = ({
                       )}
                     </div>
                     <div className="mt-0">
-                      <span className="text-xs text-muted-foreground">Dimensiune</span>
+                      <span className="text-xs text-muted-foreground">{t('attr.dimension')}</span>
                       <p className="text-sm font-semibold text-foreground">
                         {dimensions || '-'}
                       </p>
@@ -371,12 +382,12 @@ const MobileProductCard = ({
                       type="button"
                       onClick={() => {
                         setIsModalOpen(false);
-                        navigate(withLocalePath(`/produs/${product.slug}`));
+                        navigate(withLocalePath(`/produs/${getSlug(product)}`));
                       }}
                       data-track-action={`A deschis produsul ${title}.`}
                       className="gold-gradient mt-3 flex w-full items-center justify-center gap-2 rounded-full py-2 text-xs font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      Personalizeaza
+                      {t('product.customize')}
                       <ArrowRight className="h-4 w-4 text-white" />
                     </button>
                   </div>
@@ -406,8 +417,10 @@ const MobileProductCard = ({
                       <>
                         <p className="text-sm font-semibold text-foreground">
                           {zoomItems.length > 0
-                            ? `${zoomItems.length}/${product.recenzii.length} poze reale de la clientii nostri`
-                            : `${product.recenzii.length} ${product.recenzii.length === 1 ? 'recenzie' : 'recenzii'} de la clienti`}
+                            ? `${zoomItems.length}/${product.recenzii.length} ${t('product.realPhotos')}`
+                            : `${product.recenzii.length} ${
+                                product.recenzii.length === 1 ? t('product.review') : t('product.reviews')
+                              } ${t('product.reviewsFromCustomers')}`}
                         </p>
                         <div className="relative">
                           <div
@@ -499,7 +512,7 @@ const MobileProductCard = ({
                       const visibleAttributes: { name: string; slug: string; options: string[] }[] = [];
                       if (dimensions) {
                         visibleAttributes.push({
-                          name: 'Dimensiune',
+                          name: t('attr.dimension'),
                           slug: 'dimensiune',
                           options: [dimensions],
                         });
@@ -508,7 +521,7 @@ const MobileProductCard = ({
                         ?.filter((attr) => attr.visible)
                         .forEach((attr) => {
                           visibleAttributes.push({
-                            name: attr.name,
+                            name: translateAttributeName(attr.name),
                             slug: attr.slug,
                             options: attr.options,
                           });
@@ -539,13 +552,13 @@ const MobileProductCard = ({
                 type="button"
                 onClick={() => {
                   setIsModalOpen(false);
-                  navigate(withLocalePath(`/produs/${product.slug}`));
+                  navigate(withLocalePath(`/produs/${getSlug(product)}`));
                 }}
                 data-track-action={`A deschis informatii suplimentare pentru ${title}.`}
                 className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-border py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
               >
                 <Info className="h-4 w-4" />
-                Informatii Suplimentare
+                {t('product.moreInfo')}
               </button>
             </div>
 

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCategoryContext } from '@/contexts/CategoryContext';
+import { getLocale, withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 import { Baby, Users, Gift, Heart, Mail, ArrowLeft, Info, Grid } from 'lucide-react';
 import MobileCategoryFilterSlide from './MobileCategoryFilterSlide';
 import MobileCategoryTypeSlide from './MobileCategoryTypeSlide';
@@ -28,7 +30,7 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
             <div className="h-7 w-40 rounded-md bg-white/20 animate-pulse" />
             <div className="h-6 w-6 rounded-full bg-white/20 animate-pulse" />
           </div>
-          <p className="text-white/60 text-sm">Se incarca...</p>
+          <p className="text-white/60 text-sm">{t('category.loading')}</p>
         </div>
 
         <div className="flex gap-3 pb-2 mb-6">
@@ -48,15 +50,18 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
     );
   }
 
+  const locale = getLocale();
   const subcategories = data.info.subcategorii;
   const filteredSubcategories = subcategories.filter(
     (subcategory) => subcategory.count_produse && subcategory.count_produse > 0
   );
   const showOtherCategoriesCard = filteredSubcategories.length > 0 && Boolean(onOpenCategories);
-  const categoryTitle = data.info.titlu;
+  const categoryTitleEn = data.info.title_en ?? data.title_en ?? '';
+  const categoryTitle = locale === 'en' ? categoryTitleEn : data.info.titlu;
   const parentCategory = data.info.parinte;
   const productCount = data.info.nr_produse;
-  const description = data.info.descriere;
+  const descriptionEn = data.info.desc_en ?? data.desc_en ?? '';
+  const description = locale === 'en' ? descriptionEn : data.info.descriere;
   const descriptionText = description
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
@@ -106,9 +111,10 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
     return 'flex gap-3 overflow-x-auto pb-2 mb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]';
   };
 
-  const handleCardClick = (slug: string) => {
+  const handleCardClick = (slug: string, slugEn?: string) => {
     setCurrentSlug(slug);
-    navigate(`/categorie/${slug}`);
+    const targetSlug = locale === 'en' ? slugEn || slug : slug;
+    navigate(withLocalePath(`/categorie/${targetSlug}`));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -122,13 +128,13 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
             onClick={() => setShowDescription(!showDescription)}
             data-track-action="A apasat pe informatii categorie."
             className="rounded-full p-1 hover:bg-white/10 transition-colors active:scale-95"
-            aria-label="Informatii despre categorie"
+            aria-label={t('category.info')}
           >
             <Info className={`h-5 w-5 text-white transition-transform ${showDescription ? 'rotate-180' : ''}`} />
           </button>
         </div>
         <p className="text-white/80 text-xl font-serif">
-          {productCount} {productCount === 1 ? 'produs' : 'produse'}
+          {productCount} {productCount === 1 ? t('category.product') : t('category.products')}
         </p>
 
         {showDescription && (
@@ -146,7 +152,7 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
       <div className={getContainerClass()}>
         {shouldShowParent && parentCategory && (
           <div
-            onClick={() => handleCardClick(parentCategory.slug)}
+            onClick={() => handleCardClick(parentCategory.slug, parentCategory.slug_en)}
             data-track-action={`A apasat pe categoria ${parentCategory.titlu}.`}
             className={`relative ${getCardWidthClass()} flex-shrink-0 overflow-hidden rounded-2xl bg-card opacity-0 animate-scale-in transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none border-2 border-primary/30`}
             style={{ animationDelay: '0s', animationFillMode: 'forwards' }}
@@ -158,9 +164,11 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
             <div className="relative z-10 p-3">
               <div className="flex items-center gap-1 mb-1">
                 <ArrowLeft className="h-3 w-3 text-primary" />
-                <span className="text-xs text-primary font-medium">Inapoi la</span>
+                <span className="text-xs text-primary font-medium">{t('category.backTo')}</span>
               </div>
-              <h3 className="text-sm font-serif text-foreground pointer-events-none">{parentCategory.titlu}</h3>
+              <h3 className="text-sm font-serif text-foreground pointer-events-none">
+                {locale === 'en' ? parentCategory.title_en ?? '' : parentCategory.titlu}
+              </h3>
             </div>
           </div>
         )}
@@ -171,8 +179,8 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
           return (
             <div
               key={subcategory.slug}
-              onClick={() => handleCardClick(subcategory.slug)}
-              data-track-action={`A apasat pe categoria ${subcategory.titlu}.`}
+            onClick={() => handleCardClick(subcategory.slug, subcategory.slug_en)}
+            data-track-action={`A apasat pe categoria ${subcategory.titlu}.`}
               className={`relative ${getCardWidthClass()} flex-shrink-0 overflow-hidden rounded-2xl bg-card opacity-0 animate-scale-in transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none`}
               style={{ animationDelay: `${animationIndex * 0.15}s`, animationFillMode: 'forwards' }}
             >
@@ -190,9 +198,11 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
               )}
 
               <div className="relative z-10 p-3">
-                <h3 className="text-sm font-serif text-foreground pointer-events-none">{subcategory.titlu}</h3>
+                <h3 className="text-sm font-serif text-foreground pointer-events-none">
+                  {locale === 'en' ? subcategory.title_en ?? '' : subcategory.titlu}
+                </h3>
                 <button className="mt-2 rounded-full bg-foreground px-2 py-1 text-[10px] font-medium text-primary-foreground transition-all hover:bg-foreground/80">
-                  {subcategory.count_produse} produse
+                  {subcategory.count_produse} {t('category.products')}
                 </button>
               </div>
             </div>
@@ -219,9 +229,9 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
             </div>
 
             <div className="relative z-10 p-3">
-              <h3 className="text-sm font-serif text-foreground pointer-events-none">Vezi alte categorii</h3>
+              <h3 className="text-sm font-serif text-foreground pointer-events-none">{t('category.other')}</h3>
               <button className="mt-2 rounded-full bg-primary px-2 py-1 text-[10px] font-medium text-primary-foreground transition-all hover:bg-primary/90">
-                Apasa
+                {t('category.tap')}
               </button>
             </div>
           </div>

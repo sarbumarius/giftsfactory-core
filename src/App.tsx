@@ -48,7 +48,7 @@ const App = () => {
                 <Route path="/plata-cos/order-received/:orderNumber" element={<ThankYouPage />} />
                 <Route path="/categorie/:slug" element={<CategoryLandingPage />} />
                 <Route path="/en" element={<Index />} />
-                <Route path="/en/produs/:slug" element={<ProductPageEntry />} />
+                <Route path="/en/product/:slug" element={<ProductPageEntry />} />
                 <Route path="/en/cos" element={<CartPageEntry />} />
                 <Route path="/en/plata-cos" element={<CheckoutPageEntry />} />
                 <Route path="/en/wishlist" element={<WishlistPageEntry />} />

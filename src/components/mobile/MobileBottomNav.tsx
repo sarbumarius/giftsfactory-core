@@ -6,12 +6,13 @@ import MobileCategorySheet from './MobileCategorySheet';
 import MobileSearchSheet from './MobileSearchSheet';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { stripLocalePrefix, withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 const navItems = [
-  { icon: Menu, label: 'Meniu' },
-  { icon: LayoutGrid, label: 'Categorii' },
-  { icon: Search, label: 'Cauta' },
-  { icon: MessageSquare, label: 'Recenzii' },
-  { icon: Phone, label: 'Suna' },
+  { icon: Menu, labelKey: 'nav.menu' },
+  { icon: LayoutGrid, labelKey: 'nav.categories' },
+  { icon: Search, labelKey: 'nav.search' },
+  { icon: MessageSquare, labelKey: 'nav.reviews' },
+  { icon: Phone, labelKey: 'nav.call' },
 ];
 
 export interface MobileBottomNavRef {
@@ -53,7 +54,7 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
         <div className="flex items-center justify-around">
           {navItems.map((item, index) => {
             const isReviewsPage = stripLocalePrefix(location.pathname) === '/recenzii';
-            const label = index === 3 && isReviewsPage ? 'Categorii' : item.label;
+            const label = index === 3 && isReviewsPage ? t('nav.categories') : t(item.labelKey);
 
             return (
               <button
@@ -87,8 +88,8 @@ const MobileBottomNav = forwardRef<MobileBottomNavRef>((props, ref) => {
                   item.icon && <item.icon className="h-5 w-5 text-muted-foreground" />
                 )}
                 <span className={`text-[10px] ${index === 2 ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
-                  {label}
-                </span>
+                {label}
+              </span>
               </button>
             );
           })}

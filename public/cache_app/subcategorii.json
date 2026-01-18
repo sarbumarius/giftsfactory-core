@@ -1,2 +1,583 @@
-
-{"parent":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[{"id":1796786515,"titlu":"Cadouri corporate","slug":"cadouri-corporate","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/corporate-01.svg","nr_produse":35,"nivel":1,"parinte":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[]},{"id":2378879534,"titlu":"Cadouri lideri","slug":"cadouri-lideri","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/sef-01.svg","nr_produse":16,"nivel":1,"parinte":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[]},{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171,"nivel":1,"parinte":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[{"id":900059124,"titlu":"Cadouri pentru medici chirurgi","slug":"cadouri-pentru-medici-chirurgi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/doctor-1.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":2498364769,"titlu":"Cadouri pentru medici ginecologi personalizate","slug":"cadouri-pentru-medici-ginecologi-personalizate","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/female.png","nr_produse":4,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":4190466643,"titlu":"Cadouri pentru stomatologi","slug":"cadouri-pentru-stomatologi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/healthy.png","nr_produse":2,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":879692924,"titlu":"Cadouri pentru psihologi","slug":"cadouri-pentru-psihologi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/autism.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":3385429930,"titlu":"Cadouri pentru reumatologi","slug":"cadouri-pentru-reumatologi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/medical-team.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":1634838364,"titlu":"Cadouri pentru pediatri","slug":"cadouri-pentru-pediatri","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/doctor.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":82393450,"titlu":"Cadouri pentru cardiologi","slug":"cadouri-pentru-cardiologi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/heart.png","nr_produse":2,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":2483506199,"titlu":"Cadouri oncologi","slug":"cadouri-oncologi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/oncology.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":3617432085,"titlu":"Cadouri pentru ortopezi","slug":"cadouri-pentru-ortopezi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/check-up.png","nr_produse":1,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":2313757844,"titlu":"Cadouri pentru veterinari","slug":"cadouri-pentru-veterinari","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/veterinarian.png","nr_produse":2,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":2219146022,"titlu":"Cadouri nutritionisti","slug":"cadouri-nutritionisti","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/nutrition.png","nr_produse":2,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]},{"id":1741985554,"titlu":"Cadouri pentru asistenti medicali","slug":"cadouri-pentru-asistenti-medicali","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/old-man.png","nr_produse":2,"nivel":3,"parinte":{"id":163624727,"titlu":"Cadouri pentru medici","slug":"cadouri-pentru-medici","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/doctor-01-01.svg","nr_produse":25},"subcategorii":[]}]},{"id":3563119060,"titlu":"Cadouri pentru profesori","slug":"cadouri-pentru-profesori","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/05\/profesori-01.svg","nr_produse":62,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]},{"id":82096001,"titlu":"Cadouri armata","slug":"cadouri-armata","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/soldier-1.png","nr_produse":13,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]},{"id":490795849,"titlu":"Cadouri justitie","slug":"cadouri-justitie","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/judge.png","nr_produse":4,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]},{"id":1800490527,"titlu":"Cadouri politisti","slug":"cadouri-politisti","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/avatar.png","nr_produse":3,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]},{"id":1118672631,"titlu":"Cadouri pompieri","slug":"cadouri-pompieri","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/fire.png","nr_produse":2,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]},{"id":2032848739,"titlu":"Cadouri primari","slug":"cadouri-primari","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/house.png","nr_produse":1,"nivel":2,"parinte":{"id":495387440,"titlu":"Cadouri profesii","slug":"cadouri-profesii","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2022\/06\/profesii-icon.svg","nr_produse":171},"subcategorii":[]}]},{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24,"nivel":1,"parinte":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[{"id":3888312559,"titlu":"Cadouri fotbal","slug":"cadouri-fotbal","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/football.png","nr_produse":16,"nivel":2,"parinte":{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24},"subcategorii":[]},{"id":3232618091,"titlu":"Cadouri arte martiale","slug":"cadouri-arte-martiale","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/kimono.png","nr_produse":3,"nivel":2,"parinte":{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24},"subcategorii":[]},{"id":2047911759,"titlu":"Cadouri pentru gameri","slug":"cadouri-pentru-gameri","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/mobile-game.png","nr_produse":1,"nivel":2,"parinte":{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24},"subcategorii":[]},{"id":30814951,"titlu":"Cadouri tenis","slug":"cadouri-tenis","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/ball.png","nr_produse":1,"nivel":2,"parinte":{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24},"subcategorii":[]},{"id":370548305,"titlu":"Cadouri general sportive","slug":"cadouri-general-sportive","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/application.png","nr_produse":0,"nivel":2,"parinte":{"id":2780380282,"titlu":"Cadouri sportivi","slug":"cadouri-sportivi","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/09\/e60da38f-aee2-40f7-ad8c-07f9835fa451.png","nr_produse":24},"subcategorii":[]}]},{"id":3242222001,"titlu":"Cadouri hobby","slug":"cadouri-hobby","imagine":"https:\/\/darurialese.ro\/wp-content\/uploads\/2025\/11\/nasi-01.svg","nr_produse":9,"nivel":1,"parinte":{"id":1137441940,"titlu":"Gifts Factory","slug":"gifts-factory","imagine":"https:\/\/darurialese.com\/wp-content\/themes\/woodmart-child\/img\/logo-menu-wt-01.svg","nr_produse":185},"subcategorii":[]}]}
+{
+  "parent": {
+    "id": 1137441940,
+    "titlu": "Gifts Factory",
+    "slug": "gifts-factory",
+    "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+    "nr_produse": 185,
+    "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+    "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+    "slug_en": "gifts-factory"
+  },
+  "subcategorii": [
+    {
+      "id": 1796786515,
+      "titlu": "Cadouri corporate",
+      "slug": "cadouri-corporate",
+      "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/corporate-01.svg",
+      "nr_produse": 35,
+      "nivel": 1,
+      "parinte": {
+        "id": 1137441940,
+        "titlu": "Gifts Factory",
+        "slug": "gifts-factory",
+        "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+        "nr_produse": 185,
+        "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+        "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+        "slug_en": "gifts-factory"
+      },
+      "subcategorii": [],
+      "title_en": "Personalized Corporate Gifts",
+      "desc_en": "Discover personalized corporate gifts for bosses, business partners, and colleagues. Choose a unique, custom-engraved desk gift or trophy that shows appreciation and motivates every day—fully tailored to the recipient, with nationwide shipping.",
+      "slug_en": "personalized-corporate-gifts"
+    },
+    {
+      "id": 2378879534,
+      "titlu": "Cadouri lideri",
+      "slug": "cadouri-lideri",
+      "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/sef-01.svg",
+      "nr_produse": 16,
+      "nivel": 1,
+      "parinte": {
+        "id": 1137441940,
+        "titlu": "Gifts Factory",
+        "slug": "gifts-factory",
+        "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+        "nr_produse": 185,
+        "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+        "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+        "slug_en": "gifts-factory"
+      },
+      "subcategorii": [],
+      "title_en": "Personalized Gifts for Bosses & Leaders",
+      "desc_en": "Elegant, personalized gifts for bosses and leaders: custom trophies, engraved plaques and moss decor that convey respect, appreciation and professionalism.",
+      "slug_en": "gifts-for-bosses-and-leaders"
+    },
+    {
+      "id": 495387440,
+      "titlu": "Cadouri profesii",
+      "slug": "cadouri-profesii",
+      "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+      "nr_produse": 171,
+      "nivel": 1,
+      "parinte": {
+        "id": 1137441940,
+        "titlu": "Gifts Factory",
+        "slug": "gifts-factory",
+        "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+        "nr_produse": 185,
+        "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+        "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+        "slug_en": "gifts-factory"
+      },
+      "subcategorii": [
+        {
+          "id": 163624727,
+          "titlu": "Cadouri pentru medici",
+          "slug": "cadouri-pentru-medici",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+          "nr_produse": 25,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [
+            {
+              "id": 900059124,
+              "titlu": "Cadouri pentru medici chirurgi",
+              "slug": "cadouri-pentru-medici-chirurgi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/doctor-1.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Surgeons: Thank-You, Promotion & Retirement",
+              "desc_en": "Meaningful, personalized gifts for surgeons: engraved plaques and trophies with name, specialty, surgery date or heartfelt message. Ideal thank-you, promotion or retirement presents.",
+              "slug_en": "personalized-gifts-for-surgeons"
+            },
+            {
+              "id": 2498364769,
+              "titlu": "Cadouri pentru medici ginecologi personalizate",
+              "slug": "cadouri-pentru-medici-ginecologi-personalizate",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/female.png",
+              "nr_produse": 4,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Gynecologists & OB-GYNs",
+              "desc_en": "Say thank you with personalized gifts for gynecologists: engraved trophies and plaques with name, birth date, or message - meaningful keepsakes for OB-GYNs.",
+              "slug_en": "personalized-gifts-for-gynecologists-obgyn"
+            },
+            {
+              "id": 4190466643,
+              "titlu": "Cadouri pentru stomatologi",
+              "slug": "cadouri-pentru-stomatologi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/healthy.png",
+              "nr_produse": 2,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Dentists",
+              "desc_en": "Find memorable dentist gifts—engraved trophies, custom plaques and photo frames—for practice openings, exam milestones or a meaningful thank-you. Personalize names, messages, designs, colors and dental symbols for unique office decor that shows appreciation.",
+              "slug_en": "personalized-gifts-for-dentists"
+            },
+            {
+              "id": 879692924,
+              "titlu": "Cadouri pentru psihologi",
+              "slug": "cadouri-pentru-psihologi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/autism.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Gifts for Psychologists: Personalized Trophies, Plaques & Decor",
+              "desc_en": "Discover thoughtful gifts for psychologists: personalized trophies and plaques, stabilized moss decor, and custom designs to celebrate milestones or say thank you.",
+              "slug_en": "gifts-for-psychologists"
+            },
+            {
+              "id": 3385429930,
+              "titlu": "Cadouri pentru reumatologi",
+              "slug": "cadouri-pentru-reumatologi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/medical-team.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Rheumatologists",
+              "desc_en": "Thoughtful personalized gifts for rheumatologists: custom trophies, engraved plaques and frames with name, specialty and your message—perfect for birthdays, retirements or thank‑you gifts.",
+              "slug_en": "personalized-gifts-for-rheumatologists"
+            },
+            {
+              "id": 1634838364,
+              "titlu": "Cadouri pentru pediatri",
+              "slug": "cadouri-pentru-pediatri",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/doctor.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Pediatricians",
+              "desc_en": "Personalized gifts for pediatricians: custom trophies, engraved plaques, and nature-inspired decor with your message. A meaningful thank-you for great care.",
+              "slug_en": "personalized-gifts-for-pediatricians"
+            },
+            {
+              "id": 82393450,
+              "titlu": "Cadouri pentru cardiologi",
+              "slug": "cadouri-pentru-cardiologi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/heart.png",
+              "nr_produse": 2,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Cardiologists",
+              "desc_en": "Discover personalized gifts for cardiologists—custom trophies, elegant plaques, and natural office decor. Ideal for residency graduation, exams, and career milestones.",
+              "slug_en": "personalized-gifts-for-cardiologists"
+            },
+            {
+              "id": 2483506199,
+              "titlu": "Cadouri oncologi",
+              "slug": "cadouri-oncologi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/oncology.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Oncologists - Trophies, Plaques & Keepsakes",
+              "desc_en": "Discover thoughtful, personalized gifts for oncologists: custom trophies, engraved plaques and LED keepsakes with names and messages, perfect for thank-you gifts and milestones.",
+              "slug_en": "personalized-gifts-for-oncologists"
+            },
+            {
+              "id": 3617432085,
+              "titlu": "Cadouri pentru ortopezi",
+              "slug": "cadouri-pentru-ortopezi",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/check-up.png",
+              "nr_produse": 1,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Orthopedic Surgeons & Orthopedists",
+              "desc_en": "Discover personalized gifts for orthopedic surgeons &amp; orthopedists: custom trophies, engraved plaques, and LED lamps—ideal for residency milestones, promotions, or clinic anniversaries.",
+              "slug_en": "gifts-for-orthopedic-surgeons"
+            },
+            {
+              "id": 2313757844,
+              "titlu": "Cadouri pentru veterinari",
+              "slug": "cadouri-pentru-veterinari",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/veterinarian.png",
+              "nr_produse": 2,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Veterinarians | Custom Vet Gifts",
+              "desc_en": "Personalized gifts for veterinarians: custom trophies, engraved plaques, and keepsakes with names, dates, or pet motifs. Thoughtful, memorable, clinic-ready.",
+              "slug_en": "personalized-gifts-for-veterinarians"
+            },
+            {
+              "id": 2219146022,
+              "titlu": "Cadouri nutritionisti",
+              "slug": "cadouri-nutritionisti",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/nutrition.png",
+              "nr_produse": 2,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Nutritionist Gifts",
+              "desc_en": "Say thank you with personalized gifts for nutritionists. Custom trophies, elegant plaques, and photo frames with your message become meaningful, desk-ready keepsakes that celebrate your journey together.",
+              "slug_en": "personalized-nutritionist-gifts"
+            },
+            {
+              "id": 1741985554,
+              "titlu": "Cadouri pentru asistenti medicali",
+              "slug": "cadouri-pentru-asistenti-medicali",
+              "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/old-man.png",
+              "nr_produse": 2,
+              "nivel": 3,
+              "parinte": {
+                "id": 163624727,
+                "titlu": "Cadouri pentru medici",
+                "slug": "cadouri-pentru-medici",
+                "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/doctor-01-01.svg",
+                "nr_produse": 25
+              },
+              "subcategorii": [],
+              "title_en": "Personalized Gifts for Nurses",
+              "desc_en": "Discover thoughtful, personalized gifts for nurses that say thank you. Add a name, ward, or heartfelt message to a custom trophy, engraved plaque, or nature-inspired decor for a lasting keepsake.",
+              "slug_en": "personalized-gifts-for-nurses"
+            }
+          ],
+          "title_en": "Personalized Gifts for Doctors | Unique Doctor Appreciation Gifts",
+          "desc_en": "Personalized gifts for doctors: engraved desk decor and practical keepsakes. Add your custom thank-you message for a meaningful gift they'll appreciate in any specialty.",
+          "slug_en": "personalized-gifts-for-doctors"
+        },
+        {
+          "id": 3563119060,
+          "titlu": "Cadouri pentru profesori",
+          "slug": "cadouri-pentru-profesori",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2022/05/profesori-01.svg",
+          "nr_produse": 62,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Teacher Gifts: Personalized Thank-You & End-of-Year Ideas",
+          "desc_en": "Explore thoughtful, personalized gifts for teachers, perfect for end-of-year, Teacher Appreciation, or back-to-school. Add your message for a heartfelt thank-you.",
+          "slug_en": "teacher-gifts-personalized"
+        },
+        {
+          "id": 82096001,
+          "titlu": "Cadouri armata",
+          "slug": "cadouri-armata",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/soldier-1.png",
+          "nr_produse": 13,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Military Gifts: Engraved Trophies, Plaques & Awards",
+          "desc_en": "Honor service with personalized military gifts: custom trophies, engraved plaques in wood or acrylic, LED and moss designs, ideal for promotions, retirements &amp; Army Day.",
+          "slug_en": "personalized-military-gifts"
+        },
+        {
+          "id": 490795849,
+          "titlu": "Cadouri justitie",
+          "slug": "cadouri-justitie",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/judge.png",
+          "nr_produse": 4,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Legal Gifts for Lawyers, Judges & Magistrates",
+          "desc_en": "Shop personalized legal gifts for lawyers, judges, and magistrates—custom trophies, engraved plaques, and desk decor for oath ceremonies, promotions, and retirements. Add names, titles, dates, and court or bar logos for a meaningful keepsake.",
+          "slug_en": "personalized-legal-gifts"
+        },
+        {
+          "id": 1800490527,
+          "titlu": "Cadouri politisti",
+          "slug": "cadouri-politisti",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/avatar.png",
+          "nr_produse": 3,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Gifts for Police Officers",
+          "desc_en": "Say thank you with meaningful, personalized gifts for police officers. From custom trophies with name and rank to elegant plaques, LED badge lamps, and team photo frames, find keepsakes perfect for promotions, retirements, and career milestones that honor pride, loyalty, and camaraderie.",
+          "slug_en": "personalized-police-officer-gifts"
+        },
+        {
+          "id": 1118672631,
+          "titlu": "Cadouri pompieri",
+          "slug": "cadouri-pompieri",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/fire.png",
+          "nr_produse": 2,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Custom Firefighter Gifts – Personalized Trophies, Plaques & Frames",
+          "desc_en": "Discover firefighter gifts that honor courage—personalized trophies, plaques, and frames for promotions, retirements, and milestones. Custom text, rank, date.",
+          "slug_en": "firefighter-gifts"
+        },
+        {
+          "id": 2032848739,
+          "titlu": "Cadouri primari",
+          "slug": "cadouri-primari",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/house.png",
+          "nr_produse": 1,
+          "nivel": 2,
+          "parinte": {
+            "id": 495387440,
+            "titlu": "Cadouri profesii",
+            "slug": "cadouri-profesii",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2022/06/profesii-icon.svg",
+            "nr_produse": 171
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Gifts for Mayors and Local Officials | Engraved Plaques & Trophies",
+          "desc_en": "Honor civic leaders with personalized gifts—engraved plaques with city crests, elegant trophies, and custom awards. Add name, title, date, and a meaningful message for official ceremonies, retirements, and recognitions.",
+          "slug_en": "personalized-gifts-for-mayors"
+        }
+      ],
+      "title_en": "Gifts by Profession – Personalized Trophies and Engraved Plaques",
+      "desc_en": "Thoughtful gifts by profession—custom trophies, engraved plaques and decor tailored to each career. Perfect for promotions, retirements or a heartfelt thank‑you.",
+      "slug_en": "gifts-by-profession-personalized-trophies-engraved-plaques"
+    },
+    {
+      "id": 2780380282,
+      "titlu": "Cadouri sportivi",
+      "slug": "cadouri-sportivi",
+      "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+      "nr_produse": 24,
+      "nivel": 1,
+      "parinte": {
+        "id": 1137441940,
+        "titlu": "Gifts Factory",
+        "slug": "gifts-factory",
+        "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+        "nr_produse": 185,
+        "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+        "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+        "slug_en": "gifts-factory"
+      },
+      "subcategorii": [
+        {
+          "id": 3888312559,
+          "titlu": "Cadouri fotbal",
+          "slug": "cadouri-fotbal",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/football.png",
+          "nr_produse": 16,
+          "nivel": 2,
+          "parinte": {
+            "id": 2780380282,
+            "titlu": "Cadouri sportivi",
+            "slug": "cadouri-sportivi",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+            "nr_produse": 24
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Football Gifts & Trophies",
+          "desc_en": "Discover personalized football gifts in wood and acrylic: custom trophies, engraved plaques, LED awards, and trophies with preserved moss. Add name, team, date, and message—ideal for players, coaches, and fans on birthdays, team anniversaries, and end-of-season awards.",
+          "slug_en": "personalized-football-gifts"
+        },
+        {
+          "id": 3232618091,
+          "titlu": "Cadouri arte martiale",
+          "slug": "cadouri-arte-martiale",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/kimono.png",
+          "nr_produse": 3,
+          "nivel": 2,
+          "parinte": {
+            "id": 2780380282,
+            "titlu": "Cadouri sportivi",
+            "slug": "cadouri-sportivi",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+            "nr_produse": 24
+          },
+          "subcategorii": [],
+          "title_en": "Martial Arts Gifts: Karate, Judo, MMA & Aikido Gift Ideas",
+          "desc_en": "Discover thoughtful martial arts gifts for every level—beginners, kids, and sensei. Shop training gear, personalized accessories, and samurai-inspired decor for karate, judo, MMA, and aikido—perfect for birthdays, belt promotions, holidays, or competitions.",
+          "slug_en": "martial-arts-gifts"
+        },
+        {
+          "id": 2047911759,
+          "titlu": "Cadouri pentru gameri",
+          "slug": "cadouri-pentru-gameri",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/mobile-game.png",
+          "nr_produse": 1,
+          "nivel": 2,
+          "parinte": {
+            "id": 2780380282,
+            "titlu": "Cadouri sportivi",
+            "slug": "cadouri-sportivi",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+            "nr_produse": 24
+          },
+          "subcategorii": [],
+          "title_en": "Gifts for Gamers",
+          "desc_en": "Shop gaming gifts and gifts for gamers: personalized trophies, wood and acrylic plaques, LED awards, and moss trophies. Customize with names, teams, mottos—ideal for birthdays, tournaments, and team milestones.",
+          "slug_en": "gifts-for-gamers"
+        },
+        {
+          "id": 30814951,
+          "titlu": "Cadouri tenis",
+          "slug": "cadouri-tenis",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/ball.png",
+          "nr_produse": 1,
+          "nivel": 2,
+          "parinte": {
+            "id": 2780380282,
+            "titlu": "Cadouri sportivi",
+            "slug": "cadouri-sportivi",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+            "nr_produse": 24
+          },
+          "subcategorii": [],
+          "title_en": "Tennis Gifts: Personalized Trophies, Engraved Awards & Unique Decor",
+          "desc_en": "Shop tennis gifts for players, coaches, and events: custom trophies with names, dates, and messages; engraved plaques and awards; plus creative tennis-themed moss decor. Perfect for wins, debuts, and season milestones.",
+          "slug_en": "tennis-gifts"
+        },
+        {
+          "id": 370548305,
+          "titlu": "Cadouri general sportive",
+          "slug": "cadouri-general-sportive",
+          "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/application.png",
+          "nr_produse": 0,
+          "nivel": 2,
+          "parinte": {
+            "id": 2780380282,
+            "titlu": "Cadouri sportivi",
+            "slug": "cadouri-sportivi",
+            "imagine": "https://darurialese.ro/wp-content/uploads/2025/09/e60da38f-aee2-40f7-ad8c-07f9835fa451.png",
+            "nr_produse": 24
+          },
+          "subcategorii": [],
+          "title_en": "Personalized Sports Gifts: Custom Trophies, LED Lamps & More",
+          "desc_en": "Personalized sports gifts that tell a story—engraved trophies, custom LED lamps, and more, tailored to their style, passions, and milestones.",
+          "slug_en": "personalized-sports-gifts"
+        }
+      ],
+      "title_en": "Personalized Gifts for Athletes – Custom Trophies, Engraved Plaques & LED Sports Lamps",
+      "desc_en": "Celebrate dedication with personalized sports gifts—custom trophies, engraved plaques and LED lamps with names, disciplines and records. Motivating awards that honor milestones and make every victory memorable.",
+      "slug_en": "personalized-gifts-for-athletes"
+    },
+    {
+      "id": 3242222001,
+      "titlu": "Cadouri hobby",
+      "slug": "cadouri-hobby",
+      "imagine": "https://darurialese.ro/wp-content/uploads/2025/11/nasi-01.svg",
+      "nr_produse": 9,
+      "nivel": 1,
+      "parinte": {
+        "id": 1137441940,
+        "titlu": "Gifts Factory",
+        "slug": "gifts-factory",
+        "imagine": "https://darurialese.com/wp-content/themes/woodmart-child/img/logo-menu-wt-01.svg",
+        "nr_produse": 185,
+        "title_en": "Gifts Factory: Personalized & Unique Gifts for Every Occasion",
+        "desc_en": "Explore Gifts Factory for personalized, unique gift ideas—ideal for birthdays, weddings, anniversaries, holidays, and corporate gifting.",
+        "slug_en": "gifts-factory"
+      },
+      "subcategorii": [],
+      "title_en": "Personalized Hobby Gifts: Trophies, Plaques & Awards",
+      "desc_en": "Celebrate every passion with personalized hobby gifts: custom trophies, plaques, cards, LED and preserved-moss awards in wood and acrylic. Perfect for gamers, anglers, photographers, chefs, and more.",
+      "slug_en": "personalized-hobby-gifts"
+    }
+  ]
+}

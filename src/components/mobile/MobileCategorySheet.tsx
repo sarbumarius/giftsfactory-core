@@ -4,7 +4,7 @@ import { X, Search, ChevronRight } from 'lucide-react';
 import { fetchSubcategoriesCached } from '@/services/api';
 import { SubcategoriesResponse, SubcategoryTreeNode } from '@/types/api';
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import { withLocalePath } from '@/utils/locale';
+import { getLocale, withLocalePath } from '@/utils/locale';
 
 interface MobileCategorySheetProps {
   isOpen: boolean;
@@ -19,6 +19,11 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const locale = getLocale();
+  const getCategoryTitle = (category: SubcategoryTreeNode) =>
+    locale === 'en' ? category.title_en ?? category.titlu : category.titlu;
+  const getCategorySlug = (category: SubcategoryTreeNode) =>
+    locale === 'en' ? category.slug_en ?? category.slug : category.slug;
 
   useEffect(() => {
     if (!isOpen || treeData) return;
@@ -68,7 +73,9 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
   };
 
   const shouldHideChristmasCategory = (category: SubcategoryTreeNode): boolean => {
-    const hasCraciun = category.titlu.toLowerCase().includes('craciun') || category.slug.toLowerCase().includes('craciun');
+    const title = getCategoryTitle(category).toLowerCase();
+    const slug = getCategorySlug(category).toLowerCase();
+    const hasCraciun = title.includes('craciun') || slug.includes('craciun');
     if (!hasCraciun) return false;
 
     const now = new Date();
@@ -96,24 +103,26 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
     const hasChildren = category.subcategorii?.length > 0;
     const indentClass = level === 1 ? 'ml-6' : level === 2 ? 'ml-12' : '';
     const isCurrent = category.slug === data?.info?.slug;
-    const isHighlighted = highlightSlugs?.has(category.slug);
+    const displayTitle = getCategoryTitle(category);
+    const displaySlug = getCategorySlug(category);
+    const isHighlighted = highlightSlugs?.has(displaySlug);
     const isExpanded = expandedIds.has(category.id);
 
     return (
       <div key={category.id}>
         <button
           className={`w-full flex items-center gap-3 p-3 ${getLevelBgClass(level)} hover:bg-muted/50 transition-colors ${indentClass}`}
-          data-track-action={`A apasat pe categoria ${category.titlu}.`}
+          data-track-action={`A apasat pe categoria ${displayTitle}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
-            navigate(withLocalePath(`/categorie/${category.slug}`));
+            navigate(withLocalePath(`/categorie/${displaySlug}`));
             onClose();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
           <img
             src={category.imagine}
-            alt={category.titlu}
+            alt={displayTitle}
             className="h-8 w-8 object-contain flex-shrink-0"
           /> 
           <div className="flex-1 text-left ">
@@ -122,7 +131,7 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
                 isHighlighted || isCurrent ? 'font-bold' : 'font-medium'
               }`}
             >
-              {category.titlu}
+              {displayTitle}
             </h3>
             <p className="text-xs text-muted-foreground">{category.nr_produse} produse</p>
           </div>
@@ -188,10 +197,12 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
     walk(treeData.subcategorii);
 
     const matches = allNodes.filter((node) => {
-      return node.titlu.toLowerCase().includes(query) || node.slug.toLowerCase().includes(query);
+      const title = getCategoryTitle(node).toLowerCase();
+      const slug = getCategorySlug(node).toLowerCase();
+      return title.includes(query) || slug.includes(query);
     });
 
-    const highlightedSlugs = new Set(matches.map((node) => node.slug));
+    const highlightedSlugs = new Set(matches.map((node) => getCategorySlug(node)));
     const resultMap = new Map<number, SubcategoryTreeNode>();
     const expandedIds = new Set<number>();
 
@@ -211,8 +222,8 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
       }
 
       const reorderedChildren = [...node.subcategorii].sort((a, b) => {
-        const aMatch = highlightedSlugs.has(a.slug) ? 1 : 0;
-        const bMatch = highlightedSlugs.has(b.slug) ? 1 : 0;
+        const aMatch = highlightedSlugs.has(getCategorySlug(a)) ? 1 : 0;
+        const bMatch = highlightedSlugs.has(getCategorySlug(b)) ? 1 : 0;
         return bMatch - aMatch;
       });
 
@@ -289,7 +300,7 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
       <div className="fixed inset-x-0 bottom-0 top-16 bg-background z-50 rounded-t-2xl animate-slide-up overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold text-foreground">
-            {treeData?.parent?.titlu || 'Categorii'}
+            {treeData?.parent ? getCategoryTitle(treeData.parent) : 'Categorii'}
           </h2>
           <button
             onClick={onClose}

@@ -11,7 +11,7 @@ import MobileBottomNav, { MobileBottomNavRef } from '@/components/mobile/MobileB
 import MobileScrollToTop from '@/components/mobile/MobileScrollToTop';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { removeJsonLd, upsertJsonLd } from '@/utils/structuredData';
-import { withLocalePath } from '@/utils/locale';
+import { getLocale, withLocalePath } from '@/utils/locale';
 
 const MobileCategoryPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -24,9 +24,13 @@ const MobileCategoryPage = () => {
   useEffect(() => {
     if (!data?.info) return;
     const origin = window.location.origin;
-    const categoryUrl = `${origin}/categorie/${data.info.slug}`;
-
-    const rawDescription = data.info.descriere || '';
+    const locale = getLocale();
+    const categorySlug = locale === 'en' ? data.info.slug_en || data.info.slug : data.info.slug;
+    const categoryUrl = `${origin}${withLocalePath(`/categorie/${categorySlug}`)}`;
+    const rawDescription =
+      locale === 'en'
+        ? data.info.desc_en || data.desc_en || ''
+        : data.info.descriere || '';
     const cleanDescription = rawDescription
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
@@ -45,7 +49,7 @@ const MobileCategoryPage = () => {
         {
           '@type': 'ListItem',
           position: 2,
-          name: data.info.titlu,
+          name: locale === 'en' ? data.info.title_en || data.title_en || '' : data.info.titlu,
           item: categoryUrl,
         },
       ],
@@ -60,7 +64,7 @@ const MobileCategoryPage = () => {
         item: {
           '@type': 'Product',
           name: product.titlu,
-          url: `${origin}/produs/${product.slug}`,
+          url: `${origin}${withLocalePath(`/produs/${product.slug}`)}`,
           image: product.imagine_principala?.full || product.imagine_principala?.['300x300'],
           brand: {
             '@type': 'Brand',
@@ -68,7 +72,7 @@ const MobileCategoryPage = () => {
           },
           offers: {
             '@type': 'Offer',
-            url: `${origin}/produs/${product.slug}`,
+            url: `${origin}${withLocalePath(`/produs/${product.slug}`)}`,
             priceCurrency: 'RON',
             price: String(product.pret_redus || product.pret || '0').replace(',', '.'),
             availability: 'https://schema.org/InStock',
@@ -95,7 +99,7 @@ const MobileCategoryPage = () => {
     const page = {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: data.info.titlu,
+      name: locale === 'en' ? data.info.title_en || data.title_en || '' : data.info.titlu,
       description: cleanDescription || data.info.titlu,
       url: categoryUrl,
       mainEntity: itemList,

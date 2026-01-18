@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/factorygifts.svg';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
 interface MobileMenuModalProps {
   isOpen: boolean;
@@ -11,12 +12,12 @@ interface MobileMenuModalProps {
 }
 
 const menuItems = [
-  { label: 'Categorii produse', href: '#', icon: Store, isDefaultCategory: true },
-  { label: 'Reduceri', href: '/reduceri', icon: Tag },
-  // { label: 'Calendar Oferte', href: '#', icon: Calendar },
-  { label: 'Recenzii clienti', href: '/recenzii', icon: MessageCircle },
-  { label: 'Intrebari frecvente', href: '/intrebari-frecvente', icon: HelpCircle },
-  { label: 'Contact', href: '/contact', icon: Phone },
+  { labelKey: 'menu.categories', href: '#', icon: Store, isDefaultCategory: true },
+  { labelKey: 'menu.discounts', href: '/reduceri', icon: Tag },
+  // { labelKey: 'menu.calendar', href: '#', icon: Calendar },
+  { labelKey: 'menu.reviews', href: '/recenzii', icon: MessageCircle },
+  { labelKey: 'menu.faq', href: '/intrebari-frecvente', icon: HelpCircle },
+  { labelKey: 'menu.contact', href: '/contact', icon: Phone },
 ];
 
 const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalProps) => {
@@ -60,6 +61,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
             <nav className="flex flex-col gap-1">
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
+                const label = t(item.labelKey);
                 const handleClick = () => {
                   if (item.isDefaultCategory) {
                     if (onOpenCategories) {
@@ -68,7 +70,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                       return;
                     }
                     setCurrentSlug('gifts-factory');
-                    navigate('/');
+                    navigate(withLocalePath('/'));
                     onClose();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     return;
@@ -85,28 +87,28 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
                 return (
                   isButton ? (
                     <button
-                      key={item.label}
+                      key={label}
                       type="button"
                       onClick={handleClick}
-                      data-track-action={`A apasat pe ${item.label} in meniu.`}
+                      data-track-action={`A apasat pe ${label} in meniu.`}
                       className="py-2 px-5 border border-t-1 border-b-0  border-[#000]/10 border-l-0 border-r-0 flex items-center justify-between gap-2 text-left text-white hover:bg-muted/50 transition-all hover:scale-[1.02] active:scale-[0.98] font-medium"
                     >
                       <div className="flex items-center gap-2">
                         <Icon className="h-4 w-4" />
-                        {item.label}
+                        {label}
                       </div>
                       <ChevronRight className="h-4 w-4 text-white" />
                     </button>
                   ) : (
                     <a
-                      key={item.label}
+                      key={label}
                       href={item.href}
-                      data-track-action={`A apasat pe ${item.label} in meniu.`}
+                      data-track-action={`A apasat pe ${label} in meniu.`}
                       className="py-2 px-5 border border-t-1 border-b-0 border-l-0 border-r-0 flex items-center justify-between gap-2 text-left text-foreground hover:bg-muted/50 transition-all hover:scale-[1.02] active:scale-[0.98] font-medium"
                     >
                       <div className="flex items-center gap-2">
                         <Icon className="h-4 w-4" />
-                        {item.label}
+                        {label}
                       </div>
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </a>
@@ -127,7 +129,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
               className="mb-3 flex items-center gap-2 py-3 px-4 text-left bg-white text-[#6844c1] font-semibold rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
             >
               <Phone className="h-4 w-4" />
-              Suna la 0748.777.776
+              {t('menu.call')}
             </a>
 
             <a
@@ -136,7 +138,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
               className="flex items-center gap-2 py-2.5 px-4 text-left rounded-lg bg-muted/40 text-xs font-semibold text-foreground transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Mail className="h-4 w-4" />
-              Email hello@sweetgifts.ro
+              {t('menu.email')}
             </a>
           </div>
         </div>

@@ -43,6 +43,7 @@ interface CategoryProviderProps {
 }
 
 export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: CategoryProviderProps) => {
+  const slugMapKey = 'slug_en_map';
   const [pathname, setPathname] = useState(() => {
     if (typeof window === 'undefined') return '/';
     return window.location.pathname;
@@ -52,7 +53,17 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
     const normalizedPath = stripLocalePrefix(window.location.pathname);
     const match = normalizedPath.match(/^\/categorie\/([^/]+)/);
     if (match?.[1]) {
-      return decodeURIComponent(match[1]);
+      const slugFromPath = decodeURIComponent(match[1]);
+      if (window.location.pathname.startsWith('/en')) {
+        try {
+          const stored = window.localStorage.getItem(slugMapKey);
+          const map = stored ? (JSON.parse(stored) as Record<string, string>) : {};
+          return map[slugFromPath] || slugFromPath;
+        } catch {
+          return slugFromPath;
+        }
+      }
+      return slugFromPath;
     }
     return initialSlug;
   };
@@ -126,14 +137,28 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
 
   useEffect(() => {
     if (!data?.info) return;
+    if (data.info.slug_en) {
+      try {
+        const stored = window.localStorage.getItem(slugMapKey);
+        const map = stored ? (JSON.parse(stored) as Record<string, string>) : {};
+        map[data.info.slug_en] = data.info.slug;
+        window.localStorage.setItem(slugMapKey, JSON.stringify(map));
+      } catch {
+        // ignore storage errors
+      }
+    }
     const path = stripLocalePrefix(pathname);
     if (path !== '/' && !path.startsWith('/categorie')) {
       return;
     }
     const defaultTitle = 'Daruri Alese Catalog';
     const locale = getLocale();
-    const titleValue = locale === 'en' ? data.info.title_en : data.info.titlu;
-    const descriptionValue = locale === 'en' ? data.info.descriere_en : data.info.descriere;
+    const titleValue =
+      locale === 'en' ? data.info.title_en ?? data.title_en : data.info.titlu;
+    const descriptionValue =
+      locale === 'en'
+        ? data.info.desc_en ?? data.desc_en
+        : data.info.descriere;
     const title = titleValue ? `${titleValue} | ${defaultTitle}` : defaultTitle;
     document.title = title;
 

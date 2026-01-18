@@ -110,7 +110,7 @@ const ReviewsPage = () => {
 
     const reviewItems = filteredReviews.slice(0, 20).map((review) => {
       const product = productsById.get(review.id_produs);
-      const productUrl = product?.slug ? `${origin}/produs/${product.slug}` : undefined;
+      const productUrl = product?.slug ? `${origin}${withLocalePath(`/produs/${product.slug}`)}` : undefined;
       const reviewItem: Record<string, unknown> = {
         '@type': 'Review',
         author: { '@type': 'Person', name: review.autor },

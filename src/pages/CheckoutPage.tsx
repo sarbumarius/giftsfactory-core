@@ -1251,7 +1251,7 @@ const CheckoutPage = () => {
       .then((res) => res.json())
       .then((response) => {
         if (response?.success) {
-          toast({ title: 'Comanda a fost trimisa cu succes.' });
+          toast({ title: t('checkout.orderSuccess') });
           try {
             sessionStorage.setItem('checkout-last-response', JSON.stringify(response));
           } catch {

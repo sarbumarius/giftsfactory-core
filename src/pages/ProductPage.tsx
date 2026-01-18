@@ -2313,12 +2313,12 @@ const ProductPage = () => {
                           onClick={() => setShowCartConfirm(false)}
                           data-track-action="A inchis confirmarea adaugarii in cos."
                           className="absolute right-3 top-3 rounded-full border border-border bg-white p-1.5 text-muted-foreground shadow-sm"
-                          aria-label="Inchide"
+                          aria-label={t('common.close')}
                       >
                           <X className="h-4 w-4" />
                       </button>
                       <h3 className="text-xl font-semibold font-serif text-center text-foreground">
-                          Adaugat cu succes!
+                          {t('product.addedSuccess')}
                       </h3>
                       <img
                           src="/added.jpg"
@@ -2348,7 +2348,7 @@ const ProductPage = () => {
                           {t('product.continueShopping')}
                       </p>
 
-                      {data.categorii?.length > 0 && (
+                      {data.categorii?.length > 0 ? (
                           <div className="mt-4">
                               <div className="mt-2 space-y-2">
                                   {(showAllConfirmCategories ? data.categorii : data.categorii.slice(0, 3)).map((category) => (
@@ -2383,6 +2383,21 @@ const ProductPage = () => {
                                 </button>
                               )}
                           </div>
+                      ) : (
+                        <div className="mt-4 flex w-full justify-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowCartConfirm(false);
+                              setIsCategoryOpen(true);
+                            }}
+                            data-track-action="A deschis categoriile din confirmarea cosului."
+                            className="flex min-w-[180px] items-center justify-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-muted-foreground shadow-sm"
+                          >
+                            {t('product.goToCategories')}
+                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                          </button>
+                        </div>
                       )}
                   </div>
               </>

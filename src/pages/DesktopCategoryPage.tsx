@@ -397,7 +397,7 @@ const DesktopCategoryPage = () => {
                         />
                       )}
                       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-                      <div className="mt-2 inline-flex rounded-full bg-[#f7e0e8] px-2 py-1 text-[11px] font-semibold text-[#6844c1]">
+                      <div className="mt-2 inline-flex rounded-full bg-[#f1f1f1] px-2 py-1 text-[11px] font-semibold text-[#6844c1]">
                         {subcategory.count_produse} {t('category.products')}
                       </div>
                     </button>

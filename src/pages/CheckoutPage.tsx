@@ -2117,25 +2117,25 @@ const CheckoutPage = () => {
 
 
           <div className="rounded-2xl p-2 hidden">
-            <p className="text-sm font-semibold text-foreground">De unde ai auzit de noi? (optional)</p>
+            <p className="text-sm font-semibold text-foreground">{t('checkout.sourceQuestion')}</p>
             <div className="mt-3">
               <select
                 name="wc_customer_source_checkout_field"
                 id="wc_customer_source_checkout_field"
                 className="h-10 w-full rounded-lg border border-border bg-white px-3 text-sm"
                 data-allow_clear="true"
-                data-placeholder="Selecteaza o optiune..."
+                data-placeholder={t('checkout.sourcePlaceholder')}
                 defaultValue=""
               >
-                <option value="">Selecteaza o optiune...</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Grupuri Facebook">Grupuri Facebook</option>
-                <option value="Google">Google</option>
-                <option value="Instagram">Instagram</option>
-                <option value="Tik Tok">Tik Tok</option>
-                <option value="Recomandari">Recomandari</option>
-                <option value="Sunt client fidel">Sunt client fidel</option>
-                <option value="Altceva">Altceva</option>
+                <option value="">{t('checkout.sourcePlaceholder')}</option>
+                <option value="Facebook">{t('checkout.sourceFacebook')}</option>
+                <option value="Grupuri Facebook">{t('checkout.sourceFacebookGroups')}</option>
+                <option value="Google">{t('checkout.sourceGoogle')}</option>
+                <option value="Instagram">{t('checkout.sourceInstagram')}</option>
+                <option value="Tik Tok">{t('checkout.sourceTikTok')}</option>
+                <option value="Recomandari">{t('checkout.sourceRecommendations')}</option>
+                <option value="Sunt client fidel">{t('checkout.sourceLoyalCustomer')}</option>
+                <option value="Altceva">{t('checkout.sourceOther')}</option>
               </select>
             </div>
           </div>
@@ -2541,9 +2541,9 @@ const CheckoutPage = () => {
             </div>
             {paymentMethod === 'transfer' && (
               <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                <p className="font-semibold text-foreground">ING BANK ROMANIA</p>
+                <p className="font-semibold text-foreground">{t('checkout.paymentBankPrimary')}</p>
                 <p>RO74INGB0000999906973879</p>
-                <p className="font-semibold text-foreground">Trezorerie operativa Sector5</p>
+                <p className="font-semibold text-foreground">{t('checkout.paymentBankSecondary')}</p>
                 <p>RO65TREZ7055069XXX012556</p>
                 <p>{t('checkout.paymentBankInfo')}</p>
               </div>
@@ -2713,7 +2713,7 @@ const CheckoutPage = () => {
               className="absolute right-4 top-4 rounded-full border border-border bg-white p-2 text-muted-foreground shadow-sm"
               aria-label={t('common.close')}
             >
-              ×
+              {t('common.close')}
             </button>
             <h3 className="text-base font-semibold text-foreground">
               {activeLegalModal === 'privacy' ? t('checkout.privacyTitle') : t('checkout.termsTitle')}

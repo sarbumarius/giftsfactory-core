@@ -743,12 +743,12 @@ const DesktopCartPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-white p-4">
+              <div className="rounded-2xl border border-border bg-white p-4 mt-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t('cart.deliveryScenarioTitle')}
                 </p>
 
-                <div className="mt-3 rounded-2xl bg-[#d0c6eb] px-3 py-3">
+                <div className="mt-3 rounded-2xl bg-[#d0c6eb] px-3 py-3 ">
                   <div className="flex justify-center">
                     <button
                       type="button"
@@ -807,7 +807,7 @@ const DesktopCartPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-white p-4">
+              <div className="rounded-2xl border border-border bg-white p-2 px-3 mt-2">
                 <button
                   type="button"
                   className="flex w-full items-center justify-between rounded-md py-2"
@@ -817,7 +817,7 @@ const DesktopCartPage = () => {
                   onClick={() => setIsGraphicOpen((prev) => !prev)}
                   data-track-action="A deschis simularea grafica."
                 >
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t('product.graphicPreview')}
                   </span>
                   <ChevronDown
@@ -846,12 +846,12 @@ const DesktopCartPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-white p-4">
+              <div className="rounded-2xl border border-border bg-white p-2 px-3 mt-2">
                 <button
                   type="button"
                   onClick={() => setIsShippingOpen((prev) => !prev)}
                   data-track-action="A deschis livrare & retur din sidebar cart."
-                  className="flex w-full items-center justify-between text-left"
+                  className="flex w-full items-center justify-between rounded-md py-2"
                 >
                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t('product.shippingReturn')}

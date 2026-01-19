@@ -224,7 +224,7 @@ const DesktopCheckoutPage = () => {
       })
       .catch((err) => {
         if (!isActive) return;
-        setCategoryError(err instanceof Error ? err.message : 'Nu am putut incarca categoriile.');
+        setCategoryError(err instanceof Error ? err.message : t('category.loadError'));
         setIsLoadingCategories(false);
       });
     return () => {
@@ -827,7 +827,7 @@ const DesktopCheckoutPage = () => {
 
   useEffect(() => {
     const defaultTitle = 'Daruri Alese Catalog';
-    document.title = `Finalizare comanda | ${defaultTitle}`;
+    document.title = `${t('checkout.pageTitle')} | ${defaultTitle}`;
   }, []);
 
   const totals = useMemo(() => {
@@ -1210,33 +1210,35 @@ const DesktopCheckoutPage = () => {
     }, 0);
 
     if (!canSubmit || isSubmitting) {
+      const billingPrefix = `${t('checkout.billingTitle')}: `;
+      const shippingPrefix = `${t('checkout.shippingTitle')}: `;
       const missing: string[] = [];
-      if (!isNonEmpty(billingData.billing_first_name)) missing.push('Date facturare: Prenume');
-      if (!isNonEmpty(billingData.billing_last_name)) missing.push('Date facturare: Nume');
-      if (!isNonEmpty(billingData.billing_email)) missing.push('Date facturare: Email');
-      if (!isNonEmpty(billingData.billing_phone)) missing.push('Date facturare: Telefon');
-      if (!isNonEmpty(billingData.billing_county)) missing.push('Date facturare: Judet');
-      if (!isNonEmpty(billingData.billing_locality)) missing.push('Date facturare: Localitate');
-      if (!isNonEmpty(billingData.billing_address_1)) missing.push('Date facturare: Adresa');
-      if (!isNonEmpty(billingData.billing_postcode)) missing.push('Date facturare: Cod postal');
-      if (!isNonEmpty(billingData.billing_country)) missing.push('Date facturare: Tara');
+      if (!isNonEmpty(billingData.billing_first_name)) missing.push(`${billingPrefix}${t('checkout.firstName')}`);
+      if (!isNonEmpty(billingData.billing_last_name)) missing.push(`${billingPrefix}${t('checkout.lastName')}`);
+      if (!isNonEmpty(billingData.billing_email)) missing.push(`${billingPrefix}${t('checkout.email')}`);
+      if (!isNonEmpty(billingData.billing_phone)) missing.push(`${billingPrefix}${t('checkout.phone')}`);
+      if (!isNonEmpty(billingData.billing_county)) missing.push(`${billingPrefix}${t('checkout.county')}`);
+      if (!isNonEmpty(billingData.billing_locality)) missing.push(`${billingPrefix}${t('checkout.locality')}`);
+      if (!isNonEmpty(billingData.billing_address_1)) missing.push(`${billingPrefix}${t('checkout.address')}`);
+      if (!isNonEmpty(billingData.billing_postcode)) missing.push(`${billingPrefix}${t('checkout.postcode')}`);
+      if (!isNonEmpty(billingData.billing_country)) missing.push(`${billingPrefix}${t('checkout.country')}`);
       if (customerType === 'company') {
-        if (!isNonEmpty(companyData.companyName)) missing.push('Date firma: Nume firma');
-        if (!isNonEmpty(companyData.cui)) missing.push('Date firma: CUI');
+        if (!isNonEmpty(companyData.companyName)) missing.push(t('checkout.companyName'));
+        if (!isNonEmpty(companyData.cui)) missing.push(t('checkout.companyCui'));
       }
       if (useDifferentShipping) {
-        if (!isNonEmpty(shippingData.firstName)) missing.push('Date livrare: Prenume');
-        if (!isNonEmpty(shippingData.lastName)) missing.push('Date livrare: Nume');
-        if (!isNonEmpty(shippingData.phone)) missing.push('Date livrare: Telefon');
-        if (!isNonEmpty(shippingData.county)) missing.push('Date livrare: Judet');
-        if (!isNonEmpty(shippingData.locality)) missing.push('Date livrare: Localitate');
-        if (!isNonEmpty(shippingData.address1)) missing.push('Date livrare: Adresa');
-        if (!isNonEmpty(shippingData.postcode)) missing.push('Date livrare: Cod postal');
-        if (!isNonEmpty(shippingData.country)) missing.push('Date livrare: Tara');
+        if (!isNonEmpty(shippingData.firstName)) missing.push(`${shippingPrefix}${t('checkout.firstName')}`);
+        if (!isNonEmpty(shippingData.lastName)) missing.push(`${shippingPrefix}${t('checkout.lastName')}`);
+        if (!isNonEmpty(shippingData.phone)) missing.push(`${shippingPrefix}${t('checkout.phone')}`);
+        if (!isNonEmpty(shippingData.county)) missing.push(`${shippingPrefix}${t('checkout.county')}`);
+        if (!isNonEmpty(shippingData.locality)) missing.push(`${shippingPrefix}${t('checkout.locality')}`);
+        if (!isNonEmpty(shippingData.address1)) missing.push(`${shippingPrefix}${t('checkout.address')}`);
+        if (!isNonEmpty(shippingData.postcode)) missing.push(`${shippingPrefix}${t('checkout.postcode')}`);
+        if (!isNonEmpty(shippingData.country)) missing.push(`${shippingPrefix}${t('checkout.country')}`);
       }
-      if (!termsAccepted) missing.push('Termeni si conditii');
+      if (!termsAccepted) missing.push(t('checkout.termsLink'));
       if (missing.length > 0 && window.rybbit?.event) {
-        missing.forEach((item) => window.rybbit?.event?.(`Nu a completat: ${item}`));
+        missing.forEach((item) => window.rybbit?.event?.(t('checkout.missingField', { field: item })));
       }
       return;
     }
@@ -1373,7 +1375,7 @@ const DesktopCheckoutPage = () => {
       .then((res) => res.json())
       .then((response) => {
         if (response?.success) {
-          toast({ title: 'Comanda a fost trimisa cu succes.' });
+          toast({ title: t('checkout.orderSuccess') });
           try {
             sessionStorage.setItem('checkout-last-response', JSON.stringify(response));
           } catch {
@@ -1474,7 +1476,7 @@ const DesktopCheckoutPage = () => {
       } catch {
         setCouponTotals(null);
         setCouponDetails(null);
-        setCouponStatus({ type: 'error', message: 'Nu am putut verifica cuponul.' });
+        setCouponStatus({ type: 'error', message: t('cart.couponCheckFail') });
       } finally {
         setIsApplyingCoupon(false);
       }
@@ -1545,8 +1547,8 @@ const DesktopCheckoutPage = () => {
                     1
                   </span>
                   <div className="text-[11px] font-semibold text-muted-foreground text-left">
-                    <div>Pasul 1</div>
-                    <div className="text-[10px] font-medium text-muted-foreground">Cos cumparaturi</div>
+                    <div>{t('checkout.step', { step: 1 })}</div>
+                    <div className="text-[10px] font-medium text-muted-foreground">{t('checkout.stepCart')}</div>
                   </div>
                 </button>
 
@@ -1558,15 +1560,15 @@ const DesktopCheckoutPage = () => {
                     2
                   </span>
                   <div className="text-[11px] font-semibold text-amber-900">
-                    <div>Pasul 2</div>
-                    <div className="text-[10px] font-medium text-amber-900/60">Date facturare</div>
+                    <div>{t('checkout.step', { step: 2 })}</div>
+                    <div className="text-[10px] font-medium text-amber-900/60">{t('checkout.stepBilling')}</div>
                   </div>
                 </div>
               </div>
             </div>
           <div className="rounded-2xl border border-border p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold font-serif text-foreground">Esti companie?</span>
+              <span className="text-sm font-semibold font-serif text-foreground">{t('checkout.companyQuestion')}</span>
               <button
                 type="button"
                 role="switch"
@@ -1602,7 +1604,7 @@ const DesktopCheckoutPage = () => {
                       type="text"
                       value={companyData.companyName}
                       onChange={(event) => setCompanyData((prev) => ({ ...prev, companyName: event.target.value }))}
-                      data-track-action="Date firma: Nume firma"
+                    data-track-action={`${t('checkout.companyName')}`}
                       required={customerType === 'company'}
                       data-invalid={attemptedSubmit && customerType === 'company' && !isNonEmpty(companyData.companyName)}
                       className={inputClass(attemptedSubmit && customerType === 'company' && !isNonEmpty(companyData.companyName))}
@@ -1614,7 +1616,7 @@ const DesktopCheckoutPage = () => {
                       type="text"
                       value={companyData.cui}
                       onChange={(event) => setCompanyData((prev) => ({ ...prev, cui: event.target.value }))}
-                      data-track-action="Date firma: CUI"
+                      data-track-action={`${t('checkout.companyCui')}`}
                       required={customerType === 'company'}
                       data-invalid={attemptedSubmit && customerType === 'company' && !isNonEmpty(companyData.cui)}
                       className={inputClass(attemptedSubmit && customerType === 'company' && !isNonEmpty(companyData.cui))}
@@ -1626,7 +1628,7 @@ const DesktopCheckoutPage = () => {
                       type="text"
                       value={companyData.registry}
                       onChange={(event) => setCompanyData((prev) => ({ ...prev, registry: event.target.value }))}
-                      data-track-action="Date firma: Registru"
+                      data-track-action={`${t('checkout.companyReg')}`}
                       className="h-10 w-full rounded-lg border border-border px-3 text-sm"
                     />
                   </div>
@@ -1637,68 +1639,68 @@ const DesktopCheckoutPage = () => {
 
           <div className="grid grid-cols-2 gap-4">
           <div className="rounded-2xl border border-border p-4">
-            <p className="text-sm font-semibold text-foreground">Date facturare</p>
+            <p className="text-sm font-semibold text-foreground">{t('checkout.billingTitle')}</p>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Prenume</label>
+                <label className="font-semibold text-foreground">{t('checkout.firstName')}</label>
                 <input
                   type="text"
                   value={billingData.billing_first_name}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_first_name: event.target.value }))
                   }
-                  data-track-action="Date facturare: Prenume"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.firstName')}`}
                   required
                   data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_first_name)}
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_first_name))}
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Nume</label>
+                <label className="font-semibold text-foreground">{t('checkout.lastName')}</label>
                 <input
                   type="text"
                   value={billingData.billing_last_name}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_last_name: event.target.value }))
                   }
-                  data-track-action="Date facturare: Nume"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.lastName')}`}
                   required
                   data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_last_name)}
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_last_name))}
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Email</label>
+                <label className="font-semibold text-foreground">{t('checkout.email')}</label>
                 <input
                   type="email"
                   value={billingData.billing_email}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_email: event.target.value }))
                   }
-                  data-track-action="Date facturare: Email"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.email')}`}
                   required
                   data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_email)}
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_email))}
                 />
                 {customerCheck.response?.verificari?.email?.found && (
-                  <p className="text-[11px] font-semibold text-emerald-600">Email existent in sistem.</p>
+                  <p className="text-[11px] font-semibold text-emerald-600">{t('checkout.emailExists')}</p>
                 )}
               </div>
               {customerCheck.response?.verificari?.email?.found && (
                   <div className="col-span-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700">
-                    Comanda va fi atasata contului existent.
+                    {t('checkout.emailAttached')}
                   </div>
               )}
 
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Telefon</label>
+                <label className="font-semibold text-foreground">{t('checkout.phone')}</label>
                 <input
                   type="tel"
                   value={billingData.billing_phone}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_phone: event.target.value }))
                   }
-                  data-track-action="Date facturare: Telefon"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.phone')}`}
                   required
                   data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_phone)}
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_phone))}
@@ -1706,12 +1708,12 @@ const DesktopCheckoutPage = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Judet</label>
+                <label className="font-semibold text-foreground">{t('checkout.county')}</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={billingCountyQuery || (billingData.billing_county ? countyNameByCode.get(billingData.billing_county) ?? '' : '')}
-                    placeholder="Alege judet"
+                    placeholder={t('checkout.selectCounty')}
                     onFocus={() => {
                       setBillingCountyOpen(true);
                       if (!billingCountyQuery && billingData.billing_county) {
@@ -1746,7 +1748,7 @@ const DesktopCheckoutPage = () => {
                       }));
                       setBillingComuna('');
                     }}
-                    data-track-action="Date facturare: Judet"
+                    data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.county')}`}
                     required
                     data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_county)}
                     className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_county))}
@@ -1784,12 +1786,12 @@ const DesktopCheckoutPage = () => {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Localitate</label>
+                <label className="font-semibold text-foreground">{t('checkout.locality')}</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={billingData.billing_locality}
-                    placeholder="Alege localitatea"
+                    placeholder={t('checkout.selectLocality')}
                     onFocus={() => setBillingLocalityOpen(true)}
                     onBlur={() => {
                       setTimeout(() => setBillingLocalityOpen(false), 120);
@@ -1807,7 +1809,7 @@ const DesktopCheckoutPage = () => {
                       }));
                       setBillingComuna('');
                     }}
-                    data-track-action="Date facturare: Localitate"
+                    data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.locality')}`}
                     required
                     data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_locality)}
                     className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_locality))}
@@ -1838,20 +1840,20 @@ const DesktopCheckoutPage = () => {
                   )}
                 </div>
                 {isSamedayLoading && (
-                  <p className="text-[11px] text-muted-foreground">Se incarca localitatile...</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.localitiesLoading')}</p>
                 )}
 
               </div>
               {billingComunas.length > 0 && (
                   <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-muted-foreground">Comuna</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground">{t('checkout.commune')}</label>
                     <select
                         value={billingComuna}
                         onChange={(event) => setBillingComuna(event.target.value)}
-                        data-track-action="Date facturare: Comuna"
+                        data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.commune')}`}
                         className="h-9 w-full rounded-lg border border-border px-2 text-xs"
                     >
-                      <option value="">Alege comuna</option>
+                      <option value="">{t('checkout.selectCommune')}</option>
                       {billingComunas.map((item) => (
                           <option key={item} value={item}>
                             {item}
@@ -1861,51 +1863,51 @@ const DesktopCheckoutPage = () => {
                   </div>
               )}
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Adresa</label>
+                <label className="font-semibold text-foreground">{t('checkout.address')}</label>
                 <input
                     type="text"
                     value={billingData.billing_address_1}
                     onChange={(event) =>
                         setBillingData((prev) => ({ ...prev, billing_address_1: event.target.value }))
                     }
-                    data-track-action="Date facturare: Adresa"
+                    data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.address')}`}
                     required
                     data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_address_1)}
                     className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_address_1))}
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Bloc / Scara / Apartament</label>
+                <label className="font-semibold text-foreground">{t('checkout.address2')}</label>
                 <input
                   type="text"
                   value={billingData.billing_address_2}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_address_2: event.target.value }))
                   }
-                  data-track-action="Date facturare: Adresa 2"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.address2')}`}
                   className={inputClass(false)}
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Cod postal</label>
+                <label className="font-semibold text-foreground">{t('checkout.postcode')}</label>
                 <input
                   type="text"
                   value={billingData.billing_postcode}
                   onChange={(event) =>
                     setBillingData((prev) => ({ ...prev, billing_postcode: event.target.value }))
                   }
-                  data-track-action="Date facturare: Cod postal"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.postcode')}`}
                   required
                   data-invalid={attemptedSubmit && !isNonEmpty(billingData.billing_postcode)}
                   className={inputClass(attemptedSubmit && !isNonEmpty(billingData.billing_postcode))}
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Tara</label>
+                <label className="font-semibold text-foreground">{t('checkout.country')}</label>
                 <input
                   type="text"
                   value={billingData.billing_country}
-                  data-track-action="Date facturare: Tara"
+                  data-track-action={`${t('checkout.billingTitle')}: ${t('checkout.country')}`}
                   readOnly
                   className="h-10 w-full rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground"
                 />
@@ -1915,7 +1917,7 @@ const DesktopCheckoutPage = () => {
 
           <div className="rounded-2xl border border-border p-4">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-foreground">Livrezi la o alta adresa</p>
+              <p className="text-sm font-semibold text-foreground">{t('checkout.shipToDifferent')}</p>
               <button
                 type="button"
                 role="switch"
@@ -1946,7 +1948,7 @@ const DesktopCheckoutPage = () => {
             </div>
             {isSurpriseGift && (
               <p className="mt-2 text-xs font-semibold text-amber-800">
-                Este necesara adresa persoanei care va primi cadoul surpriza.
+                {t('checkout.surpriseAddressHint')}
               </p>
             )}
 
@@ -1959,36 +1961,36 @@ const DesktopCheckoutPage = () => {
                     }`}
                   >
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Prenume</label>
+                      <label className="font-semibold text-foreground">{t('checkout.firstName')}</label>
                   <input
                     type="text"
                     value={shippingData.firstName}
                     onChange={(event) => setShippingData((prev) => ({ ...prev, firstName: event.target.value }))}
-                    data-track-action="Date livrare: Prenume"
+                    data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.firstName')}`}
                     required={useDifferentShipping}
                     data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.firstName)}
                     className={inputClass(attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.firstName))}
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Nume</label>
+                      <label className="font-semibold text-foreground">{t('checkout.lastName')}</label>
                   <input
                     type="text"
                     value={shippingData.lastName}
                     onChange={(event) => setShippingData((prev) => ({ ...prev, lastName: event.target.value }))}
-                    data-track-action="Date livrare: Nume"
+                    data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.lastName')}`}
                     required={useDifferentShipping}
                     data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.lastName)}
                     className={inputClass(attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.lastName))}
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Telefon</label>
+                      <label className="font-semibold text-foreground">{t('checkout.phone')}</label>
                   <input
                     type="tel"
                     value={shippingData.phone}
                     onChange={(event) => setShippingData((prev) => ({ ...prev, phone: event.target.value }))}
-                    data-track-action="Date livrare: Telefon"
+                    data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.phone')}`}
                     required={useDifferentShipping}
                     data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.phone)}
                     className={inputClass(attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.phone))}
@@ -1996,12 +1998,12 @@ const DesktopCheckoutPage = () => {
                     </div>
                     <div className="space-y-1" aria-hidden="true" />
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Judet</label>
+                      <label className="font-semibold text-foreground">{t('checkout.county')}</label>
                   <div className="relative">
                     <input
                       type="text"
                       value={shippingCountyQuery || (shippingData.county ? countyNameByCode.get(shippingData.county) ?? '' : '')}
-                      placeholder="Alege judet"
+                      placeholder={t('checkout.selectCounty')}
                       onFocus={() => {
                         setShippingCountyOpen(true);
                         if (!shippingCountyQuery && shippingData.county) {
@@ -2036,7 +2038,7 @@ const DesktopCheckoutPage = () => {
                         }));
                         setShippingComuna('');
                       }}
-                      data-track-action="Date livrare: Judet"
+                      data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.county')}`}
                       required={useDifferentShipping}
                       data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.county)}
                       className={inputClass(
@@ -2075,12 +2077,12 @@ const DesktopCheckoutPage = () => {
                   </div>
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Localitate</label>
+                      <label className="font-semibold text-foreground">{t('checkout.locality')}</label>
                       <div className="relative">
                         <input
                           type="text"
                           value={shippingData.locality}
-                          placeholder="Alege localitatea"
+                          placeholder={t('checkout.selectLocality')}
                           onFocus={() => setShippingLocalityOpen(true)}
                           onBlur={() => {
                             setTimeout(() => setShippingLocalityOpen(false), 120);
@@ -2098,7 +2100,7 @@ const DesktopCheckoutPage = () => {
                             }));
                             setShippingComuna('');
                           }}
-                          data-track-action="Date livrare: Localitate"
+                          data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.locality')}`}
                           required={useDifferentShipping}
                           data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.locality)}
                           className={inputClass(
@@ -2131,21 +2133,21 @@ const DesktopCheckoutPage = () => {
                         )}
                       </div>
                       {isSamedayLoading && (
-                        <p className="text-[11px] text-muted-foreground">Se incarca localitatile...</p>
+                        <p className="text-[11px] text-muted-foreground">{t('checkout.localitiesLoading')}</p>
                       )}
 
                     </div>
 
                     {shippingComunas.length > 0 && (
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-muted-foreground">Comuna</label>
+                          <label className="text-[11px] font-semibold text-muted-foreground">{t('checkout.commune')}</label>
                           <select
                               value={shippingComuna}
                               onChange={(event) => setShippingComuna(event.target.value)}
-                              data-track-action="Date livrare: Comuna"
+                              data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.commune')}`}
                               className="h-9 w-full rounded-lg border border-border px-2 text-xs"
                           >
-                            <option value="">Alege comuna</option>
+                            <option value="">{t('checkout.selectCommune')}</option>
                             {shippingComunas.map((item) => (
                                 <option key={item} value={item}>
                                   {item}
@@ -2155,46 +2157,46 @@ const DesktopCheckoutPage = () => {
                         </div>
                     )}
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Adresa</label>
+                      <label className="font-semibold text-foreground">{t('checkout.address')}</label>
                   <input
                     type="text"
                     value={shippingData.address1}
                     onChange={(event) => setShippingData((prev) => ({ ...prev, address1: event.target.value }))}
-                    data-track-action="Date livrare: Adresa"
+                    data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.address')}`}
                     required={useDifferentShipping}
                     data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.address1)}
                     className={inputClass(attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.address1))}
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Bloc / Scara / Apartament</label>
+                      <label className="font-semibold text-foreground">{t('checkout.address2')}</label>
                       <input
                         type="text"
                         value={shippingData.address2}
                         onChange={(event) => setShippingData((prev) => ({ ...prev, address2: event.target.value }))}
-                        data-track-action="Date livrare: Adresa 2"
+                        data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.address2')}`}
                         className={inputClass(false)}
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Cod postal</label>
+                      <label className="font-semibold text-foreground">{t('checkout.postcode')}</label>
                   <input
                     type="text"
                     value={shippingData.postcode}
                     onChange={(event) => setShippingData((prev) => ({ ...prev, postcode: event.target.value }))}
-                    data-track-action="Date livrare: Cod postal"
+                    data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.postcode')}`}
                     required={useDifferentShipping}
                     data-invalid={attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.postcode)}
                     className={inputClass(attemptedSubmit && useDifferentShipping && !isNonEmpty(shippingData.postcode))}
                   />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-semibold text-foreground">Tara</label>
+                      <label className="font-semibold text-foreground">{t('checkout.country')}</label>
                       <input
                           type="text"
                           value={shippingData.country}
                           readOnly
-                          data-track-action="Date livrare: Tara"
+                          data-track-action={`${t('checkout.shippingTitle')}: ${t('checkout.country')}`}
                           className="h-10 w-full rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground"
                       />
                     </div>
@@ -2205,10 +2207,10 @@ const DesktopCheckoutPage = () => {
 
           {SHOW_SURPRISE_GIFT && (
             <div className="cadoucomanda rounded-2xl border border-border p-4">
-              <p className="text-xl text-center font-semibold font-serif text-foreground">Produsele sunt cadou surpriza?</p>
+              <p className="text-xl text-center font-semibold font-serif text-foreground">{t('checkout.surpriseQuestion')}</p>
               <div className="mt-3 flex items-center justify-center gap-3 text-sm font-semibold text-foreground">
                 <span className={`${!isSurpriseGift ? 'text-foreground' : 'text-muted-foreground'} text-base font-bold`}>
-                  NU
+                  {t('checkout.no')}
                 </span>
                 <button
                   type="button"
@@ -2226,57 +2228,57 @@ const DesktopCheckoutPage = () => {
                   />
                 </button>
                 <span className={`${isSurpriseGift ? 'text-foreground' : 'text-muted-foreground'} text-base font-bold`}>
-                  DA
+                  {t('checkout.yes')}
                 </span>
               </div>
               <div className="mt-3 text-center">
                 {isSurpriseGift ? (
                   <div className="cadou-status-message status-da" id="cadouStatusMessage">
-                    Comanda <strong>este cadou surpriza</strong>. Nu vom trimite notificari (SMS, email, detalii AWB sau
-                    suma) catre destinatar. Acesta va trebui doar sa ridice coletul.
+                    {t('checkout.surpriseYesPrefix')}{' '}
+                    <strong>{t('checkout.surpriseYesStrong')}</strong>. {t('checkout.surpriseYesBody')}
                   </div>
                 ) : (
                   <div className="cadou-status-message status-nu" id="cadouStatusMessage">
-                    Comanda <strong>nu este cadou surpriza</strong>. Destinatarul va primi toate notificarile de informare
-                    (SMS, email) privind cursul comenzii, inclusiv detalii despre AWB si suma coletului.
+                    {t('checkout.surpriseNoPrefix')}{' '}
+                    <strong>{t('checkout.surpriseNoStrong')}</strong>. {t('checkout.surpriseNoBody')}
                   </div>
                 )}
               </div>
-              <img src="/client-vizual.png" alt="Cadou surpriza" className="mt-3 w-full rounded-xl object-cover" />
+              <img src="/client-vizual.png" alt={t('checkout.surpriseAlt')} className="mt-3 w-full rounded-xl object-cover" />
             </div>
           )}
 
           <div className="rounded-2xl p-2 hidden">
-            <p className="text-sm font-semibold text-foreground">De unde ai auzit de noi? (optional)</p>
+            <p className="text-sm font-semibold text-foreground">{t('checkout.sourceQuestion')}</p>
             <div className="mt-3">
               <select
                 name="wc_customer_source_checkout_field"
                 id="wc_customer_source_checkout_field"
                 className="h-10 w-full rounded-lg border border-border bg-white px-3 text-sm"
                 data-allow_clear="true"
-                data-placeholder="Selecteaza o optiune..."
+                data-placeholder={t('checkout.sourcePlaceholder')}
                 defaultValue=""
               >
-                <option value="">Selecteaza o optiune...</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Grupuri Facebook">Grupuri Facebook</option>
-                <option value="Google">Google</option>
-                <option value="Instagram">Instagram</option>
-                <option value="Tik Tok">Tik Tok</option>
-                <option value="Recomandari">Recomandari</option>
-                <option value="Sunt client fidel">Sunt client fidel</option>
-                <option value="Altceva">Altceva</option>
+                <option value="">{t('checkout.sourcePlaceholder')}</option>
+                <option value="Facebook">{t('checkout.sourceFacebook')}</option>
+                <option value="Grupuri Facebook">{t('checkout.sourceFacebookGroups')}</option>
+                <option value="Google">{t('checkout.sourceGoogle')}</option>
+                <option value="Instagram">{t('checkout.sourceInstagram')}</option>
+                <option value="Tik Tok">{t('checkout.sourceTikTok')}</option>
+                <option value="Recomandari">{t('checkout.sourceRecommendations')}</option>
+                <option value="Sunt client fidel">{t('checkout.sourceLoyalCustomer')}</option>
+                <option value="Altceva">{t('checkout.sourceOther')}</option>
               </select>
             </div>
           </div>
           <div className="rounded-2xl border border-border p-4">
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">
-                {mapLocality ? `Metoda de livrare pentru ${mapLocality}` : 'Metoda de livrare'}
+                {mapLocality ? t('checkout.shippingMethodFor', { locality: mapLocality }) : t('checkout.shippingMethod')}
               </p>
 
               <p className="text-[11px] text-muted-foreground">
-                Judet selectat: {mapCountyName || '-'}
+                {t('checkout.selectedCounty', { county: mapCountyName || '-' })}
               </p>
             </div>
             {deliveryInstanceId !== null && (
@@ -2285,16 +2287,16 @@ const DesktopCheckoutPage = () => {
             <div className="mt-3 grid grid-cols-3 gap-2">
               {[
                 ...(SHOW_SAMEDAY
-                  ? [{ key: 'sameday', label: 'Livrare la adresa Sameday', logo: '/sameday.jpg', price: 17, instanceId: 4 }]
+                  ? [{ key: 'sameday', label: t('checkout.shippingSameday'), logo: '/sameday.jpg', price: 17, instanceId: 4 }]
                   : []),
                 ...(SHOW_DPD
-                  ? [{ key: 'dpd', label: 'Livrare la adresa DPD', logo: '/dpd.jpg', price: 20, instanceId: 2 }]
+                  ? [{ key: 'dpd', label: t('checkout.shippingDpd'), logo: '/dpd.jpg', price: 20, instanceId: 2 }]
                   : []),
                 ...(SHOW_EASYBOX
-                  ? [{ key: 'easybox', label: 'Ridicare Easybox Locker', logo: '/sameday.jpg', price: 13, instanceId: 3 }]
+                  ? [{ key: 'easybox', label: t('checkout.shippingEasybox'), logo: '/sameday.jpg', price: 13, instanceId: 3 }]
                   : []),
                 ...(isLocalPickupEligible
-                  ? [{ key: 'pickup', label: 'Ridicare de la sediu', logo: '/logo-gold.svg', price: 0, instanceId: 1 }]
+                  ? [{ key: 'pickup', label: t('checkout.shippingPickup'), logo: '/logo-gold.svg', price: 0, instanceId: 1 }]
                   : []),
               ].map((method) => {
                 const active = deliveryMethod === method.key;
@@ -2303,7 +2305,7 @@ const DesktopCheckoutPage = () => {
                     key={method.key}
                     type="button"
                     onClick={() => setDeliveryMethod(method.key as DeliveryMethod)}
-                    data-track-action={`Metoda livrare: ${method.label}`}
+                    data-track-action={`${t('checkout.shippingMethod')}: ${method.label}`}
                     data-instance-id={method.instanceId ?? undefined}
                     className={`flex w-full items-center justify-between rounded-xl border px-2 py-3 text-left text-xs font-semibold ${
                       active ? 'border-amber-300 bg-amber-50 text-amber-900' : 'border-border bg-white text-foreground'
@@ -2314,12 +2316,16 @@ const DesktopCheckoutPage = () => {
                       <div>
                         <div>{method.label}</div>
                         <div className="text-[11px] font-medium text-muted-foreground">
-                          {method.key === 'pickup' ? 'Programare telefonica' : '1-3 zile lucratoare'}
+                          {method.key === 'pickup' ? t('checkout.pickupSchedule') : t('checkout.shippingDays')}
                         </div>
                       </div>
                     </div>
                     <span className="text-sm font-semibold text-foreground">
-                      {method.key === 'pickup' ? 'Gratuit' : totals.discountedCost >= 200 ? 'Gratuit' : `${method.price} lei`}
+                      {method.key === 'pickup'
+                        ? t('cart.free')
+                        : totals.discountedCost >= 200
+                          ? t('cart.free')
+                          : `${method.price} lei`}
                     </span>
                   </button>
                 );
@@ -2327,19 +2333,19 @@ const DesktopCheckoutPage = () => {
             </div>
             {deliveryMethod === 'easybox' && (
               <div className="mt-3 rounded-xl border border-border bg-white p-3 text-xs">
-                <p className="font-semibold text-foreground">Alege lockerul Sameday</p>
+                <p className="font-semibold text-foreground">{t('checkout.selectLocker')}</p>
                 {!mapCountyName || !mapLocality ? (
                   <p className="mt-2 text-[11px] text-muted-foreground">
-                    Selecteaza judetul si localitatea pentru a vedea locker-ele disponibile.
+                    {t('checkout.selectLockerHint')}
                   </p>
                 ) : (
                   <>
                     {isLockerLoading ? (
-                      <p className="mt-2 text-[11px] text-muted-foreground">Se incarca locker-ele...</p>
+                      <p className="mt-2 text-[11px] text-muted-foreground">{t('checkout.lockersLoading')}</p>
                     ) : (
                       <>
                         <p className="mt-2 text-[11px] text-muted-foreground">
-                          Gasite: {lockerOptions.length} locker-e
+                          {t('checkout.lockersFound', { count: lockerOptions.length })}
                         </p>
                         {lockerOptions.length > 0 ? (
                           <>
@@ -2365,7 +2371,7 @@ const DesktopCheckoutPage = () => {
                                 }
                                 setSelectedLockerId('');
                               }}
-                              placeholder="Cauta locker"
+                              placeholder={t('checkout.searchLocker')}
                               className="mt-2 h-9 w-full rounded-lg border border-border px-2 text-xs"
                             />
                             {lockerOpen && (
@@ -2399,23 +2405,23 @@ const DesktopCheckoutPage = () => {
                           </>
                         ) : (
                           <p className="mt-2 text-[11px] text-muted-foreground">
-                            Nu exista locker-e disponibile pentru localitatea selectata.
+                            {t('checkout.lockersUnavailable')}
                           </p>
                         )}
                         {selectedLocker ? (
                           <div className="mt-3 rounded-lg border border-border bg-muted/20 p-2 text-[11px] text-muted-foreground">
                             <p className="font-semibold text-foreground">{selectedLocker.name}</p>
                             {selectedLocker.address && <p>{selectedLocker.address}</p>}
-                            {selectedLocker.postal_code && <p>Cod postal: {selectedLocker.postal_code}</p>}
+                            {selectedLocker.postal_code && <p>{t('checkout.postalCode')}: {selectedLocker.postal_code}</p>}
                             {(() => {
                               const boxes = parseLockerBoxes(selectedLocker.boxes);
                               if (!boxes.total) return null;
                               if (boxes.sizes.length === 0) {
-                                return <p>Boxe: {boxes.total}</p>;
+                                return <p>{t('checkout.boxes')}: {boxes.total}</p>;
                               }
                               return (
                                 <p>
-                                  Boxe:{' '}
+                                  {t('checkout.boxes')}:{' '}
                                   {boxes.sizes.map((item) => `${item.size}: ${item.count}`).join(', ')}
                                 </p>
                               );
@@ -2424,7 +2430,7 @@ const DesktopCheckoutPage = () => {
                         ) : (
                           lockerOptions.length > 0 && (
                             <p className="mt-2 text-[11px] text-muted-foreground">
-                              Alege un locker pentru pin pe harta.
+                              {t('checkout.selectLockerPin')}
                             </p>
                           )
                         )}
@@ -2438,7 +2444,7 @@ const DesktopCheckoutPage = () => {
               <div className="mt-3 space-y-2">
                 {mapKm > 0 && deliveryMethod === 'sameday' && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">
-                    Km aditionali: {mapKm}. Pot fi intarzieri fiind in afara ariei de livrare.
+                    {t('checkout.extraKm', { km: mapKm })}
                   </div>
                 )}
                 {deliveryMethod === 'easybox' && lockerOptions.length > 0 ? (
@@ -2448,7 +2454,7 @@ const DesktopCheckoutPage = () => {
                 ) : (
                   <div className="relative z-0 overflow-hidden rounded-xl border border-border">
                     <iframe
-                      title="Harta livrare"
+                      title={t('checkout.mapTitle')}
                       src={mapEmbedUrl}
                       className="h-[22rem] w-full border-0"
                       loading="lazy"
@@ -2457,9 +2463,9 @@ const DesktopCheckoutPage = () => {
                   </div>
                 )}
                 {mapComuna ? (
-                  <p className="text-[11px] text-muted-foreground">Comuna: {mapComuna}</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.communeLabel', { name: mapComuna })}</p>
                 ) : !mapLocality && mapCountyName ? (
-                  <p className="text-[11px] text-muted-foreground">Judet: {mapCountyName}</p>
+                  <p className="text-[11px] text-muted-foreground">{t('checkout.countyLabel', { name: mapCountyName })}</p>
                 ) : null}
               </div>
             )}
@@ -2469,8 +2475,10 @@ const DesktopCheckoutPage = () => {
           <aside className="space-y-4">
             <div className="rounded-2xl border border-border p-4">
               <div className="flex w-full items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">Produse</span>
-                <span className="text-xs font-semibold text-muted-foreground">{totals.totalItems} produse</span>
+                <span className="text-sm font-semibold text-foreground">{t('checkout.productsTitle')}</span>
+                <span className="text-xs font-semibold text-muted-foreground">
+                  {t('checkout.productsCount', { count: totals.totalItems })}
+                </span>
               </div>
               <div className="mt-3 space-y-3">
                 {cart.map((item) => {
@@ -2484,7 +2492,7 @@ const DesktopCheckoutPage = () => {
                         <div className="flex-1">
                           <p className="text-xs font-semibold text-foreground">{item.title}</p>
                           <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                            <span>Cantitate: {item.quantity ?? 1}</span>
+                            <span>{t('checkout.quantity')}: {item.quantity ?? 1}</span>
                             <span>
                               {parseFloat(item.priceReduced ?? item.price).toFixed(2)} lei
                             </span>
@@ -2534,7 +2542,7 @@ const DesktopCheckoutPage = () => {
                         type="text"
                         value={promoCode}
                         onChange={(event) => setPromoCode(event.target.value)}
-                        placeholder="Introdu codul"
+                        placeholder={t('cart.promoCodePlaceholder')}
                         className="flex-1 bg-transparent text-sm focus:outline-none"
                       />
                     </div>
@@ -2551,7 +2559,7 @@ const DesktopCheckoutPage = () => {
                           disabled={!appliedCouponCode || isApplyingCoupon}
                           className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
                       >
-                        Reset
+                        {t('cart.reset')}
                       </button>
                       <button
                         type="button"
@@ -2559,7 +2567,7 @@ const DesktopCheckoutPage = () => {
                         disabled={isApplyingCoupon}
                         className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
                       >
-                        {isApplyingCoupon ? 'Se verifica...' : 'Aplica cuponul'}
+                        {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
                       </button>
 
                     </div>
@@ -2572,7 +2580,7 @@ const DesktopCheckoutPage = () => {
                             <p className="font-semibold">{couponStatus.message}</p>
                             {couponDetails && !couponDetails.hasApplicableProducts && (
                               <p className="mt-1 text-[11px] font-semibold text-red-500">
-                                Cuponul nu se aplica la niciun produs din cos.
+                                {t('cart.couponNoProducts')}
                               </p>
                             )}
                           </div>
@@ -2607,14 +2615,14 @@ const DesktopCheckoutPage = () => {
             </div>
 
             <div className="rounded-2xl border border-border p-4">
-              <p className="text-sm font-semibold text-foreground">Metoda de plata</p>
+              <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
               <input type="hidden" name="payment_method" value={paymentMethodId} />
               <div className="mt-3 space-y-2">
                 <button
                   type="button"
                   data-payment-id="cod"
                   onClick={() => setPaymentMethod('ramburs')}
-                  data-track-action="Metoda plata: Ramburs"
+                  data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentCod')}`}
                   className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
                     paymentMethod === 'ramburs'
                       ? 'border-amber-300 bg-amber-50 text-amber-900'
@@ -2624,8 +2632,8 @@ const DesktopCheckoutPage = () => {
                   <div className="flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     <div>
-                      <div>Ramburs</div>
-                      <div className="text-[11px] font-medium text-muted-foreground">Plata la livrare</div>
+                      <div>{t('checkout.paymentCod')}</div>
+                      <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentCodHint')}</div>
                     </div>
                   </div>
                   <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
@@ -2641,7 +2649,7 @@ const DesktopCheckoutPage = () => {
                   type="button"
                   data-payment-id="bacs"
                   onClick={() => setPaymentMethod('transfer')}
-                  data-track-action="Metoda plata: Transfer bancar"
+                  data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentBank')}`}
                   className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
                     paymentMethod === 'transfer'
                       ? 'border-amber-300 bg-amber-50 text-amber-900'
@@ -2651,8 +2659,8 @@ const DesktopCheckoutPage = () => {
                   <div className="flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     <div>
-                      <div>Transfer bancar</div>
-                      <div className="text-[11px] font-medium text-muted-foreground">OP/IBAN</div>
+                      <div>{t('checkout.paymentBank')}</div>
+                      <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentBankHint')}</div>
                     </div>
                   </div>
                   <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
@@ -2666,63 +2674,60 @@ const DesktopCheckoutPage = () => {
               </div>
               {paymentMethod === 'transfer' && (
                 <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                  <p className="font-semibold text-foreground">ING BANK ROMANIA</p>
+                  <p className="font-semibold text-foreground">{t('checkout.paymentBankPrimary')}</p>
                   <p>RO74INGB0000999906973879</p>
-                  <p className="font-semibold text-foreground">Trezorerie operativa Sector5</p>
+                  <p className="font-semibold text-foreground">{t('checkout.paymentBankSecondary')}</p>
                   <p>RO65TREZ7055069XXX012556</p>
-                  <p>
-                    Fa plata direct in contul nostru bancar. Te rog foloseste ID-ul comenzii tale ca referinta de plata.
-                    Comanda nu va fi livrata pana cand fondurile nu vor fi varsate in contul nostru.
-                  </p>
+                  <p>{t('checkout.paymentBankInfo')}</p>
                 </div>
               )}
             </div>
 
             <div className="rounded-2xl border border-border p-4">
               <div className="rounded-2xl mb-3" id="checkout-summary">
-                <p className="text-sm font-semibold text-foreground">Note comanda (optional)</p>
+                <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
                 <div className="mt-3">
                 <textarea
                     value={orderNote}
                     onChange={(event) => setOrderNote(event.target.value)}
-                    data-track-action="Note comanda"
+                    data-track-action={t('checkout.orderNotes')}
                     className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
-                    placeholder="Mentiuni pentru comanda..."
+                    placeholder={t('checkout.orderNotesPlaceholder')}
                 />
                 </div>
               </div>
               <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
-                Contul tau va fi alimentat cu <b>{Math.round(totals.total)}</b> puncte si pot fi folosite la urmatoarele comenzi.
+                {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
               </div>
               <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
-                Pentru realizarea produselor indicate va fi necesara achitarea unui avans de minim 30% din valoarea acestora dupa confirmarea telefonica. Mai multe detalii.
+                {t('cart.advanceIntroPrefix')} <b>30%</b> {t('cart.advanceIntroSuffix')} {t('cart.advanceMore')}.
               </div>
-              <p className="text-sm font-semibold text-foreground">Sumar comanda</p>
+              <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
               <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center justify-between">
-                  <span>Cost produse ({totals.totalItems})</span>
+                  <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
                   <span>{totals.cost.toFixed(2)} lei</span>
                 </div>
                 {totals.couponDiscount > 0 && (
                   <div className="flex items-center justify-between text-emerald-600">
-                    <span>Reducere cupon</span>
+                    <span>{t('cart.couponDiscount')}</span>
                     <span>-{totals.couponDiscount.toFixed(2)} lei</span>
                   </div>
                 )}
                 <div className="flex items-center justify-between">
-                  <span>Transport curier</span>
+                  <span>{t('cart.shipping')}</span>
                   {totals.shipping === 0 ? (
-                    <span className="font-semibold text-emerald-600">Gratuit</span>
+                    <span className="font-semibold text-emerald-600">{t('cart.free')}</span>
                   ) : (
                     <span>{totals.shipping.toFixed(2)} lei</span>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Subtotal</span>
+                  <span>{t('cart.subtotal')}</span>
                   <span>{totals.discountedCost.toFixed(2)} lei</span>
                 </div>
                 <div className="flex items-center justify-between text-base font-semibold text-foreground">
-                  <span>Total (TVA inclus)</span>
+                  <span>{t('cart.totalVat')}</span>
                   <span>{totals.total.toFixed(2)} lei</span>
                 </div>
               </div>
@@ -2735,8 +2740,7 @@ const DesktopCheckoutPage = () => {
               data-invalid={attemptedSubmit && !termsAccepted}
             >
               <p>
-                Datele personale vor fi folosite pentru a procesa comanda, pentru a-ti sustine experienta pe acest site web
-                si pentru alte scopuri descrise in{' '}
+                {t('checkout.privacyIntro')}{' '}
                 <a
                   href="https://darurialese.ro/politica-de-confidentialitate/"
                   className="text-primary underline"
@@ -2745,13 +2749,13 @@ const DesktopCheckoutPage = () => {
                     setActiveLegalModal('privacy');
                   }}
                 >
-                  politica de confidentialitate
+                  {t('checkout.privacyLink')}
                 </a>
                 .
               </p>
               <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2">
                 <span className="text-xs font-semibold text-foreground">
-                  Am citit si sunt de acord cu{' '}
+                  {t('checkout.termsAccept')}{' '}
                   <a
                     href="https://darurialese.ro/termeni-si-conditii-daruri-alese/"
                     className="text-primary underline"
@@ -2760,7 +2764,7 @@ const DesktopCheckoutPage = () => {
                       setActiveLegalModal('terms');
                     }}
                   >
-                    termeni si conditii
+                    {t('checkout.termsLink')}
                   </a>
                 </span>
                 <button
@@ -2781,7 +2785,7 @@ const DesktopCheckoutPage = () => {
                 </button>
               </div>
               {attemptedSubmit && !termsAccepted && (
-                <p className="mt-2 text-xs font-semibold text-red-500">Trebuie sa accepti termenii si conditiile.</p>
+                <p className="mt-2 text-xs font-semibold text-red-500">{t('checkout.termsRequired')}</p>
               )}
               <button
                 type="button"
@@ -2791,7 +2795,7 @@ const DesktopCheckoutPage = () => {
                 className="mt-4 w-full rounded-full py-3 text-xs font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                 style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
               >
-                {isSubmitting ? 'Se trimite...' : 'Trimite comanda'}
+                {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
               </button>
             </div>
           </aside>
@@ -2852,7 +2856,7 @@ const DesktopCheckoutPage = () => {
                 type="button"
                 data-track-action="A apasat pe scroll in categorii."
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
-                aria-label="Scroll in jos"
+                aria-label={t('common.scrollDown')}
                 onClick={() => {
                   categoryScrollRef.current?.scrollBy({ top: 240, behavior: 'smooth' });
                 }}
@@ -2876,12 +2880,12 @@ const DesktopCheckoutPage = () => {
               type="button"
               onClick={() => setActiveLegalModal(null)}
               className="absolute right-4 top-4 rounded-full border border-border bg-white p-2 text-muted-foreground shadow-sm"
-              aria-label="Inchide"
+              aria-label={t('common.close')}
             >
-              ×
+              {t('common.close')}
             </button>
             <h3 className="text-base font-semibold text-foreground">
-              {activeLegalModal === 'privacy' ? 'Politica de confidentialitate' : 'Termeni si conditii'}
+              {activeLegalModal === 'privacy' ? t('checkout.privacyTitle') : t('checkout.termsTitle')}
             </h3>
             {activeLegalModal === 'terms' ? (
               <div
@@ -2894,7 +2898,7 @@ const DesktopCheckoutPage = () => {
                 dangerouslySetInnerHTML={{ __html: privacyHtml }}
               />
             ) : (
-              <div className="mt-3 text-sm text-muted-foreground">Continut in lucru.</div>
+              <div className="mt-3 text-sm text-muted-foreground">{t('checkout.contentPending')}</div>
             )}
           </div>
         </>

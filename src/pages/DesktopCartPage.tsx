@@ -328,10 +328,10 @@ const DesktopCartPage = () => {
       }}
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_55%_30%] gap-0 overflow-hidden rounded-2xl">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col relative">
+          <section className="min-h-full border-r border-border bg-white flex flex-col relative ">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -343,7 +343,7 @@ const DesktopCartPage = () => {
               cartCount={cart.length}
             />
 
-            <div className="flex-1 -mt-6 pb-6">
+            <div className="flex-1 -mt-6 ">
               {hasItems && (
                 <div className=" mb-3 ">
                   {bannerIndex === 0 && totals.discountedProducts < 200 && (
@@ -375,7 +375,7 @@ const DesktopCartPage = () => {
             {t('cart.loading')}
           </div>
         ) : cart.length === 0 ? (
-          <div className=" flex min-h-[60vh] flex-col items-center justify-center gap-4 text-sm text-muted-foreground">
+          <div className=" flex min-h-[60vh] pb-24 flex-col items-center justify-center gap-4 text-sm text-muted-foreground">
             <span>{t('cart.empty')}</span>
             <img
               src="/no-results.png"
@@ -396,28 +396,29 @@ const DesktopCartPage = () => {
             </button>
           </div>
         ) : (
-          <div className="flex min-h-full w-full flex-col">
-            <section className="space-y-6">
-              <div className="rounded-2xl border border-border bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('cart.title')}</p>
-                    <p className="mt-1 text-xl font-semibold text-foreground">
-                      {t('cart.itemsInCart', { count: totals.totalItems })}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/')}
-                    data-track-action="A mers la categorii din cos."
-                    className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground"
-                  >
-                    {t('cart.continueShopping')}
-                  </button>
+          <>
+            <div className="rounded-2xl border border-border bg-white p-5 mb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('cart.title')}</p>
+                  <p className="mt-1 text-xl font-semibold text-foreground">
+                    {t('cart.itemsInCart', { count: totals.totalItems })}
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  data-track-action="A mers la categorii din cos."
+                  className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground"
+                >
+                  {t('cart.continueShopping')}
+                </button>
               </div>
+            </div>
 
-              {cart.map((item) => {
+            <div className="flex overflow-y-auto w-full flex-col max-h-[calc(100vh-350px)] pb-56 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <section className="space-y-6">
+                {cart.map((item) => {
                 const unitPrice = parseFloat(item.price);
                 const reducedPrice = item.priceReduced ? parseFloat(item.priceReduced) : null;
                 const cartKey = item.cartItemId || `${item.id}`;
@@ -425,7 +426,7 @@ const DesktopCartPage = () => {
                 const giftEnabled = item.giftSelected;
                 const packingEnabled = item.packingSelected;
                 return (
-                  <div key={cartKey} className="rounded-2xl border border-border bg-white p-5">
+                  <div key={cartKey} className="rounded-2xl border border-border bg-white p-5 ">
                     <div className="flex gap-5">
                       <button
                         type="button"
@@ -610,112 +611,113 @@ const DesktopCartPage = () => {
                 </div>
               )}
             </div>
-
-            <div className="absolute bottom-0 left-0 right-0 mt-auto border border-l-0 border-r-0 border-b-0 border-t-1 bg-white p-4 shadow-lg" id="cart-summary">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
-                <div className="flex flex-1 items-center justify-end gap-2">
-                  <span className="text-[11px] font-semibold text-muted-foreground">{t('cart.promoCodeTitle')}</span>
-                  <div className="flex min-w-[220px] max-w-[320px] flex-1 gap-2">
-                    <input
-                      type="text"
-                      value={promoCode}
-                      onChange={(event) => setPromoCode(event.target.value)}
-                      data-track-action="A completat cuponul in cos."
-                      placeholder={t('cart.promoCodePlaceholder')}
-                      className="flex-1 rounded-lg border border-border px-3 py-2 text-xs"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleApplyCoupon}
-                      data-track-action="A aplicat cuponul in cos."
-                      className="rounded-full bg-amber-600 px-4 py-2 text-[11px] font-semibold text-white"
-                    >
-                      {t('cart.applyCoupon')}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              {couponStatus && (
-                <div
-                  className={`mt-2 rounded-lg px-3 py-2 text-[11px] font-semibold ${
-                    couponStatus.type === 'success'
-                      ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-                      : 'border border-rose-200 bg-rose-50 text-rose-700'
-                  }`}
-                >
-                  {couponStatus.message}
-                </div>
-              )}
-              {couponDetails && (
-                <div className="mt-2 space-y-2 rounded-lg border border-border bg-white/80 p-2 text-[11px] text-muted-foreground">
-                  {couponDetails.invalidProducts.length > 0 && (
-                    <ul className="space-y-1 text-left font-medium text-muted-foreground">
-                      {couponDetails.invalidProducts.map((item) => (
-                        <li key={`${item.title}-${item.reason}`} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                          <span>
-                            {item.title}: {item.reason}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {couponDetails.conditions.length > 0 && (
-                    <ul className="space-y-1 text-left font-medium text-muted-foreground">
-                      {couponDetails.conditions.map((item) => (
-                        <li key={item} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-
-              <div className="mt-3 space-y-3 text-sm text-muted-foreground">
-                {(() => {
-                  const productsCost = totals.cost;
-                  const discountedProducts = totals.discountedProducts;
-                  const subtotal = discountedProducts + totals.giftTotal + totals.packingTotal;
-                  const total = subtotal + totals.shipping;
-
-                  const shippingLabel =
-                    totals.shipping === 0 ? t('cart.free') : `${totals.shipping.toFixed(2)} lei`;
-
-                  return (
-                    <div className="rounded-xl border border-border/60 bg-white px-3 py-2">
-                      <div className="grid grid-cols-4 gap-2 text-[11px] font-semibold text-muted-foreground">
-                        <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
-                        <span>{t('cart.subtotal')}</span>
-                        <span>{t('cart.shipping')}</span>
-                        <span>{t('cart.totalVat')}</span>
-                      </div>
-                      <div className="mt-1 grid grid-cols-4 gap-2 text-xs font-semibold text-foreground">
-                        <span>{productsCost.toFixed(2)} lei</span>
-                        <span>{subtotal.toFixed(2)} lei</span>
-                        <span className={totals.shipping === 0 ? 'text-emerald-600' : undefined}>
-                          {shippingLabel}
-                        </span>
-                        <span>{total.toFixed(2)} lei</span>
+          </div>
+          </>
+        )}
+                <div className="absolute bottom-0 left-0 right-0 mt-auto border border-l-0 border-r-0 border-b-0 border-t-1 bg-white p-4 shadow-lg" id="cart-summary">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
+                    <div className="flex flex-1 items-center justify-end gap-2">
+                      <span className="text-[11px] font-semibold text-muted-foreground">{t('cart.promoCodeTitle')}</span>
+                      <div className="flex min-w-[220px] max-w-[320px] flex-1 gap-2">
+                        <input
+                            type="text"
+                            value={promoCode}
+                            onChange={(event) => setPromoCode(event.target.value)}
+                            data-track-action="A completat cuponul in cos."
+                            placeholder={t('cart.promoCodePlaceholder')}
+                            className="flex-1 rounded-lg border border-border px-3 py-2 text-xs"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleApplyCoupon}
+                            data-track-action="A aplicat cuponul in cos."
+                            className="rounded-full bg-amber-600 px-4 py-2 text-[11px] font-semibold text-white"
+                        >
+                          {t('cart.applyCoupon')}
+                        </button>
                       </div>
                     </div>
-                  );
-                })()}
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate('/plata-cos')}
-                data-track-action="A mers la finalizare comanda din cos."
-                className="mt-4 w-full rounded-full py-3 text-sm font-semibold text-white shadow-lg"
-                style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
-              >
-                {t('cart.continue')}
-              </button>
-            </div>
-          </div>
-        )}
+                  </div>
+                  {couponStatus && (
+                      <div
+                          className={`mt-2 rounded-lg px-3 py-2 text-[11px] font-semibold ${
+                              couponStatus.type === 'success'
+                                  ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                                  : 'border border-rose-200 bg-rose-50 text-rose-700'
+                          }`}
+                      >
+                        {couponStatus.message}
+                      </div>
+                  )}
+                  {couponDetails && (
+                      <div className="mt-2 space-y-2 rounded-lg border border-border bg-white/80 p-2 text-[11px] text-muted-foreground">
+                        {couponDetails.invalidProducts.length > 0 && (
+                            <ul className="space-y-1 text-left font-medium text-muted-foreground">
+                              {couponDetails.invalidProducts.map((item) => (
+                                  <li key={`${item.title}-${item.reason}`} className="flex gap-2">
+                                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                    <span>
+                            {item.title}: {item.reason}
+                          </span>
+                                  </li>
+                              ))}
+                            </ul>
+                        )}
+                        {couponDetails.conditions.length > 0 && (
+                            <ul className="space-y-1 text-left font-medium text-muted-foreground">
+                              {couponDetails.conditions.map((item) => (
+                                  <li key={item} className="flex gap-2">
+                                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                    <span>{item}</span>
+                                  </li>
+                              ))}
+                            </ul>
+                        )}
+                      </div>
+                  )}
+
+                  <div className="mt-3 space-y-3 text-sm text-muted-foreground">
+                    {(() => {
+                      const productsCost = totals.cost;
+                      const discountedProducts = totals.discountedProducts;
+                      const subtotal = discountedProducts + totals.giftTotal + totals.packingTotal;
+                      const total = subtotal + totals.shipping;
+
+                      const shippingLabel =
+                          totals.shipping === 0 ? t('cart.free') : `${totals.shipping.toFixed(2)} lei`;
+
+                      return (
+                          <div className="rounded-xl border border-border/60 bg-white px-3 py-2">
+                            <div className="grid grid-cols-4 gap-2 text-[11px] font-semibold text-muted-foreground">
+                              <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
+                              <span>{t('cart.subtotal')}</span>
+                              <span>{t('cart.shipping')}</span>
+                              <span>{t('cart.totalVat')}</span>
+                            </div>
+                            <div className="mt-1 grid grid-cols-4 gap-2 text-xs font-semibold text-foreground">
+                              <span>{productsCost.toFixed(2)} lei</span>
+                              <span>{subtotal.toFixed(2)} lei</span>
+                              <span className={totals.shipping === 0 ? 'text-emerald-600' : undefined}>
+                          {shippingLabel}
+                        </span>
+                              <span>{total.toFixed(2)} lei</span>
+                            </div>
+                          </div>
+                      );
+                    })()}
+                  </div>
+                  <button
+                      type="button"
+                      onClick={() => navigate('/plata-cos')}
+                      data-track-action="A mers la finalizare comanda din cos."
+                      className="mt-4 w-full rounded-full py-3 text-sm font-semibold text-white shadow-lg"
+                      style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
+                  >
+                    {t('cart.continue')}
+                  </button>
+                </div>
+
               </div>
             </div>
           </section>

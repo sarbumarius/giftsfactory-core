@@ -13,7 +13,7 @@ import { ProductDetailResponse, SubcategoriesResponse, SubcategoryTreeNode } fro
 import { formatDimensions } from '@/utils/formatDimensions';
 import { tiktokViewContent } from '@/utils/tiktok';
 import { fbViewContent } from '@/utils/facebook';
-import { getLocale, withLocalePath } from '@/utils/locale';
+import { getLocale, LocaleCode, setLocale, stripLocalePrefix, withLocalePath } from '@/utils/locale';
 import { t } from '@/utils/translations';
 
 const DesktopProductPage = () => {
@@ -38,6 +38,28 @@ const DesktopProductPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const locale = getLocale();
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const getCategoryTitle = (category?: { titlu?: string; title_en?: string }) =>
+    locale === 'en' ? category?.title_en ?? category?.titlu ?? '' : category?.titlu ?? '';
+  const getProductTitle = (product?: { titlu?: string; title_en?: string }) =>
+    locale === 'en' ? product?.title_en ?? product?.titlu ?? '' : product?.titlu ?? '';
+
+  const handleLocaleChange = (nextLocale: LocaleCode) => {
+    if (nextLocale === locale) return;
+    setLocale(nextLocale);
+    if (typeof window === 'undefined') return;
+    const path = stripLocalePrefix(window.location.pathname);
+    const isProductPath = path.startsWith('/produs/') || path.startsWith('/product/');
+    let nextPath = withLocalePath(path, nextLocale);
+    if (isProductPath && data?.slug) {
+      if (nextLocale === 'en') {
+        const slugEn = data.slug_en || data.slug;
+        nextPath = `/en/product/${slugEn}`;
+      } else {
+        nextPath = `/produs/${data.slug}`;
+      }
+    }
+    window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
+  };
 
   useEffect(() => {
     if (!slug) return;
@@ -54,8 +76,11 @@ const DesktopProductPage = () => {
 
         const price = parseFloat(response.pret_redus || response.pret || '0');
         const priceWithoutVAT = price / 1.21;
-        tiktokViewContent(String(response.id), response.titlu, priceWithoutVAT, 'RON');
-        fbViewContent(String(response.id), response.titlu, priceWithoutVAT, 'RON');
+        const currentLocale = getLocale();
+        const viewTitle =
+          currentLocale === 'en' ? response.title_en ?? response.titlu ?? '' : response.titlu ?? '';
+        tiktokViewContent(String(response.id), viewTitle, priceWithoutVAT, 'RON');
+        fbViewContent(String(response.id), viewTitle, priceWithoutVAT, 'RON');
       })
       .catch((err) => {
         if (!isActive) return;
@@ -92,10 +117,14 @@ const DesktopProductPage = () => {
   useEffect(() => {
     if (!data) return;
     const defaultTitle = 'Daruri Alese Catalog';
-    const title = data.titlu ? `${data.titlu} | ${defaultTitle}` : defaultTitle;
+    const localizedTitle = locale === 'en' ? data.title_en ?? data.titlu ?? '' : data.titlu;
+    const title = localizedTitle ? `${localizedTitle} | ${defaultTitle}` : defaultTitle;
     document.title = title;
 
-    const rawDescription = data.descriere_scurta || data.descriere || '';
+    const rawDescription =
+      locale === 'en'
+        ? data.descriere_en || data.descriere_scurta || data.descriere || ''
+        : data.descriere_scurta || data.descriere || '';
     const cleanDescription = rawDescription
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
@@ -254,7 +283,7 @@ const DesktopProductPage = () => {
 
       window.rybbit.event('AddToCart', {
         url: window.location.href,
-        product: data.titlu || 'Produs necunoscut',
+        product: getProductTitle(data) || 'Produs necunoscut',
         productId: data.id ?? null,
         customizations: selections.length ? selections : 'fara personalizari',
       });
@@ -263,7 +292,7 @@ const DesktopProductPage = () => {
     addToCart({
       id: data.id,
       slug: data.slug,
-      title: data.titlu,
+      title: getProductTitle(data),
       image: data.imagine_principala['300x300'] || data.imagine_principala.full,
       price: data.pret,
       priceReduced: data.pret_redus,
@@ -278,6 +307,7 @@ const DesktopProductPage = () => {
   };
 
   const product = data;
+  const productTitle = getProductTitle(product);
   const price = product ? parseFloat(product.pret) : 0;
   const reducedPrice = product?.pret_redus ? parseFloat(product.pret_redus) : null;
   const hasDiscount = typeof reducedPrice === 'number' && reducedPrice !== price;
@@ -333,7 +363,7 @@ const DesktopProductPage = () => {
       const countA = a.subcategorii?.length ?? 0;
       const countB = b.subcategorii?.length ?? 0;
       if (countA !== countB) return countA - countB;
-      return a.titlu.localeCompare(b.titlu);
+      return getCategoryTitle(a).localeCompare(getCategoryTitle(b));
     });
   };
 
@@ -341,7 +371,7 @@ const DesktopProductPage = () => {
     if ((category.nr_produse ?? 0) === 0) {
       return null;
     }
-    const title = locale === 'en' ? category.title_en ?? '' : category.titlu;
+    const title = getCategoryTitle(category);
     const targetSlug = locale === 'en' ? category.slug_en || category.slug : category.slug;
     const hasChildren = category.subcategorii?.length > 0;
     const productLabel =
@@ -351,7 +381,7 @@ const DesktopProductPage = () => {
       <div key={category.id}>
         <button
           className="w-full min-w-0 flex items-center gap-3 p-3 bg-white hover:bg-muted/50 transition-colors"
-          data-track-action={`A apasat pe categoria ${category.titlu}.`}
+          data-track-action={`A apasat pe categoria ${title}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
             const targetPath = locale === 'en' ? `/en/category/${targetSlug}` : `/categorie/${targetSlug}`;
@@ -361,7 +391,7 @@ const DesktopProductPage = () => {
         >
           <img
             src={category.imagine}
-            alt={category.titlu}
+            alt={title}
             className="h-8 w-8 object-contain flex-shrink-0"
           />
           <div className="min-w-0 flex-1 text-left">
@@ -427,7 +457,7 @@ const DesktopProductPage = () => {
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
         <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
-          <DesktopSidebar />
+          <DesktopSidebar locale={locale} onLocaleChange={handleLocaleChange} />
 
           <section className="min-h-full border-r border-border bg-white flex flex-col">
             <DesktopTopBar
@@ -464,7 +494,7 @@ const DesktopProductPage = () => {
               {galleryImages[activeImageIndex] ? (
                 <img
                   src={galleryImages[activeImageIndex]}
-                  alt={product.titlu}
+                  alt={productTitle}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -485,42 +515,132 @@ const DesktopProductPage = () => {
                       activeImageIndex === idx ? 'border-amber-500' : 'border-border'
                     }`}
                   >
-                    <img src={img} alt={product.titlu} className="h-20 w-full object-cover" />
+                    <img src={img} alt={productTitle} className="h-20 w-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
+
+            <div className="rounded-2xl border border-border bg-white p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-foreground">{t('product.photoReviews')}</h2>
+                <div className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
+                  {t('product.photoCount', { count: reviewPhotos.length })}
+                </div>
+              </div>
+
+              {reviewPhotos.length > 0 ? (
+                <div className="mt-4 grid grid-cols-4 gap-3">
+                  {reviewPhotos.map((photo, idx) => (
+                    <button
+                      key={`${photo.url}-${idx}`}
+                      type="button"
+                      onClick={() => setZoomReviewIndex(idx)}
+                      className="overflow-hidden rounded-2xl border border-border bg-muted"
+                    >
+                      <img src={photo.url} alt="Recenzie" className="h-28 w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-muted-foreground">Nu exista fotografii din recenzii.</p>
+              )}
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-white p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">Recenzii cu poze</h2>
-              <div className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
-                {reviewPhotos.length} fotografii
+          <aside className="space-y-4">
+            <div className="rounded-2xl border border-border bg-white p-6">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                {getCategoryTitle(product.categorii?.[0]) || t('product.category')}
+              </div>
+              <h1 className="mt-2 text-3xl font-semibold text-foreground">{productTitle}</h1>
+
+              <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={`star-${index}`}
+                      className={`h-4 w-4 ${index < Math.round(parseFloat(product.average_recenzii || '0')) ? 'fill-amber-500' : ''}`}
+                    />
+                  ))}
+                </div>
+                <span>
+                  {Number(product.average_recenzii || 0).toFixed(1)} ({product.nr_recenzii} recenzii)
+                </span>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-end gap-3">
+                <span className="text-3xl font-semibold text-amber-700">
+                  {discountedPrice.toFixed(2)} lei
+                </span>
+                {hasDiscount && (
+                  <span className="text-sm text-muted-foreground line-through">
+                    {originalPrice.toFixed(2)} lei
+                  </span>
+                )}
+                {dimensionValue && (
+                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                    {dimensionValue}
+                  </span>
+                )}
+              </div>
+
+              {product.descriere_scurta && locale !== 'en' && (
+                <div
+                  className="mt-4 text-sm text-muted-foreground prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: product.descriere_scurta }}
+                />
+              )}
+
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  data-track-action={showPersonalizare || personalizareFields.length === 0 ? 'A adaugat produsul in cos.' : 'A deschis personalizarea produsului.'}
+                  className="flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
+                >
+                  <Plus className="h-4 w-4" />
+                  {showPersonalizare || personalizareFields.length === 0 ? t('product.addToCart') : t('product.customize')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isInWishlist) {
+                      removeFromWishlist(product.id);
+                    } else {
+                      addToWishlist({
+                        id: product.id,
+                        slug: product.slug,
+                        title: productTitle,
+                        image: product.imagine_principala['300x300'] || product.imagine_principala.full,
+                      });
+                    }
+                  }}
+                  data-track-action={`A apasat pe wishlist pentru ${productTitle}.`}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold ${
+                    isInWishlist ? 'border-red-300 bg-red-50 text-red-600' : 'border-border text-foreground'
+                  }`}
+                >
+                  <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} />
+                  {isInWishlist ? 'In wishlist' : 'Adauga la wishlist'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentSlug(product.categorii?.[0]?.slug || 'gifts-factory');
+                    navigate(withLocalePath('/cos'));
+                    window.setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 50);
+                  }}
+                  data-track-action="A mers la cos din produs."
+                  className="rounded-full border border-border px-4 py-3 text-sm font-semibold text-foreground"
+                >
+                  Vezi cos ({cart.length})
+                </button>
               </div>
             </div>
 
-            {reviewPhotos.length > 0 ? (
-              <div className="mt-4 grid grid-cols-4 gap-3">
-                {reviewPhotos.map((photo, idx) => (
-                  <button
-                    key={`${photo.url}-${idx}`}
-                    type="button"
-                    onClick={() => setZoomReviewIndex(idx)}
-                    className="overflow-hidden rounded-2xl border border-border bg-muted"
-                  >
-                    <img src={photo.url} alt="Recenzie" className="h-28 w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-4 text-sm text-muted-foreground">Nu exista fotografii din recenzii.</p>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-10 grid grid-cols-2 gap-6">
-          <div className="space-y-4">
             <div id="personalizare-desktop" className="rounded-2xl border border-border bg-white p-6">
               <button
                 type="button"
@@ -533,12 +653,12 @@ const DesktopProductPage = () => {
               >
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
-                    Personalizare
+                    {t('attr.personalization')}
                   </p>
-                  <h2 className="mt-1 text-xl font-semibold text-foreground">Personalizeaza produsul</h2>
+                  <h2 className="mt-1 text-xl font-semibold text-foreground">{t('product.startPersonalization')}</h2>
                 </div>
                 <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
-                  {showPersonalizare ? 'Ascunde' : 'Afiseaza'}
+                  {showPersonalizare ? t('common.hide') : t('common.show')}
                 </span>
               </button>
 
@@ -678,13 +798,15 @@ const DesktopProductPage = () => {
                 onClick={() => setOpenSection(openSection === 'descriere' ? 'personalizare' : 'descriere')}
                 className="flex w-full items-center justify-between"
               >
-                <h2 className="text-lg font-semibold text-foreground">Descriere produs</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('product.description')}</h2>
                 <ArrowRight className={`h-4 w-4 transition-transform ${openSection === 'descriere' ? 'rotate-90' : ''}`} />
               </button>
               {openSection === 'descriere' && (
                 <div
                   className="mt-4 text-sm text-muted-foreground prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: product.descriere }}
+                  dangerouslySetInnerHTML={{
+                    __html: locale === 'en' ? product.descriere_en || product.descriere : product.descriere,
+                  }}
                 />
               )}
             </div>
@@ -695,7 +817,7 @@ const DesktopProductPage = () => {
                 onClick={() => setOpenSection(openSection === 'detalii' ? 'personalizare' : 'detalii')}
                 className="flex w-full items-center justify-between"
               >
-                <h2 className="text-lg font-semibold text-foreground">Detalii tehnice</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('product.details')}</h2>
                 <ArrowRight className={`h-4 w-4 transition-transform ${openSection === 'detalii' ? 'rotate-90' : ''}`} />
               </button>
               {openSection === 'detalii' && (
@@ -708,100 +830,6 @@ const DesktopProductPage = () => {
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-
-          <aside className="space-y-4">
-            <div className="rounded-2xl border border-border bg-white p-6">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                {product.categorii?.[0]?.titlu || 'Categorie'}
-              </div>
-              <h1 className="mt-2 text-3xl font-semibold text-foreground">{product.titlu}</h1>
-
-              <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1 text-amber-500">
-                  {[...Array(5)].map((_, index) => (
-                    <Star
-                      key={`star-${index}`}
-                      className={`h-4 w-4 ${index < Math.round(parseFloat(product.average_recenzii || '0')) ? 'fill-amber-500' : ''}`}
-                    />
-                  ))}
-                </div>
-                <span>
-                  {Number(product.average_recenzii || 0).toFixed(1)} ({product.nr_recenzii} recenzii)
-                </span>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-end gap-3">
-                <span className="text-3xl font-semibold text-amber-700">
-                  {discountedPrice.toFixed(2)} lei
-                </span>
-                {hasDiscount && (
-                  <span className="text-sm text-muted-foreground line-through">
-                    {originalPrice.toFixed(2)} lei
-                  </span>
-                )}
-                {dimensionValue && (
-                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                    {dimensionValue}
-                  </span>
-                )}
-              </div>
-
-              {product.descriere_scurta && locale !== 'en' && (
-                <div
-                  className="mt-4 text-sm text-muted-foreground prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: product.descriere_scurta }}
-                />
-              )}
-
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  data-track-action={showPersonalizare || personalizareFields.length === 0 ? 'A adaugat produsul in cos.' : 'A deschis personalizarea produsului.'}
-                  className="flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
-                >
-                  <Plus className="h-4 w-4" />
-                  {showPersonalizare || personalizareFields.length === 0 ? 'Adauga in cos' : 'Personalizeaza'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isInWishlist) {
-                      removeFromWishlist(product.id);
-                    } else {
-                      addToWishlist({
-                        id: product.id,
-                        slug: product.slug,
-                        title: product.titlu,
-                        image: product.imagine_principala['300x300'] || product.imagine_principala.full,
-                      });
-                    }
-                  }}
-                  data-track-action={`A apasat pe wishlist pentru ${product.titlu}.`}
-                  className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold ${
-                    isInWishlist ? 'border-red-300 bg-red-50 text-red-600' : 'border-border text-foreground'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} />
-                  {isInWishlist ? 'In wishlist' : 'Adauga la wishlist'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentSlug(product.categorii?.[0]?.slug || 'gifts-factory');
-                    navigate(withLocalePath('/cos'));
-                    window.setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 50);
-                  }}
-                  data-track-action="A mers la cos din produs."
-                  className="rounded-full border border-border px-4 py-3 text-sm font-semibold text-foreground"
-                >
-                  Vezi cos ({cart.length})
-                </button>
-              </div>
             </div>
 
             <div className="rounded-2xl border border-border bg-white p-5">
@@ -819,11 +847,11 @@ const DesktopProductPage = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
                   <Check className="h-4 w-4 text-amber-600" />
-                  Plata securizata
+                  {t('product.securePayment')}
                 </div>
                 <div className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
                   <Check className="h-4 w-4 text-amber-600" />
-                  Livrare rapida
+                  {t('product.fastDeliveryLabel')}
                 </div>
               </div>
             </div>
@@ -835,7 +863,7 @@ const DesktopProductPage = () => {
                 </p>
                 <div className="mt-4 space-y-2">
                   {product.categorii.slice(0, 4).map((category) => {
-                    const categoryTitle = locale === 'en' ? category.title_en ?? category.titlu : category.titlu;
+                    const categoryTitle = getCategoryTitle(category);
                     const categorySlug = locale === 'en' ? category.slug_en || category.slug : category.slug;
                     return (
                       <button
@@ -847,10 +875,10 @@ const DesktopProductPage = () => {
                             locale === 'en' ? `/en/category/${categorySlug}` : `/categorie/${categorySlug}`;
                           navigate(targetPath);
                         }}
-                        data-track-action={`A deschis categoria ${category.titlu} din produs.`}
+                        data-track-action={`A deschis categoria ${categoryTitle} din produs.`}
                         className="flex w-full items-center gap-3 rounded-xl border border-border bg-white px-3 py-2 text-left text-sm font-semibold text-foreground"
                       >
-                        <img src={category.imagine} alt={category.titlu} className="h-8 w-8 object-contain" />
+                        <img src={category.imagine} alt={categoryTitle} className="h-8 w-8 object-contain" />
                         <span>{categoryTitle}</span>
                       </button>
                     );
@@ -863,7 +891,7 @@ const DesktopProductPage = () => {
         {product.categorii?.[0]?.produse?.length ? (
           <div className="mt-10">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">Produse recomandate</h2>
+              <h2 className="text-xl font-semibold text-foreground">{t('product.recommendedProducts')}</h2>
               <button
                 type="button"
                 onClick={() => {
@@ -876,7 +904,7 @@ const DesktopProductPage = () => {
                 data-track-action="A deschis categoria recomandata din produs."
                 className="text-sm font-semibold text-amber-700"
               >
-                Vezi categoria
+                {t('product.viewCategory')}
               </button>
             </div>
             <div className="mt-4 grid grid-cols-4 gap-4">

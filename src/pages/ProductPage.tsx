@@ -58,7 +58,7 @@ const ProductPage = () => {
   const [orderDate, setOrderDate] = useState<Date>(new Date());
   const [showOrderDateModal, setShowOrderDateModal] = useState(false);
   const locale = getLocale();
-  const displayTitle = locale === 'en' ? data?.title_en ?? '' : data?.titlu || '';
+  const displayTitle = locale === 'en' ? data?.title_en ?? data?.titlu ?? '' : data?.titlu || '';
   const photoTouchStartX = useRef<number | null>(null);
   const photoTouchEndX = useRef<number | null>(null);
   const templateSliderRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
@@ -160,8 +160,10 @@ const ProductPage = () => {
 
         const price = parseFloat(response.pret_redus || response.pret || '0');
         const priceWithoutVAT = price / 1.21;
-        tiktokViewContent(String(response.id), response.titlu, priceWithoutVAT, 'RON');
-        fbViewContent(String(response.id), response.titlu, priceWithoutVAT, 'RON');
+        const locale = getLocale();
+        const viewTitle = locale === 'en' ? response.title_en ?? response.titlu ?? '' : response.titlu ?? '';
+        tiktokViewContent(String(response.id), viewTitle, priceWithoutVAT, 'RON');
+        fbViewContent(String(response.id), viewTitle, priceWithoutVAT, 'RON');
       })
       .catch((err) => {
         if (!isActive) return;
@@ -178,7 +180,7 @@ const ProductPage = () => {
     if (!data) return;
     const defaultTitle = 'Daruri Alese Catalog';
     const locale = getLocale();
-    const displayTitle = locale === 'en' ? data.title_en ?? '' : data.titlu;
+    const displayTitle = locale === 'en' ? data.title_en ?? data.titlu ?? '' : data.titlu;
     const title = displayTitle ? `${displayTitle} | ${defaultTitle}` : defaultTitle;
     document.title = title;
 
@@ -208,7 +210,7 @@ const ProductPage = () => {
     const locale = getLocale();
     const productSlug = locale === 'en' ? data.slug_en || data.slug : data.slug;
     const url = `${origin}${withLocalePath(`/produs/${productSlug}`)}`;
-    const displayTitle = locale === 'en' ? data.title_en ?? '' : data.titlu;
+    const displayTitle = locale === 'en' ? data.title_en ?? data.titlu ?? '' : data.titlu;
     const rawDescription =
       locale === 'en'
         ? data.descriere_en || data.descriere_scurta || data.descriere || ''

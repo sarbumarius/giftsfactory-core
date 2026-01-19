@@ -1509,6 +1509,7 @@ const DesktopCheckoutPage = () => {
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
         <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+
           <DesktopSidebar />
 
           <section className="min-h-full border-r border-border bg-white flex flex-col">
@@ -1534,7 +1535,7 @@ const DesktopCheckoutPage = () => {
           <ArrowLeft className="h-5 w-5" />
         </button>
 
-        <div className="mt-6 grid grid-cols-[1fr_360px] gap-8">
+        <div className="mt-6 grid grid-cols-1 gap-8">
           <div className="space-y-4">
             <div className="mt-0">
               <div className="flex items-center gap-2">
@@ -2471,149 +2472,6 @@ const DesktopCheckoutPage = () => {
             )}
           </div>
 
-          </div>
-          <aside className="space-y-4">
-            <div className="rounded-2xl border border-border p-4">
-              <div className="flex w-full items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">{t('checkout.productsTitle')}</span>
-                <span className="text-xs font-semibold text-muted-foreground">
-                  {t('checkout.productsCount', { count: totals.totalItems })}
-                </span>
-              </div>
-              <div className="mt-3 space-y-3">
-                {cart.map((item) => {
-                  const hasPersonalizare = item.personalizare && item.personalizare.length > 0;
-                  const itemKey = item.cartItemId ?? `${item.id}`;
-                  const showPersonalizare = openPersonalizareId === itemKey;
-                  return (
-                    <div key={itemKey} className="rounded-xl border border-border p-3">
-                      <div className="flex gap-3">
-                        <img src={item.image} alt={item.title} className="h-16 w-16 rounded-lg object-cover" />
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-foreground">{item.title}</p>
-                          <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                            <span>{t('checkout.quantity')}: {item.quantity ?? 1}</span>
-                            <span>
-                              {parseFloat(item.priceReduced ?? item.price).toFixed(2)} lei
-                            </span>
-                          </div>
-                          {hasPersonalizare && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setOpenPersonalizareId((prev) => (prev === itemKey ? null : itemKey))
-                              }
-                              className="mt-2 text-[11px] font-semibold text-primary"
-                            >
-                              {showPersonalizare ? 'Ascunde personalizare' : 'Vezi personalizare'}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                      {hasPersonalizare && showPersonalizare && (
-                        <div className="mt-3 space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-muted-foreground">
-                          {item.personalizare?.map((entry) => (
-                            <div key={`${itemKey}-${entry.name}`}>
-                              <span className="font-semibold text-foreground">{entry.label}:</span>{' '}
-                              {entry.type === 'upload' && entry.file ? (
-                                <div className="mt-2 overflow-hidden rounded-lg border border-border">
-                                  <img src={entry.file} alt={entry.label} className="h-24 w-full object-cover" />
-                                </div>
-                              ) : Array.isArray(entry.value) ? (
-                                entry.value.join(', ')
-                              ) : (
-                                entry.value || '-'
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {SHOW_PROMO_CODE && (
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-foreground">Cod promotional</p>
-                  <div className="bg-white">
-                    <div className="flex items-center gap-2 rounded-md mt-2 bg-muted/20 px-3 py-2 border border-1 border-[#ccc]">
-
-                      <input
-                        type="text"
-                        value={promoCode}
-                        onChange={(event) => setPromoCode(event.target.value)}
-                        placeholder={t('cart.promoCodePlaceholder')}
-                        className="flex-1 bg-transparent text-sm focus:outline-none"
-                      />
-                    </div>
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button
-                          type="button"
-                          onClick={() => {
-                            setPromoCode('');
-                            setAppliedCouponCode(null);
-                            setCouponTotals(null);
-                            setCouponStatus(null);
-                            setCouponDetails(null);
-                          }}
-                          disabled={!appliedCouponCode || isApplyingCoupon}
-                          className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
-                      >
-                        {t('cart.reset')}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleApplyCoupon}
-                        disabled={isApplyingCoupon}
-                        className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
-                      >
-                        {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
-                      </button>
-
-                    </div>
-                    {couponStatus && (
-                      <div className="mt-2 space-y-2 text-xs font-semibold">
-                        {couponStatus.type === 'success' ? (
-                          <p className="text-center text-emerald-600">{couponStatus.message}</p>
-                        ) : (
-                          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-left text-red-600">
-                            <p className="font-semibold">{couponStatus.message}</p>
-                            {couponDetails && !couponDetails.hasApplicableProducts && (
-                              <p className="mt-1 text-[11px] font-semibold text-red-500">
-                                {t('cart.couponNoProducts')}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                        {couponDetails?.invalidProducts?.length > 0 && (
-                          <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
-                            {couponDetails.invalidProducts.map((item) => (
-                              <li key={`${item.title}-${item.reason}`} className="flex gap-2">
-                                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                                <span>
-                                  {item.title}: {item.reason}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                        {couponDetails?.conditions?.length > 0 && (
-                          <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
-                            {couponDetails.conditions.map((item) => (
-                              <li key={item} className="flex gap-2">
-                                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
             <div className="rounded-2xl border border-border p-4">
               <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
               <input type="hidden" name="payment_method" value={paymentMethodId} />
@@ -2683,186 +2541,272 @@ const DesktopCheckoutPage = () => {
               )}
             </div>
 
-            <div className="rounded-2xl border border-border p-4">
-              <div className="rounded-2xl mb-3" id="checkout-summary">
-                <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
-                <div className="mt-3">
-                <textarea
-                    value={orderNote}
-                    onChange={(event) => setOrderNote(event.target.value)}
-                    data-track-action={t('checkout.orderNotes')}
-                    className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
-                    placeholder={t('checkout.orderNotesPlaceholder')}
-                />
-                </div>
-              </div>
-              <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
-                {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
-              </div>
-              <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
-                {t('cart.advanceIntroPrefix')} <b>30%</b> {t('cart.advanceIntroSuffix')} {t('cart.advanceMore')}.
-              </div>
-              <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
-              <div className="mt-3 space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center justify-between">
-                  <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
-                  <span>{totals.cost.toFixed(2)} lei</span>
-                </div>
-                {totals.couponDiscount > 0 && (
-                  <div className="flex items-center justify-between text-emerald-600">
-                    <span>{t('cart.couponDiscount')}</span>
-                    <span>-{totals.couponDiscount.toFixed(2)} lei</span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between">
-                  <span>{t('cart.shipping')}</span>
-                  {totals.shipping === 0 ? (
-                    <span className="font-semibold text-emerald-600">{t('cart.free')}</span>
-                  ) : (
-                    <span>{totals.shipping.toFixed(2)} lei</span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>{t('cart.subtotal')}</span>
-                  <span>{totals.discountedCost.toFixed(2)} lei</span>
-                </div>
-                <div className="flex items-center justify-between text-base font-semibold text-foreground">
-                  <span>{t('cart.totalVat')}</span>
-                  <span>{totals.total.toFixed(2)} lei</span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={`rounded-2xl border p-4 text-xs text-muted-foreground ${
-                attemptedSubmit && !termsAccepted ? 'border-red-400' : 'border-border'
-              }`}
-              data-invalid={attemptedSubmit && !termsAccepted}
-            >
-              <p>
-                {t('checkout.privacyIntro')}{' '}
-                <a
-                  href="https://darurialese.ro/politica-de-confidentialitate/"
-                  className="text-primary underline"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setActiveLegalModal('privacy');
-                  }}
-                >
-                  {t('checkout.privacyLink')}
-                </a>
-                .
-              </p>
-              <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2">
-                <span className="text-xs font-semibold text-foreground">
-                  {t('checkout.termsAccept')}{' '}
-                  <a
-                    href="https://darurialese.ro/termeni-si-conditii-daruri-alese/"
-                    className="text-primary underline"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      setActiveLegalModal('terms');
-                    }}
-                  >
-                    {t('checkout.termsLink')}
-                  </a>
-                </span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={termsAccepted}
-                  onClick={() => setTermsAccepted((prev) => !prev)}
-                  data-track-action="A bifat termenii si conditiile."
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
-                    termsAccepted ? 'bg-amber-500' : 'bg-muted'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                      termsAccepted ? 'translate-x-5' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-              {attemptedSubmit && !termsAccepted && (
-                <p className="mt-2 text-xs font-semibold text-red-500">{t('checkout.termsRequired')}</p>
-              )}
-              <button
-                type="button"
-                onClick={handleSubmitClick}
-                disabled={isSubmitting}
-                data-track-action="A trimis comanda."
-                className="mt-4 w-full rounded-full py-3 text-xs font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
-                style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
-              >
-                {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
-              </button>
-            </div>
-          </aside>
+          </div>
         </div>
               </div>
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="sidebar2 min-h-full border-l border-border bg-white relative">
             <div className="relative flex h-full flex-col">
-              <div className="border-b border-border p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('nav.categories')}
-                </p>
-                <div className="relative mt-3">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder={t('search.categoriesPlaceholder')}
-                    value={categorySearch}
-                    onChange={(event) => setCategorySearch(event.target.value)}
-                    data-track-action="A folosit cautarea in categorii."
-                    className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
-                  />
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-40">
+              <div className="rounded-2xl border border-border p-4">
+                <div className="flex w-full items-center justify-between">
+                  <span className="text-sm font-semibold text-foreground">{t('checkout.productsTitle')}</span>
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {t('checkout.productsCount', { count: totals.totalItems })}
+                  </span>
                 </div>
-              </div>
-              <div
-                ref={categoryScrollRef}
-                className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/60 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]"
-                style={{ scrollbarColor: '#6844c1 #ffffff', scrollbarWidth: 'thin' }}
-              >
-                {isLoadingCategories ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {t('category.loadingCategories')}
-                  </div>
-                ) : categoryError ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {categoryError}
-                  </div>
-                ) : categorySearch.trim() ? (
-                  searchResults.nodes.length === 0 ? (
-                    <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                      {t('search.noCategories')}
+                <div className="mt-3 space-y-3">
+                  {cart.map((item) => {
+                    const hasPersonalizare = item.personalizare && item.personalizare.length > 0;
+                    const itemKey = item.cartItemId ?? `${item.id}`;
+                    const showPersonalizare = openPersonalizareId === itemKey;
+                    return (
+                      <div key={itemKey} className="rounded-xl border border-border p-3">
+                        <div className="flex gap-3">
+                          <img src={item.image} alt={item.title} className="h-16 w-16 rounded-lg object-cover" />
+                          <div className="flex-1">
+                            <p className="text-xs font-semibold text-foreground">{item.title}</p>
+                            <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                              <span>{t('checkout.quantity')}: {item.quantity ?? 1}</span>
+                              <span>
+                                {parseFloat(item.priceReduced ?? item.price).toFixed(2)} lei
+                              </span>
+                            </div>
+                            {hasPersonalizare && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setOpenPersonalizareId((prev) => (prev === itemKey ? null : itemKey))
+                                }
+                                className="mt-2 text-[11px] font-semibold text-primary"
+                              >
+                                {showPersonalizare ? t('checkout.customizationHide') : t('checkout.customizationShow')}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        {hasPersonalizare && showPersonalizare && (
+                          <div className="mt-3 space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-muted-foreground">
+                            {item.personalizare?.map((entry) => (
+                              <div key={`${itemKey}-${entry.name}`}>
+                                <span className="font-semibold text-foreground">{entry.label}:</span>{' '}
+                                {entry.type === 'upload' && entry.file ? (
+                                  <div className="mt-2 overflow-hidden rounded-lg border border-border">
+                                    <img src={entry.file} alt={entry.label} className="h-24 w-full object-cover" />
+                                  </div>
+                                ) : Array.isArray(entry.value) ? (
+                                  entry.value.join(', ')
+                                ) : (
+                                  entry.value || '-'
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {SHOW_PROMO_CODE && (
+                  <div className="mt-4">
+                    <p className="text-sm font-semibold text-foreground">{t('cart.promoCodeTitle')}</p>
+                    <div className="bg-white">
+                      <div className="flex items-center gap-2 rounded-md mt-2 bg-muted/20 px-3 py-2 border border-1 border-[#ccc]">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(event) => setPromoCode(event.target.value)}
+                          placeholder={t('cart.promoCodePlaceholder')}
+                          className="flex-1 bg-transparent text-sm focus:outline-none"
+                        />
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => {
+                              setPromoCode('');
+                              setAppliedCouponCode(null);
+                              setCouponTotals(null);
+                              setCouponStatus(null);
+                              setCouponDetails(null);
+                            }}
+                            disabled={!appliedCouponCode || isApplyingCoupon}
+                            className="w-full rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground disabled:opacity-50"
+                        >
+                          {t('cart.reset')}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={isApplyingCoupon}
+                          className="w-full rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground"
+                        >
+                          {isApplyingCoupon ? t('cart.couponChecking') : t('cart.applyCoupon')}
+                        </button>
+
+                      </div>
+                      {couponStatus && (
+                        <div className="mt-2 space-y-2 text-xs font-semibold">
+                          {couponStatus.type === 'success' ? (
+                            <p className="text-center text-emerald-600">{couponStatus.message}</p>
+                          ) : (
+                            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-left text-red-600">
+                              <p className="font-semibold">{couponStatus.message}</p>
+                              {couponDetails && !couponDetails.hasApplicableProducts && (
+                                <p className="mt-1 text-[11px] font-semibold text-red-500">
+                                  {t('cart.couponNoProducts')}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                          {couponDetails?.invalidProducts?.length > 0 && (
+                            <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
+                              {couponDetails.invalidProducts.map((item) => (
+                                <li key={`${item.title}-${item.reason}`} className="flex gap-2">
+                                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                  <span>
+                                    {item.title}: {item.reason}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {couponDetails?.conditions?.length > 0 && (
+                            <ul className="space-y-1 text-left text-[11px] font-medium text-muted-foreground">
+                              {couponDetails.conditions.map((item) => (
+                                <li key={item} className="flex gap-2">
+                                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div>
-                      {sortCategories(searchResults.nodes).map((cat) => renderCategory(cat))}
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {orderedCategories.map((cat) => renderCategory(cat))}
                   </div>
                 )}
               </div>
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#6844c1]/20 via-white/80 to-transparent" />
-              <button
-                type="button"
-                data-track-action="A apasat pe scroll in categorii."
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
-                aria-label={t('common.scrollDown')}
-                onClick={() => {
-                  categoryScrollRef.current?.scrollBy({ top: 240, behavior: 'smooth' });
-                }}
-              >
-                v
-              </button>
+
+              <div className="rounded-2xl border border-border p-4">
+                <div className="rounded-2xl mb-3" id="checkout-summary">
+                  <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
+                  <div className="mt-3">
+                  <textarea
+                      value={orderNote}
+                      onChange={(event) => setOrderNote(event.target.value)}
+                      data-track-action={t('checkout.orderNotes')}
+                      className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
+                      placeholder={t('checkout.orderNotesPlaceholder')}
+                  />
+                  </div>
+                </div>
+                <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
+                  {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
+                </div>
+                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+                  {t('cart.advanceIntroPrefix')} <b>30%</b> {t('cart.advanceIntroSuffix')} {t('cart.advanceMore')}.
+                </div>
+                <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
+                <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between">
+                    <span>{t('cart.productsCost', { count: totals.totalItems })}</span>
+                    <span>{totals.cost.toFixed(2)} lei</span>
+                  </div>
+                  {totals.couponDiscount > 0 && (
+                    <div className="flex items-center justify-between text-emerald-600">
+                      <span>{t('cart.couponDiscount')}</span>
+                      <span>-{totals.couponDiscount.toFixed(2)} lei</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span>{t('cart.shipping')}</span>
+                    {totals.shipping === 0 ? (
+                      <span className="font-semibold text-emerald-600">{t('cart.free')}</span>
+                    ) : (
+                      <span>{totals.shipping.toFixed(2)} lei</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>{t('cart.subtotal')}</span>
+                    <span>{totals.discountedCost.toFixed(2)} lei</span>
+                  </div>
+                  <div className="flex items-center justify-between text-base font-semibold text-foreground">
+                    <span>{t('cart.totalVat')}</span>
+                    <span>{totals.total.toFixed(2)} lei</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div
+                  className={`rounded-2xl border p-4 text-xs text-muted-foreground ${
+                    attemptedSubmit && !termsAccepted ? 'border-red-400' : 'border-border'
+                  }`}
+                  data-invalid={attemptedSubmit && !termsAccepted}
+                >
+                  <p>
+                    {t('checkout.privacyIntro')}{' '}
+                    <a
+                      href="https://darurialese.ro/politica-de-confidentialitate/"
+                      className="text-primary underline"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setActiveLegalModal('privacy');
+                      }}
+                    >
+                      {t('checkout.privacyLink')}
+                    </a>
+                    .
+                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2">
+                    <span className="text-xs font-semibold text-foreground">
+                      {t('checkout.termsAccept')}{' '}
+                      <a
+                        href="https://darurialese.ro/termeni-si-conditii-daruri-alese/"
+                        className="text-primary underline"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          setActiveLegalModal('terms');
+                        }}
+                      >
+                        {t('checkout.termsLink')}
+                      </a>
+                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={termsAccepted}
+                      onClick={() => setTermsAccepted((prev) => !prev)}
+                      data-track-action="A bifat termenii si conditiile."
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
+                        termsAccepted ? 'bg-amber-500' : 'bg-muted'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          termsAccepted ? 'translate-x-5' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  {attemptedSubmit && !termsAccepted && (
+                    <p className="mt-2 text-xs font-semibold text-red-500">{t('checkout.termsRequired')}</p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSubmitClick}
+                    disabled={isSubmitting}
+                    data-track-action="A trimis comanda."
+                    className="mt-4 w-full rounded-full py-3 text-xs font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                    style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
+                  >
+                    {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
+                  </button>
+                </div>
+              </div>
             </div>
           </aside>
         </div>

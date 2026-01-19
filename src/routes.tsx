@@ -43,7 +43,7 @@ const routes: RouteObject[] = [
   { path: "/en/about-me", element: <AboutPageEntry /> },
   { path: "/en/create-unique-product", element: <CreateUniqueProductPageEntry /> },
   { path: "/en/plata-cos/order-received/:orderNumber", element: <ThankYouPage /> },
-  { path: "/en/categorie/:slug", element: <CategoryLandingPage /> },
+  { path: "/en/category/:slug", element: <CategoryLandingPage /> },
   { path: "*", element: <NotFound /> },
 ];
 

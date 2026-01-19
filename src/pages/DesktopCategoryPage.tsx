@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, Heart, HelpCircle, Mail, Menu, MessageCircle, Phone, Plus, Search, ShoppingCart, Store, Tag, Users } from 'lucide-react';
-import logo from '@/assets/factorygifts.svg';
-import logoDaruri from '@/assets/logo-daruri.svg';
+import { ArrowLeft, ChevronRight, Search } from 'lucide-react';
 import DesktopDiscountBanner from '@/components/desktop/DesktopDiscountBanner';
 import MobileProductCard from '@/components/mobile/MobileProductCard';
 import { useCategoryContext } from '@/contexts/CategoryContext';
@@ -11,7 +9,10 @@ import { fetchSubcategoriesCached } from '@/services/api';
 import { SubcategoriesResponse, SubcategoryTreeNode } from '@/types/api';
 import DesktopSearchModal from '@/components/desktop/DesktopSearchModal';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
+import DesktopSidebar from '@/components/desktop/DesktopSidebar';
+import DesktopTopBar from '@/components/desktop/DesktopTopBar';
 import { getLocale, LocaleCode, setLocale, stripLocalePrefix, withLocalePath } from '@/utils/locale';
+import { getSortLabel, t } from '@/utils/translations';
 
 const DesktopCategoryPage = () => {
   const navigate = useNavigate();
@@ -54,19 +55,12 @@ const DesktopCategoryPage = () => {
   const subcategories =
     data?.info?.subcategorii?.filter((subcategory) => subcategory.count_produse && subcategory.count_produse > 0) ||
     [];
+  const getCategoryTitle = (category: SubcategoryTreeNode) =>
+    locale === 'en' ? category.title_en ?? category.titlu : category.titlu;
+  const getCategorySlug = (category: SubcategoryTreeNode) =>
+    locale === 'en' ? category.slug_en ?? category.slug : category.slug;
 
   const displayProducts = useMemo(() => filteredProducts, [filteredProducts]);
-  const menuItems = [
-    { label: 'Categorii', href: '/', icon: Store, isDefaultCategory: true },
-
-    { label: 'Recenzii', href: '/recenzii', icon: MessageCircle },
-    { label: 'Intrebari frecvente', href: '/intrebari-frecvente', icon: HelpCircle },
-    { label: 'Despre mine', href: '/despre-mine', icon: Users },
-    { label: 'Creeaza produs', href: '/creeaza-produs', icon: Plus },
-    { label: 'Contact', href: '/contact', icon: Phone },
-  ];
-  const flagSize = 'h-5 w-5';
-
   const sortCategories = (nodes: SubcategoryTreeNode[]) => {
     return [...nodes].sort((a, b) => {
       const countA = a.subcategorii?.length ?? 0;
@@ -82,7 +76,16 @@ const DesktopCategoryPage = () => {
     setLocaleState(nextLocale);
     if (typeof window === 'undefined') return;
     const path = stripLocalePrefix(window.location.pathname);
-    const nextPath = withLocalePath(path, nextLocale);
+    const isCategoryPath = path.startsWith('/categorie/') || path.startsWith('/category/');
+    let nextPath = withLocalePath(path, nextLocale);
+    if (isCategoryPath && data?.info?.slug) {
+      if (nextLocale === 'en') {
+        const slugEn = data.info.slug_en || data.info.slug;
+        nextPath = `/en/category/${slugEn}`;
+      } else {
+        nextPath = `/categorie/${data.info.slug}`;
+      }
+    }
     window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
   };
 
@@ -155,29 +158,32 @@ const DesktopCategoryPage = () => {
     const hasChildren = category.subcategorii?.length > 0;
     const indentClass = '';
     const isCurrent = category.slug === data?.info?.slug;
-    const isHighlighted = highlightSlugs?.has(category.slug);
+    const displaySlug = getCategorySlug(category);
+    const displayTitle = getCategoryTitle(category);
+    const isHighlighted = highlightSlugs?.has(displaySlug);
 
     return (
       <div key={category.id}>
         <button
           className={`w-full min-w-0 flex items-center gap-3 p-3 ${getLevelBgClass(level)} hover:bg-[#d2c8ec] transition-colors ${indentClass}`}
-          data-track-action={`A apasat pe categoria ${category.titlu}.`}
+          data-track-action={`A apasat pe categoria ${displayTitle}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
-            navigate(`/categorie/${category.slug}`);
+            const targetPath = locale === 'en' ? `/en/category/${displaySlug}` : `/categorie/${displaySlug}`;
+            navigate(targetPath);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
           <img
             src={category.imagine}
-            alt={category.titlu}
+            alt={displayTitle}
             className="h-8 w-8 object-contain flex-shrink-0"
           />
           <div className="min-w-0 flex-1 text-left">
             <h3 className={`text-sm ${isHighlighted || isCurrent ? 'font-bold' : 'font-medium'} text-foreground`}>
-              {category.titlu}
+              {displayTitle}
             </h3>
-            <p className="text-xs text-muted-foreground">{category.nr_produse} produse</p>
+            <p className="text-xs text-muted-foreground">{category.nr_produse} {t('category.products')}</p>
           </div>
           {hasChildren && (
             <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0" />
@@ -222,10 +228,12 @@ const DesktopCategoryPage = () => {
     walk(treeData.subcategorii);
 
     const matches = allNodes.filter((node) => {
-      return node.titlu.toLowerCase().includes(query) || node.slug.toLowerCase().includes(query);
+      const title = getCategoryTitle(node).toLowerCase();
+      const slug = getCategorySlug(node).toLowerCase();
+      return title.includes(query) || slug.includes(query);
     });
 
-    const highlightedSlugs = new Set(matches.map((node) => node.slug));
+    const highlightedSlugs = new Set(matches.map((node) => getCategorySlug(node)));
     const resultMap = new Map<number, SubcategoryTreeNode>();
 
     matches.forEach((node) => {
@@ -302,190 +310,57 @@ const DesktopCategoryPage = () => {
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
         <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl ">
-          <aside className="flex min-h-full flex-col border-r border-white/20 bg-[#6844c1]">
-            <div className="border-b border-white/20 p-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentSlug('gifts-factory');
-                  navigate('/');
-                }}
-                data-track-action="A apasat pe logo din sidebar desktop."
-                className="mt-4 flex w-full items-center justify-center"
-              >
-                <img src={logo} alt="Daruri Alese" className="h-22 w-auto" />
-              </button>
-              <div className="mt-4 flex items-center justify-center">
-                <div className="flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-1 py-0.5">
-                  <button
-                    type="button"
-                    onClick={() => handleLocaleChange('ro')}
-                    data-track-action="A selectat limba RO."
-                    className={`overflow-hidden rounded-full transition-colors ${locale === 'ro' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'}`}
-                    aria-label="Romana"
-                  >
-                    <img src="/flags/ro.png" alt="RO" className={`${flagSize} w-auto`} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleLocaleChange('en')}
-                    data-track-action="A selectat limba EN."
-                    className={`overflow-hidden rounded-full transition-colors ${locale === 'en' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'}`}
-                    aria-label="English"
-                  >
-                    <img src="/flags/en.png" alt="EN" className={`${flagSize} w-auto`} />
-                  </button>
-                </div>
-              </div>
-            </div>
+          <DesktopSidebar
+            locale={locale}
+            onLocaleChange={handleLocaleChange}
+            onLogoClick={() => {
+              setCurrentSlug('gifts-factory');
+              navigate(withLocalePath('/'));
+            }}
+          />
 
-            <div className="px-6 pt-5 text-center text-base italic text-white/90 font-[cursive]">
-              Arta transforma amintirile in obiecte care vorbesc despre oameni, momente si emotii.
-              <div className="mt-3 text-xs uppercase tracking-[0.3em] text-white/70">
-                - Daruri Alese
-              </div>
-            </div>
-
-            <div className="flex flex-1 items-center">
-              <nav className="w-full divide-y divide-white/15">
-                {menuItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.label}
-                      type="button"
-                      onClick={() => {
-                        if (item.isDefaultCategory) {
-                          setCurrentSlug('gifts-factory');
-                        }
-                        navigate(item.href);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      data-track-action={`A apasat pe ${item.label} in sidebar desktop.`}
-                      className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-semibold text-white transition-colors hover:bg-white/10"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" />
-                        {item.label}
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-white/70" />
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-
-            <div className="mt-auto flex flex-col border-t border-white/20 p-4">
-              <a
-                href="mailto:hello@sweetgifts.ro"
-                data-track-action="A apasat pe email din sidebar desktop."
-                className="mb-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
-              >
-                <Mail className="h-4 w-4" />
-                hello@sweetgifts.ro
-              </a>
-                <button
-                  type="button"
-                  onClick={() => window.open('tel:0748777776', '_self')}
-                  data-track-action="A apasat pe suna din sidebar desktop."
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
-                >
-                  <Phone className="h-4 w-4" />
-                  0748.777.776
-                </button>
-              <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-semibold text-white/70">
-                <img src={logoDaruri} alt="Daruri Alese" className="h-4 w-auto" />
-                by Daruri Alese
-              </div>
-            </div>
-          </aside>
-
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
-            <div className="mb-6 flex items-center justify-between gap-3 border-b border-gray-100 py-3 px-2">
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen(true)}
-                data-track-action="A deschis meniul desktop."
-                className="rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
-                aria-label="Meniu"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(event) => {
-                      setSearchQuery(event.target.value);
-                      if (!isSearchOpen) setIsSearchOpen(true);
-                    }}
-                    onFocus={() => setIsSearchOpen(true)}
-                    onClick={() => setIsSearchOpen(true)}
-                    data-track-action="A deschis cautarea din content desktop."
-                    placeholder="Cauta produse, categorii, idei de cadouri..."
-                    className="w-full rounded-full border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                    type="button"
-                    onClick={() => navigate('/wishlist')}
-                    data-track-action="A apasat pe wishlist din content desktop."
-                    className="relative rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
-                    aria-label="Wishlist"
-                >
-                  <Heart className="h-5 w-5" />
-                  {wishlist.length > 0 && (
-                      <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#6844c1] text-[11px] font-bold text-white">
-                      {wishlist.length}
-                    </span>
-                  )}
-                </button>
-                <button
-                    type="button"
-                    onClick={() => navigate('/cos')}
-                    data-track-action="A apasat pe cos din content desktop."
-                    className="relative rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
-                    aria-label="Cos"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  {cart.length > 0 && (
-                      <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#6844c1] text-[11px] font-bold text-white">
-                      {cart.length}
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
+          <section className="contentmijloc min-h-full border-r border-border bg-white flex flex-col">
+            <DesktopTopBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onSearchOpen={() => setIsSearchOpen(true)}
+              onMenuClick={() => setIsMenuOpen(true)}
+              onWishlistClick={() => navigate('/wishlist')}
+              onCartClick={() => navigate('/cos')}
+              wishlistCount={wishlist.length}
+              cartCount={cart.length}
+            />
 
 
-            <div className="mb-6 rounded-2xl border border-border bg-white p-6 mx-4">
+            <div className="relative mb-6 rounded-2xl border border-border bg-white p-6 mx-4 overflow-hidden">
+            {data?.info?.imagine && (
+              <img
+                src={data.info.imagine}
+                alt={localeCategoryTitle}
+                className="pointer-events-none absolute right-6 top-1/2 h-32 w-32 -translate-y-1/2 object-contain opacity-10"
+                loading="lazy"
+              />
+            )}
             <div className="flex items-start justify-between gap-6 ">
               <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Categorie</p>
-                  {parentCategory && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const targetSlug = locale === 'en' ? parentCategory.slug_en || parentCategory.slug : parentCategory.slug;
-                        setCurrentSlug(parentCategory.slug);
-                        navigate(withLocalePath(`/categorie/${targetSlug}`));
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      data-track-action={`A apasat pe parintele categoriei ${parentCategory.titlu}.`}
-                      className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted"
-                    >
-                      <ArrowLeft className="h-3 w-3" />
-                      {locale === 'en' ? parentCategory.title_en ?? '' : parentCategory.titlu}
-                    </button>
-                  )}
-                </div>
-                <h1 className="mt-2 text-3xl font-semibold text-foreground font-serif">{localeCategoryTitle}</h1>
-              </div>
-              <div className="rounded-full border border-border bg-muted px-4 py-2 text-xs font-semibold text-foreground">
-                {displayProducts.length} produse
+                <h1 className="text-3xl font-semibold text-foreground font-serif">{localeCategoryTitle}</h1>
+                {parentCategory && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const targetSlug = locale === 'en' ? parentCategory.slug_en || parentCategory.slug : parentCategory.slug;
+                      setCurrentSlug(parentCategory.slug);
+                      const targetPath = locale === 'en' ? `/en/category/${targetSlug}` : `/categorie/${targetSlug}`;
+                      navigate(targetPath);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    data-track-action={`A apasat pe parintele categoriei ${parentCategory.titlu}.`}
+                    className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-white px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    {locale === 'en' ? parentCategory.title_en ?? '' : parentCategory.titlu}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -506,7 +381,8 @@ const DesktopCategoryPage = () => {
                       type="button"
                       onClick={() => {
                         setCurrentSlug(subcategory.slug);
-                        navigate(withLocalePath(`/categorie/${targetSlug}`));
+                        const targetPath = locale === 'en' ? `/en/category/${targetSlug}` : `/categorie/${targetSlug}`;
+                        navigate(targetPath);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       data-track-action={`A apasat pe subcategoria ${subcategory.titlu}.`}
@@ -522,7 +398,7 @@ const DesktopCategoryPage = () => {
                       )}
                       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
                       <div className="mt-2 inline-flex rounded-full bg-[#f7e0e8] px-2 py-1 text-[11px] font-semibold text-[#6844c1]">
-                        {subcategory.count_produse} {locale === 'en' ? 'products' : 'produse'}
+                        {subcategory.count_produse} {t('category.products')}
                       </div>
                     </button>
                   );
@@ -569,13 +445,13 @@ const DesktopCategoryPage = () => {
           <div className="flex-1 overflow-y-auto pb-20">
             {loading && (
               <div className="rounded-2xl border border-border bg-white p-6 text-sm text-muted-foreground mx-4">
-                Se incarca produsele...
+                {t('category.loadingProducts')}
               </div>
             )}
 
             {!loading && displayProducts.length === 0 && (
               <div className="rounded-2xl border border-border bg-white p-6 text-sm text-muted-foreground mx-4">
-                Nu am gasit produse in aceasta categorie.
+                {t('category.noProductsInCategory')}
               </div>
             )}
 
@@ -605,11 +481,11 @@ const DesktopCategoryPage = () => {
                 data-track-action="Sortare desktop."
                 className="rounded-full border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
               >
-                <option value="popularitate">Popularitate</option>
-                <option value="cele-mai-noi">Cele mai noi</option>
-                <option value="pret-crescator">Pret crescator</option>
-                <option value="pret-descrescator">Pret descrescator</option>
-                <option value="reduceri">Reduceri</option>
+                <option value="popularitate">{getSortLabel('popularitate')}</option>
+                <option value="cele-mai-noi">{getSortLabel('cele-mai-noi')}</option>
+                <option value="pret-crescator">{getSortLabel('pret-crescator')}</option>
+                <option value="pret-descrescator">{getSortLabel('pret-descrescator')}</option>
+                <option value="reduceri">{getSortLabel('reduceri')}</option>
               </select>
               <div className="flex items-center gap-2">
                 <input
@@ -620,7 +496,7 @@ const DesktopCategoryPage = () => {
                   onChange={(event) => setMinInput(event.target.value)}
                   data-track-action="Filtru pret minim desktop."
                   className="w-20 rounded-full border border-border px-2 py-2 text-xs text-foreground"
-                  placeholder="Min"
+                  placeholder={t('filters.minPlaceholder')}
                 />
                 <span>-</span>
                 <input
@@ -631,7 +507,7 @@ const DesktopCategoryPage = () => {
                   onChange={(event) => setMaxInput(event.target.value)}
                   data-track-action="Filtru pret maxim desktop."
                   className="w-20 rounded-full border border-border px-2 py-2 text-xs text-foreground"
-                  placeholder="Max"
+                  placeholder={t('filters.maxPlaceholder')}
                 />
               </div>
               <button
@@ -640,21 +516,23 @@ const DesktopCategoryPage = () => {
                 data-track-action="A aplicat filtrul de pret desktop."
                 className="rounded-full bg-amber-600 px-3 py-2 text-xs font-semibold text-white"
               >
-                Aplica
+                {t('filters.apply')}
               </button>
             </div>
           </div>
 
           </section>
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="sidebar2 min-h-full border-l border-border bg-white">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Categorii</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('nav.categories')}
+                </p>
                 <div className="relative mt-3">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Cauta categorii..."
+                    placeholder={t('search.categoriesPlaceholder')}
                     value={categorySearch}
                     onChange={(event) => setCategorySearch(event.target.value)}
                     data-track-action="A folosit cautarea in categorii."
@@ -668,7 +546,7 @@ const DesktopCategoryPage = () => {
               >
                 {isLoadingCategories ? (
                   <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    Se incarca categoriile...
+                    {t('category.loadingCategories')}
                   </div>
                 ) : categoryError ? (
                   <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
@@ -677,7 +555,7 @@ const DesktopCategoryPage = () => {
                 ) : categorySearch.trim() ? (
                   searchResults.nodes.length === 0 ? (
                     <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                      Nu am gasit categorii
+                      {t('search.noCategories')}
                     </div>
                   ) : (
                     <div>

@@ -114,7 +114,8 @@ const MobileCategoryCards = ({ onOpenCategories, onOpenFilters }: MobileCategory
   const handleCardClick = (slug: string, slugEn?: string) => {
     setCurrentSlug(slug);
     const targetSlug = locale === 'en' ? slugEn || slug : slug;
-    navigate(withLocalePath(`/categorie/${targetSlug}`));
+    const targetPath = locale === 'en' ? `/en/category/${targetSlug}` : `/categorie/${targetSlug}`;
+    navigate(targetPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

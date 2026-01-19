@@ -115,7 +115,8 @@ const MobileCategorySheet = ({ isOpen, onClose }: MobileCategorySheetProps) => {
           data-track-action={`A apasat pe categoria ${displayTitle}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
-            navigate(withLocalePath(`/categorie/${displaySlug}`));
+            const targetPath = locale === 'en' ? `/en/category/${displaySlug}` : `/categorie/${displaySlug}`;
+            navigate(targetPath);
             onClose();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}

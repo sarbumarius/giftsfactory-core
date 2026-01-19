@@ -140,7 +140,7 @@ const MobileMenuModal = ({ isOpen, onClose, onOpenCategories }: MobileMenuModalP
               )}
 
               <a
-                href="mailto:hello@sweetgifts.ro"
+                href="mailto:hello@giftfactory.ro"
                 data-track-action="A apasat pe email in meniu."
                 className="flex items-center gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-left text-xs font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
               >

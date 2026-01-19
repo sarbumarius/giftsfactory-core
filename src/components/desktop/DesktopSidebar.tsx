@@ -1,136 +1,179 @@
-import { useState } from 'react';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight, HelpCircle, Mail, MessageCircle, Phone, Plus, Store, Tag, Users } from 'lucide-react';
+import logo from '@/assets/factorygifts.svg';
+import logoDaruri from '@/assets/logo-daruri.svg';
+import { useCategoryContext } from '@/contexts/CategoryContext';
+import { getLocale, LocaleCode, setLocale, stripLocalePrefix, withLocalePath } from '@/utils/locale';
+import { t } from '@/utils/translations';
 
-const DesktopSidebar = () => {
-  const [priceRange, setPriceRange] = useState([95, 165]);
-  const [sortOption, setSortOption] = useState('popularity');
-  const [isOpen, setIsOpen] = useState(true);
+type MenuItem = {
+  labelKey: string;
+  href: string;
+  hrefEn?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  isDefaultCategory?: boolean;
+};
 
-  const sortOptions = [
-    { value: 'popularity', label: 'După popularitate' },
-    { value: 'newest', label: 'Cele mai noi' },
-    { value: 'price-asc', label: 'Preț crescător' },
-    { value: 'price-desc', label: 'Preț descrescător' },
-  ];
+interface DesktopSidebarProps {
+  locale?: LocaleCode;
+  onLocaleChange?: (nextLocale: LocaleCode) => void;
+  onLogoClick?: () => void;
+  menuItems?: MenuItem[];
+  email?: string;
+  phone?: string;
+  showPhoneOnEn?: boolean;
+}
 
-  const categories = [
-    { name: 'Trofee personalizate', count: 24 },
-    { name: 'Rame foto', count: 18 },
-    { name: 'Cadouri nași', count: 15 },
-    { name: 'Plachete', count: 12 },
-    { name: 'Decorațiuni', count: 8 },
-  ];
+const DEFAULT_MENU_ITEMS: MenuItem[] = [
+  { labelKey: 'menu.categories', href: '/', icon: Store, isDefaultCategory: true },
+  { labelKey: 'menu.discounts', href: '/reduceri', icon: Tag },
+  { labelKey: 'menu.reviews', href: '/recenzii', icon: MessageCircle },
+  { labelKey: 'menu.faq', href: '/intrebari-frecvente', icon: HelpCircle },
+  { labelKey: 'menu.about', href: '/despre-mine', hrefEn: '/about-me', icon: Users },
+  { labelKey: 'menu.createProduct', href: '/creeaza-produs', hrefEn: '/create-unique-product', icon: Plus },
+  { labelKey: 'menu.contact', href: '/contact', icon: Phone },
+];
+
+const DesktopSidebar = ({
+  locale,
+  onLocaleChange,
+  onLogoClick,
+  menuItems,
+  email = 'hello@giftfactory.ro',
+  phone = '0748.777.776',
+  showPhoneOnEn = false,
+}: DesktopSidebarProps) => {
+  const navigate = useNavigate();
+  const { setCurrentSlug } = useCategoryContext();
+  const currentLocale = locale ?? getLocale();
+  const flagSize = 'h-5 w-5';
+  const items = menuItems ?? DEFAULT_MENU_ITEMS;
+  const allowPhone = currentLocale !== 'en' || showPhoneOnEn;
+
+  const handleLocaleChange = (nextLocale: LocaleCode) => {
+    if (nextLocale === currentLocale) return;
+    if (onLocaleChange) {
+      onLocaleChange(nextLocale);
+      return;
+    }
+    setLocale(nextLocale);
+    if (typeof window === 'undefined') return;
+    const path = stripLocalePrefix(window.location.pathname);
+    const nextPath = withLocalePath(path, nextLocale);
+    window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
+  };
+
+  const quote = useMemo(() => t('sidebar.quote'), [currentLocale]);
 
   return (
-    <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-0 top-1/2 z-40 -translate-y-1/2 rounded-l-xl bg-card px-3 py-6 shadow-lg transition-all hover:px-4 hover:shadow-xl"
-      >
-        <div className="flex flex-col items-center gap-2">
-          {isOpen ? (
-            <X className="h-5 w-5 text-primary" />
-          ) : (
-            <SlidersHorizontal className="h-5 w-5 text-primary" />
-          )}
-          <span className="text-xs font-medium text-foreground" style={{ writingMode: 'vertical-rl' }}>
-            {isOpen ? 'ÎNCHIDE' : 'FILTRE'}
-          </span>
-        </div>
-      </button>
-
-      {/* Sidebar */}
-      <aside className={`fixed right-0 top-0 z-30 h-full w-80 transform bg-card shadow-2xl transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        <div className="flex h-full flex-col overflow-y-auto pt-24 pb-8">
-          <div className="px-6">
-            <h2 className="mb-6 text-xl font-bold text-foreground flex items-center gap-2">
-              <SlidersHorizontal className="h-5 w-5 text-primary" />
-              Filtre și Sortare
-            </h2>
-
-            {/* Price Range */}
-            <div className="mb-8">
-              <h3 className="mb-4 font-semibold text-foreground">Interval Preț</h3>
-              <div className="mb-4 flex items-center justify-between">
-                <div className="rounded-lg bg-muted px-4 py-2">
-                  <span className="text-primary font-bold">{priceRange[0]}</span>
-                  <span className="text-muted-foreground"> RON</span>
-                </div>
-                <span className="text-muted-foreground">—</span>
-                <div className="rounded-lg bg-muted px-4 py-2">
-                  <span className="font-bold text-foreground">{priceRange[1]}</span>
-                  <span className="text-muted-foreground"> RON</span>
-                </div>
-              </div>
-              <input
-                type="range"
-                min="50"
-                max="250"
-                value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                className="w-full accent-primary h-2 rounded-full"
-              />
-            </div>
-
-            {/* Categories */}
-            <div className="mb-8">
-              <h3 className="mb-4 font-semibold text-foreground">Categorii</h3>
-              <div className="space-y-2">
-                {categories.map((cat) => (
-                  <label
-                    key={cat.name}
-                    className="flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input type="checkbox" className="h-4 w-4 rounded border-border accent-primary" />
-                      <span className="text-foreground">{cat.name}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">({cat.count})</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Sort Options */}
-            <div className="mb-8">
-              <h3 className="mb-4 font-semibold text-foreground">Sortare Produse</h3>
-              <div className="space-y-2">
-                {sortOptions.map((option) => (
-                  <label
-                    key={option.value}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors hover:bg-muted"
-                  >
-                    <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
-                      sortOption === option.value 
-                        ? 'border-primary bg-primary' 
-                        : 'border-muted-foreground'
-                    }`}>
-                      {sortOption === option.value && (
-                        <div className="h-2 w-2 rounded-full bg-primary-foreground" />
-                      )}
-                    </div>
-                    <span className="text-foreground">{option.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-auto px-6 space-y-3">
-            <button className="w-full rounded-full border-2 border-border py-3 font-semibold text-foreground transition-colors hover:bg-muted">
-              RESETEAZĂ
+    <aside className="sidebar1 flex min-h-full flex-col border-r border-white/20 bg-[#6844c1]">
+      <div className="border-b border-white/20 p-4">
+        <button
+          type="button"
+          onClick={() => {
+            setCurrentSlug('gifts-factory');
+            if (onLogoClick) {
+              onLogoClick();
+              return;
+            }
+            navigate('/');
+          }}
+          data-track-action="A apasat pe logo din sidebar desktop."
+          className="mt-4 flex w-full items-center justify-center"
+        >
+          <img src={logo} alt="Daruri Alese" className="h-22 w-auto" />
+        </button>
+        <div className="mt-4 flex items-center justify-center">
+          <div className="flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-1 py-0.5">
+            <button
+              type="button"
+              onClick={() => handleLocaleChange('ro')}
+              data-track-action="A selectat limba RO."
+              className={`overflow-hidden rounded-full transition-colors ${
+                currentLocale === 'ro' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'
+              }`}
+              aria-label="Romana"
+            >
+              <img src="/flags/ro.png" alt="RO" className={`${flagSize} w-auto`} />
             </button>
-            <button className="gold-gradient w-full rounded-full py-3 font-semibold text-foreground shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]">
-              APLICĂ FILTRELE
+            <button
+              type="button"
+              onClick={() => handleLocaleChange('en')}
+              data-track-action="A selectat limba EN."
+              className={`overflow-hidden rounded-full transition-colors ${
+                currentLocale === 'en' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'
+              }`}
+              aria-label="English"
+            >
+              <img src="/flags/en.png" alt="EN" className={`${flagSize} w-auto`} />
             </button>
           </div>
         </div>
-      </aside>
-    </>
+      </div>
+
+      <div className="px-6 pt-5 text-center text-base italic text-white/90 font-[cursive]">
+        {quote}
+        <div className="mt-3 text-xs uppercase tracking-[0.3em] text-white/70">{t('sidebar.signature')}</div>
+      </div>
+
+      <div className="flex flex-1 items-center">
+        <nav className="w-full divide-y divide-white/15">
+          {items.map((item) => {
+            const Icon = item.icon;
+            const label = t(item.labelKey);
+            const targetHref = currentLocale === 'en' && item.hrefEn ? item.hrefEn : item.href;
+            return (
+              <button
+                key={item.labelKey}
+                type="button"
+                onClick={() => {
+                  if (item.isDefaultCategory) {
+                    setCurrentSlug('gifts-factory');
+                  }
+                  navigate(withLocalePath(targetHref));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                data-track-action={`A apasat pe ${label} in sidebar desktop.`}
+                className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </div>
+                <ChevronRight className="h-4 w-4 text-white/70" />
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="mt-auto flex flex-col border-t border-white/20 p-4">
+        <a
+          href={`mailto:${email}`}
+          data-track-action="A apasat pe email din sidebar desktop."
+          className="mb-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+        >
+          <Mail className="h-4 w-4" />
+          {email}
+        </a>
+        {allowPhone && (
+          <button
+            type="button"
+            onClick={() => window.open(`tel:${phone.replace(/\s+/g, '')}`, '_self')}
+            data-track-action="A apasat pe suna din sidebar desktop."
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+          >
+            <Phone className="h-4 w-4" />
+            {phone}
+          </button>
+        )}
+        <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-semibold text-white/70">
+          <img src={logoDaruri} alt="Daruri Alese" className="h-4 w-auto" />
+          by Daruri Alese
+        </div>
+      </div>
+    </aside>
   );
 };
 

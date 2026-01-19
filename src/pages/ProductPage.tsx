@@ -46,6 +46,7 @@ const ProductPage = () => {
   const [shouldScrollToReviews, setShouldScrollToReviews] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuickNav, setShowQuickNav] = useState(false);
+  const [compareValue, setCompareValue] = useState(50);
   const [zoomReviewIndex, setZoomReviewIndex] = useState<number | null>(null);
   const [showPersonalizare, setShowPersonalizare] = useState(false);
   const [personalizareValues, setPersonalizareValues] = useState<Record<string, string | string[]>>({});
@@ -811,6 +812,10 @@ const ProductPage = () => {
                   setCurrentSlug('gifts-factory');
                   navigate(withLocalePath('/'));
               }}
+              getLocalePath={(nextLocale) => {
+                const slug = nextLocale === 'en' ? data.slug_en || data.slug : data.slug;
+                return withLocalePath(`/produs/${slug}`, nextLocale);
+              }}
               categoryTitle={locale === 'en' ? data.categorii?.[0]?.title_en ?? data.categorii?.[0]?.titlu : data.categorii?.[0]?.titlu}
               onCategoryClick={() => setIsCategoryOpen(true)}
               cartCount={cart.length}
@@ -820,15 +825,53 @@ const ProductPage = () => {
           />
 
           <div id="product-photo" className="-mt-3 relative ">
-              <img
+              {data.clean_image ? (
+                <div className="relative w-full overflow-hidden rounded-br-3xl">
+                  <img
+                    src={galleryImages[activeImageIndex] || data.imagine_principala.full || data.imagine_principala['300x300']}
+                    alt={displayTitle}
+                    className="w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ clipPath: `inset(0 ${100 - compareValue}% 0 0)` }}
+                  >
+                    <img
+                      src={data.clean_image}
+                      alt={displayTitle}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div
+                    className="pointer-events-none absolute inset-y-0 z-10"
+                    style={{ left: `calc(${compareValue}% - 1px)` }}
+                  >
+                    <div className="h-full w-[2px] bg-white/80 shadow" />
+                    <div className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/70 bg-white/90 shadow" />
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={compareValue}
+                    onChange={(event) => setCompareValue(Number(event.target.value))}
+                    aria-label="Before after slider"
+                    className="absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0"
+                  />
+                </div>
+              ) : (
+                <img
                   src={galleryImages[activeImageIndex] || data.imagine_principala.full || data.imagine_principala['300x300']}
                   alt={displayTitle}
                   className="w-full object-cover rounded-br-3xl "
                   loading="lazy"
-              />
+                />
+              )}
               {heroDiscountPercent && (
                 <span
-                  className="absolute right-3 top-6 z-10 rounded-full px-3 py-1 text-xs font-bold text-white shadow-md"
+                  className="absolute right-3 top-6 z-20 rounded-full px-3 py-1 text-xs font-bold text-white shadow-md"
                   style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
                 >
                   -{heroDiscountPercent}%
@@ -879,7 +922,7 @@ const ProductPage = () => {
                       });
                   }}
                   data-track-action={`A apasat pe wishlist pentru ${displayTitle}.`}
-                  className="absolute bottom-4 right-4 z-10 rounded-full bg-black/70 p-2"
+                  className="absolute bottom-4 right-4 z-20 rounded-full bg-black/70 p-2"
                   aria-label="Wishlist"
               >
                   <Heart className={`h-6 w-6 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-white'}`}/>
@@ -888,7 +931,7 @@ const ProductPage = () => {
                   type="button"
                   onClick={() => navigate(-1)}
                   data-track-action="A apasat inapoi din pagina produsului."
-                  className="absolute left-1 top-4 rounded-md bg-amber-900/20 p-3 text-white"
+                  className="absolute left-1 top-4 z-20 rounded-md bg-amber-900/20 p-3 text-white"
                   aria-label={t('common.back')}
               >
                   <ArrowLeft className="h-6 w-6"/>

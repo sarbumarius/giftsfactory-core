@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/hooks/use-mobile';
 import ReviewsPage from './ReviewsPage';
-import DesktopWorkInProgressPage from './DesktopWorkInProgressPage';
+import DesktopReviewsPage from './DesktopReviewsPage';
 
 const ReviewsPageEntry = () => {
   const isMobile = useIsMobile();
@@ -13,7 +13,7 @@ const ReviewsPageEntry = () => {
     );
   }
 
-  return isMobile ? <ReviewsPage /> : <DesktopWorkInProgressPage />;
+  return isMobile ? <ReviewsPage /> : <DesktopReviewsPage />;
 };
 
 export default ReviewsPageEntry;

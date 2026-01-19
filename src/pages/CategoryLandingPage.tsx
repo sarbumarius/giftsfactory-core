@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import Index from './Index';
+import { useIsMobile } from '@/hooks/use-mobile';
+import MobileCategoryPage from './MobileCategoryPage';
+import DesktopCategoryPage from './DesktopCategoryPage';
 import { getLocale } from '@/utils/locale';
 
 const CategoryLandingPage = () => {
   const { slug } = useParams();
   const { setCurrentSlug } = useCategoryContext();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (slug) {
@@ -25,7 +28,15 @@ const CategoryLandingPage = () => {
     }
   }, [slug, setCurrentSlug]);
 
-  return <Index />;
+  if (isMobile === undefined) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center text-muted-foreground">Se incarca...</div>
+      </div>
+    );
+  }
+
+  return isMobile ? <MobileCategoryPage /> : <DesktopCategoryPage />;
 };
 
 export default CategoryLandingPage;

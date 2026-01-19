@@ -1,10 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, ChevronDown, Copy, Star } from 'lucide-react';
-import DesktopHeader from '@/components/desktop/DesktopHeader';
+import { Check, ChevronDown, ChevronRight, Copy, Heart, HelpCircle, Mail, Menu, MessageCircle, Phone, Plus, Search, ShoppingCart, Star, Store, Tag, Users } from 'lucide-react';
+import logo from '@/assets/factorygifts.svg';
+import logoDaruri from '@/assets/logo-daruri.svg';
+import DesktopSearchModal from '@/components/desktop/DesktopSearchModal';
+import MobileMenuModal from '@/components/mobile/MobileMenuModal';
 import MobileProductCard from '@/components/mobile/MobileProductCard';
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import { ApiProduct } from '@/types/api';
+import { useShopContext } from '@/contexts/ShopContext';
+import { fetchSubcategoriesCached } from '@/services/api';
+import { ApiProduct, SubcategoriesResponse, SubcategoryTreeNode } from '@/types/api';
+import { getLocale, LocaleCode, setLocale, stripLocalePrefix, withLocalePath } from '@/utils/locale';
 
 interface CouponProduct {
   id: number;
@@ -49,29 +55,32 @@ interface DiscountsResponse {
 
 const DesktopDiscountsPage = () => {
   const navigate = useNavigate();
-  const { setCurrentSlug, searchQuery } = useCategoryContext();
+  const { cart, wishlist } = useShopContext();
+  const { setCurrentSlug, searchQuery, setSearchQuery } = useCategoryContext();
   const [data, setData] = useState<DiscountsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openCoupons, setOpenCoupons] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const defaultCategorySlug = 'gifts-factory';
+  const [treeData, setTreeData] = useState<SubcategoriesResponse | null>(null);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [categorySearch, setCategorySearch] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [locale, setLocaleState] = useState<LocaleCode>(getLocale());
+  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
 
-  const getCouponCategorySlug = (conditions: string[]) => {
-    const match = conditions.find((cond) => cond.toLowerCase().includes('doar pentru'));
-    if (!match) return defaultCategorySlug;
-    const raw = match.split(':')[1]?.trim() || '';
-    if (!raw) return defaultCategorySlug;
-    const first = raw.split(',')[0]?.trim() || '';
-    if (!first) return defaultCategorySlug;
-    return first
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9\\s-]/g, '')
-      .trim()
-      .replace(/\\s+/g, '-');
-  };
+  const menuItems = [
+    { label: 'Categorii', href: '/', icon: Store, isDefaultCategory: true },
+    { label: 'Reduceri', href: '/reduceri', icon: Tag },
+    { label: 'Recenzii', href: '/recenzii', icon: MessageCircle },
+    { label: 'Intrebari frecvente', href: '/intrebari-frecvente', icon: HelpCircle },
+    { label: 'Despre mine', href: '/despre-mine', icon: Users },
+    { label: 'Creeaza produs', href: '/creeaza-produs', icon: Plus },
+    { label: 'Contact', href: '/contact', icon: Phone },
+  ];
+  const flagSize = 'h-5 w-5';
 
   const toggleCoupon = (code: string) => {
     setOpenCoupons((prev) => ({ ...prev, [code]: !prev[code] }));
@@ -117,6 +126,37 @@ const DesktopDiscountsPage = () => {
   }, []);
 
   useEffect(() => {
+    if (treeData) return;
+    let isActive = true;
+    setIsLoadingCategories(true);
+    setCategoryError(null);
+    fetchSubcategoriesCached(87)
+      .then((response) => {
+        if (!isActive) return;
+        setTreeData(response);
+        setIsLoadingCategories(false);
+      })
+      .catch((err) => {
+        if (!isActive) return;
+        setCategoryError(err instanceof Error ? err.message : 'Nu am putut incarca categoriile.');
+        setIsLoadingCategories(false);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [treeData]);
+
+  const handleLocaleChange = (nextLocale: LocaleCode) => {
+    if (nextLocale === locale) return;
+    setLocale(nextLocale);
+    setLocaleState(nextLocale);
+    if (typeof window === 'undefined') return;
+    const path = stripLocalePrefix(window.location.pathname);
+    const nextPath = withLocalePath(path, nextLocale);
+    window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
+  };
+
+  useEffect(() => {
     if (!searchQuery.trim() || loading) return;
     const id = window.requestAnimationFrame(() => {
       const target = document.getElementById('discount-products');
@@ -140,179 +180,488 @@ const DesktopDiscountsPage = () => {
     });
   }, [data, searchQuery]);
 
+  const sortCategories = (nodes: SubcategoryTreeNode[]) => {
+    return [...nodes].sort((a, b) => {
+      const countA = a.subcategorii?.length ?? 0;
+      const countB = b.subcategorii?.length ?? 0;
+      if (countA !== countB) return countA - countB;
+      return a.titlu.localeCompare(b.titlu);
+    });
+  };
+
+  const renderCategory = (category: SubcategoryTreeNode) => {
+    if ((category.nr_produse ?? 0) === 0) {
+      return null;
+    }
+    const title = locale === 'en' ? category.title_en ?? '' : category.titlu;
+    const targetSlug = locale === 'en' ? category.slug_en || category.slug : category.slug;
+    const hasChildren = category.subcategorii?.length > 0;
+
+    return (
+      <div key={category.id}>
+        <button
+          className="w-full min-w-0 flex items-center gap-3 p-3 bg-white hover:bg-muted/50 transition-colors"
+          data-track-action={`A apasat pe categoria ${category.titlu}.`}
+          onClick={() => {
+            setCurrentSlug(category.slug);
+            navigate(withLocalePath(`/categorie/${targetSlug}`));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        >
+          <img
+            src={category.imagine}
+            alt={category.titlu}
+            className="h-8 w-8 object-contain flex-shrink-0"
+          />
+          <div className="min-w-0 flex-1 text-left">
+            <h3 className="text-sm font-medium text-foreground">{title}</h3>
+            <p className="text-xs text-muted-foreground">{category.nr_produse} produse</p>
+          </div>
+          {hasChildren && (
+            <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0" />
+          )}
+        </button>
+
+        {hasChildren && (
+          <div>
+            {sortCategories(category.subcategorii).map((child) => renderCategory(child))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const searchResults = useMemo(() => {
+    if (!categorySearch.trim() || !treeData) {
+      return {
+        nodes: [] as SubcategoryTreeNode[],
+      };
+    }
+
+    const query = categorySearch.toLowerCase();
+    const allNodes: SubcategoryTreeNode[] = [];
+
+    const walk = (nodes: SubcategoryTreeNode[]) => {
+      nodes.forEach((node) => {
+        allNodes.push(node);
+        if (node.subcategorii?.length) {
+          walk(node.subcategorii);
+        }
+      });
+    };
+
+    walk(treeData.subcategorii);
+
+    const matches = allNodes.filter((node) => {
+      return node.titlu.toLowerCase().includes(query) || node.slug.toLowerCase().includes(query);
+    });
+
+    return {
+      nodes: matches,
+    };
+  }, [categorySearch, treeData]);
+
+  const orderedCategories = useMemo(() => {
+    if (!treeData?.subcategorii) return [];
+    return sortCategories(treeData.subcategorii);
+  }, [treeData]);
+
   return (
-    <div className="min-h-screen bg-white pb-16 ">
-      <DesktopHeader />
-
-      <div className="  px-8 py-8 ">
-
-        <div className="mt-8 grid grid-cols-10 gap-8  max-w-7xl m-auto ">
-          <aside className="space-y-6 col-span-3">
-            {loading && (
-              <div className="rounded-2xl border border-border bg-white p-4 text-sm text-muted-foreground">
-                Se incarca reducerile...
-              </div>
-            )}
-
-            {error && (
-              <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-                Nu am putut incarca reducerile.
-              </div>
-            )}
-
-            {!loading && !error && data && (
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-foreground font-serif">{data.cupoane.length} cupoane active</h2>
-
+    <div
+      className="h-screen overflow-hidden"
+      style={{
+        backgroundImage:
+          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
+      }}
+    >
+      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
+        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+          <aside className="flex min-h-full flex-col border-r border-white/20 bg-[#6844c1]">
+            <div className="border-b border-white/20 p-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentSlug('gifts-factory');
+                  navigate(withLocalePath('/'));
+                }}
+                data-track-action="A apasat pe logo din sidebar desktop."
+                className="mt-4 flex w-full items-center justify-center"
+              >
+                <img src={logo} alt="Daruri Alese" className="h-22 w-auto" />
+              </button>
+              <div className="mt-4 flex items-center justify-center">
+                <div className="flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-1 py-0.5">
+                  <button
+                    type="button"
+                    onClick={() => handleLocaleChange('ro')}
+                    data-track-action="A selectat limba RO."
+                    className={`overflow-hidden rounded-full transition-colors ${locale === 'ro' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'}`}
+                    aria-label="Romana"
+                  >
+                    <img src="/flags/ro.png" alt="RO" className={`${flagSize} w-auto`} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleLocaleChange('en')}
+                    data-track-action="A selectat limba EN."
+                    className={`overflow-hidden rounded-full transition-colors ${locale === 'en' ? 'bg-white/30' : 'hover:bg-white/20 opacity-20'}`}
+                    aria-label="English"
+                  >
+                    <img src="/flags/en.png" alt="EN" className={`${flagSize} w-auto`} />
+                  </button>
                 </div>
-                {data.cupoane.length === 0 ? (
-                  <div className="rounded-2xl border border-border bg-white p-4 text-sm text-muted-foreground">
-                    Nu sunt cupoane active momentan.
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {data.cupoane.map((coupon) => {
-                      const isOpen = Boolean(openCoupons[coupon.cod]);
-                      return (
-                        <div key={coupon.cod} className="rounded-2xl border border-border bg-white p-5">
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="text-xl font-semibold text-foreground">{coupon.discount_text}</p>
-                            {coupon.data_expirare && (
-                              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">
-                                Exp: {coupon.data_expirare.split(' ')[0]}
-                              </span>
-                            )}
-                          </div>
+              </div>
+            </div>
 
-                          <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-amber-300 bg-amber-50 px-4 py-3">
-                            <div>
-                              <p className="text-[11px] font-semibold text-amber-800">Cod cupon</p>
-                              <p className="text-2xl uppercase font-bold text-foreground">{coupon.cod}</p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleCopy(coupon.cod)}
-                              data-track-action={`A copiat cuponul ${coupon.cod}.`}
-                              className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-xs font-semibold text-amber-800"
-                            >
-                              {copiedCode === coupon.cod ? (
-                                <>
-                                  <Check className="h-3 w-3" />
-                                  Copiat
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="h-3 w-3" />
-                                  Copiaza
-                                </>
-                              )}
-                            </button>
-                          </div>
+            <div className="px-6 pt-5 text-center text-base italic text-white/90 font-[cursive]">
+              Arta transforma amintirile in obiecte care vorbesc despre oameni, momente si emotii.
+              <div className="mt-3 text-xs uppercase tracking-[0.3em] text-white/70">
+                - Daruri Alese
+              </div>
+            </div>
 
-                          <button
-                            type="button"
-                            onClick={() => toggleCoupon(coupon.cod)}
-                            data-track-action={`A deschis detaliile cuponului ${coupon.cod}.`}
-                            className="mt-4 flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
-                          >
-                            Detalii cupon
-                            <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                          </button>
+            <div className="flex flex-1 items-center">
+              <nav className="w-full divide-y divide-white/15">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        if (item.isDefaultCategory) {
+                          setCurrentSlug('gifts-factory');
+                        }
+                        navigate(withLocalePath(item.href));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      data-track-action={`A apasat pe ${item.label} in sidebar desktop.`}
+                      className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-white/70" />
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
 
-                          {isOpen && (
-                            <div className="mt-4 space-y-4 rounded-2xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-                              <div>
-                                <p className="text-xs font-semibold uppercase text-foreground">Conditii</p>
-                                {coupon.conditii.length > 0 ? (
-                                  <ul className="mt-2 space-y-2">
-                                    {coupon.conditii.map((item) => (
-                                      <li key={item} className="flex gap-2">
-                                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-amber-500" />
-                                        <span>{item}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                ) : (
-                                  <p className="mt-2">Nu exista conditii speciale.</p>
-                                )}
-                              </div>
-
-                              <div>
-                                <p className="text-xs font-semibold uppercase text-foreground">Produse incluse</p>
-                                <div className="mt-3 grid grid-cols-2 gap-3">
-                                  {coupon.produse.map((product) => (
-                                    <button
-                                      key={product.id}
-                                      type="button"
-                                      onClick={() => {
-                                        setCurrentSlug(product.slug);
-                                        window.location.href = `/produs/${product.slug}`;
-                                      }}
-                                      data-track-action={`A deschis produsul ${product.titlu} din cupon.`}
-                                      className="flex items-center gap-3 rounded-xl bg-white p-3 text-left"
-                                    >
-                                      <img
-                                        src={
-                                          product.imagine_principala['300x300'] ||
-                                          product.imagine_principala.full ||
-                                          product.imagine_principala['100x100']
-                                        }
-                                        alt={product.titlu}
-                                        className="h-16 w-16 rounded-xl object-cover"
-                                        loading="lazy"
-                                      />
-                                      <div>
-                                        <p className="text-xs font-semibold text-foreground">{product.titlu}</p>
-                                        <p className="mt-1 text-[11px] text-muted-foreground">
-                                          {product.pret_redus || product.pret} lei
-                                        </p>
-                                      </div>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
-            )}
+            <div className="mt-auto flex flex-col border-t border-white/20 p-4">
+              <a
+                href="mailto:hello@sweetgifts.ro"
+                data-track-action="A apasat pe email din sidebar desktop."
+                className="mb-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+              >
+                <Mail className="h-4 w-4" />
+                hello@sweetgifts.ro
+              </a>
+              <button
+                type="button"
+                onClick={() => window.open('tel:0748777776', '_self')}
+                data-track-action="A apasat pe suna din sidebar desktop."
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+              >
+                <Phone className="h-4 w-4" />
+                0748.777.776
+              </button>
+              <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-semibold text-white/70">
+                <img src={logoDaruri} alt="Daruri Alese" className="h-4 w-auto" />
+                by Daruri Alese
+              </div>
+            </div>
           </aside>
 
-          <section className="space-y-6 col-span-7">
-            <div className="rounded-3xl border border-border bg-amber-50/40 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Reduceri</p>
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-                <h1 className="text-3xl font-semibold text-foreground font-serif">Cupoane si produse la reducere.</h1>
-                {data && (
-                    <div className="flex items-center gap-3 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-foreground">
-                      <Star className="h-4 w-4 text-amber-500" />
-                      {data.cupoane.length} cupoane active · {data.produse_la_reducere.length} produse
-                    </div>
-                )}
+          <section className="min-h-full border-r border-border bg-white flex flex-col">
+            <div className="mb-6 flex items-center justify-between gap-3 border-b border-gray-100 py-3 px-2">
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(true)}
+                data-track-action="A deschis meniul desktop."
+                className="rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
+                aria-label="Meniu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => {
+                    setSearchQuery(event.target.value);
+                    if (!isSearchOpen) setIsSearchOpen(true);
+                  }}
+                  onFocus={() => setIsSearchOpen(true)}
+                  onClick={() => setIsSearchOpen(true)}
+                  data-track-action="A deschis cautarea din content desktop."
+                  placeholder="Cauta produse, categorii, idei de cadouri..."
+                  className="w-full rounded-full border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigate(withLocalePath('/wishlist'))}
+                  data-track-action="A apasat pe wishlist din content desktop."
+                  className="relative rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
+                  aria-label="Wishlist"
+                >
+                  <Heart className="h-5 w-5" />
+                  {wishlist.length > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#6844c1] text-[11px] font-bold text-white">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(withLocalePath('/cos'))}
+                  data-track-action="A apasat pe cos din content desktop."
+                  className="relative rounded-full border border-border bg-white p-2 text-foreground transition-transform hover:scale-105"
+                  aria-label="Cos"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {cart.length > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#6844c1] text-[11px] font-bold text-white">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
 
+            <div className="flex-1 overflow-y-auto pb-6">
+              <div className="mx-4 rounded-2xl border border-border bg-amber-50/40 p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Reduceri</p>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+                  <h1 className="text-3xl font-semibold text-foreground font-serif">Cupoane si produse la reducere.</h1>
+                  {data && (
+                    <div className="flex items-center gap-3 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-foreground">
+                      <Star className="h-4 w-4 text-amber-500" />
+                      {data.cupoane.length} cupoane active & {data.produse_la_reducere.length} produse
+                    </div>
+                  )}
+                </div>
+              </div>
 
+              <div className="mt-6 mx-4 grid grid-cols-[0.9fr_1.4fr] gap-6">
+                <aside className="space-y-6">
+                  {loading && (
+                    <div className="rounded-2xl border border-border bg-white p-4 text-sm text-muted-foreground">
+                      Se incarca reducerile...
+                    </div>
+                  )}
 
+                  {error && (
+                    <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                      Nu am putut incarca reducerile.
+                    </div>
+                  )}
 
-            <div id="discount-products" className="grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-4">
-              {filteredDiscountProducts.map((product, index) => (
-                <MobileProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  desktopSequence={filteredDiscountProducts}
-                />
-              ))}
+                  {!loading && !error && data && (
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-semibold text-foreground font-serif">{data.cupoane.length} cupoane active</h2>
+                      </div>
+                      {data.cupoane.length === 0 ? (
+                        <div className="rounded-2xl border border-border bg-white p-4 text-sm text-muted-foreground">
+                          Nu sunt cupoane active momentan.
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {data.cupoane.map((coupon) => {
+                            const isOpen = Boolean(openCoupons[coupon.cod]);
+                            return (
+                              <div key={coupon.cod} className="rounded-2xl border border-border bg-white p-5">
+                                <div className="flex items-center justify-between gap-3">
+                                  <p className="text-xl font-semibold text-foreground">{coupon.discount_text}</p>
+                                  {coupon.data_expirare && (
+                                    <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">
+                                      Exp: {coupon.data_expirare.split(' ')[0]}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-amber-300 bg-amber-50 px-4 py-3">
+                                  <div>
+                                    <p className="text-[11px] font-semibold text-amber-800">Cod cupon</p>
+                                    <p className="text-2xl uppercase font-bold text-foreground">{coupon.cod}</p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopy(coupon.cod)}
+                                    data-track-action={`A copiat cuponul ${coupon.cod}.`}
+                                    className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 text-xs font-semibold text-amber-800"
+                                  >
+                                    {copiedCode === coupon.cod ? (
+                                      <>
+                                        <Check className="h-3 w-3" />
+                                        Copiat
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Copy className="h-3 w-3" />
+                                        Copiaza
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => toggleCoupon(coupon.cod)}
+                                  data-track-action={`A deschis detaliile cuponului ${coupon.cod}.`}
+                                  className="mt-4 flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
+                                >
+                                  Detalii cupon
+                                  <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isOpen && (
+                                  <div className="mt-4 space-y-4 rounded-2xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+                                    <div>
+                                      <p className="text-xs font-semibold uppercase text-foreground">Conditii</p>
+                                      {coupon.conditii.length > 0 ? (
+                                        <ul className="mt-2 space-y-2">
+                                          {coupon.conditii.map((item) => (
+                                            <li key={item} className="flex gap-2">
+                                              <span className="mt-2 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                              <span>{item}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      ) : (
+                                        <p className="mt-2">Nu exista conditii speciale.</p>
+                                      )}
+                                    </div>
+
+                                    <div>
+                                      <p className="text-xs font-semibold uppercase text-foreground">Produse incluse</p>
+                                      <div className="mt-3 grid grid-cols-2 gap-3">
+                                        {coupon.produse.map((product) => (
+                                          <button
+                                            key={product.id}
+                                            type="button"
+                                            onClick={() => {
+                                              setCurrentSlug(product.slug);
+                                              navigate(withLocalePath(`/produs/${product.slug}`));
+                                            }}
+                                            data-track-action={`A deschis produsul ${product.titlu} din cupon.`}
+                                            className="flex items-center gap-3 rounded-xl bg-white p-3 text-left"
+                                          >
+                                            <img
+                                              src={
+                                                product.imagine_principala['300x300'] ||
+                                                product.imagine_principala.full ||
+                                                product.imagine_principala['100x100']
+                                              }
+                                              alt={product.titlu}
+                                              className="h-16 w-16 rounded-xl object-cover"
+                                              loading="lazy"
+                                            />
+                                            <div>
+                                              <p className="text-xs font-semibold text-foreground">{product.titlu}</p>
+                                              <p className="mt-1 text-[11px] text-muted-foreground">
+                                                {product.pret_redus || product.pret} lei
+                                              </p>
+                                            </div>
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </section>
+                  )}
+                </aside>
+
+                <section className="space-y-6">
+                  <div id="discount-products" className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-3">
+                    {filteredDiscountProducts.map((product, index) => (
+                      <MobileProductCard
+                        key={product.id}
+                        product={product}
+                        index={index}
+                        desktopSequence={filteredDiscountProducts}
+                      />
+                    ))}
+                  </div>
+                </section>
+              </div>
             </div>
           </section>
+
+          <aside className="min-h-full border-l border-border bg-white">
+            <div className="relative flex h-full flex-col">
+              <div className="border-b border-border p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Categorii</p>
+                <div className="relative mt-3">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Cauta categorii..."
+                    value={categorySearch}
+                    onChange={(event) => setCategorySearch(event.target.value)}
+                    data-track-action="A folosit cautarea in categorii."
+                    className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
+                  />
+                </div>
+              </div>
+              <div
+                ref={categoryScrollRef}
+                className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/60 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]"
+                style={{ scrollbarColor: '#6844c1 #ffffff', scrollbarWidth: 'thin' }}
+              >
+                {isLoadingCategories ? (
+                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                    Se incarca categoriile...
+                  </div>
+                ) : categoryError ? (
+                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                    {categoryError}
+                  </div>
+                ) : categorySearch.trim() ? (
+                  searchResults.nodes.length === 0 ? (
+                    <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                      Nu am gasit categorii
+                    </div>
+                  ) : (
+                    <div>
+                      {sortCategories(searchResults.nodes).map((cat) => renderCategory(cat))}
+                    </div>
+                  )
+                ) : (
+                  <div>
+                    {orderedCategories.map((cat) => renderCategory(cat))}
+                  </div>
+                )}
+              </div>
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#6844c1]/20 via-white/80 to-transparent" />
+              <button
+                type="button"
+                data-track-action="A apasat pe scroll in categorii."
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
+                aria-label="Scroll in jos"
+                onClick={() => {
+                  categoryScrollRef.current?.scrollBy({ top: 240, behavior: 'smooth' });
+                }}
+              >
+                v
+              </button>
+            </div>
+          </aside>
         </div>
-      </div>
+      </main>
+      <DesktopSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <MobileMenuModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </div>
   );
 };

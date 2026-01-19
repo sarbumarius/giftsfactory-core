@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/hooks/use-mobile';
 import CartPage from './CartPage';
-import DesktopWorkInProgressPage from './DesktopWorkInProgressPage';
+import DesktopCartPage from './DesktopCartPage';
 
 const CartPageEntry = () => {
   const isMobile = useIsMobile();
@@ -13,7 +13,7 @@ const CartPageEntry = () => {
     );
   }
 
-  return isMobile ? <CartPage /> : <DesktopWorkInProgressPage />;
+  return isMobile ? <CartPage /> : <DesktopCartPage />;
 };
 
 export default CartPageEntry;

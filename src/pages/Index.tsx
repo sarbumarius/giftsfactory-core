@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileCategoryPage from './MobileCategoryPage';
-import DesktopWorkInProgressPage from './DesktopWorkInProgressPage';
+import DesktopCategoryPage from './DesktopCategoryPage';
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -18,7 +18,7 @@ const Index = () => {
     return <MobileCategoryPage />;
   }
 
-  return <DesktopWorkInProgressPage />;
+  return <DesktopCategoryPage />;
 };
 
 export default Index;

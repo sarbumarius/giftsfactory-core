@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/hooks/use-mobile';
 import CheckoutPage from './CheckoutPage';
-import DesktopWorkInProgressPage from './DesktopWorkInProgressPage';
+import DesktopCheckoutPage from './DesktopCheckoutPage';
 
 const CheckoutPageEntry = () => {
   const isMobile = useIsMobile();
@@ -13,7 +13,7 @@ const CheckoutPageEntry = () => {
     );
   }
 
-  return isMobile ? <CheckoutPage /> : <DesktopWorkInProgressPage />;
+  return isMobile ? <CheckoutPage /> : <DesktopCheckoutPage />;
 };
 
 export default CheckoutPageEntry;

@@ -613,7 +613,7 @@ const DesktopCartPage = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-[1fr_360px] gap-8">
+          <div className="flex min-h-full w-full flex-col">
             <section className="space-y-6">
               <div className="rounded-2xl border border-border bg-white p-5">
                 <div className="flex items-center justify-between">
@@ -776,7 +776,7 @@ const DesktopCartPage = () => {
 
             </section>
 
-            <aside className="space-y-6">
+            <div className="mt-6 space-y-6">
               <div className="rounded-2xl border border-border bg-white p-5">
                 <p className="text-sm font-semibold text-foreground">Cupon de reducere</p>
                 <div className="mt-3 flex gap-2">
@@ -881,8 +881,9 @@ const DesktopCartPage = () => {
                   </div>
                 </div>
               )}
+            </div>
 
-              <div className="rounded-2xl border border-border bg-white p-5" id="cart-summary">
+            <div className="sticky bottom-0 left-0 right-0 mt-auto rounded-2xl border border-border bg-white p-5 shadow-lg" id="cart-summary">
                 <p className="text-sm font-semibold text-foreground">Sumar comanda</p>
                 <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                   {(() => {
@@ -945,17 +946,7 @@ const DesktopCartPage = () => {
                 >
                   Continua spre plata
                 </button>
-                <button
-                  type="button"
-                  onClick={() => window.open('tel:0748777776', '_self')}
-                  data-track-action="A apasat pe suna din cos."
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-border py-2 text-xs font-semibold text-foreground"
-                >
-                  <Phone className="h-4 w-4" />
-                  Suna acum
-                </button>
               </div>
-            </aside>
           </div>
         )}
               </div>

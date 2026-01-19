@@ -165,7 +165,7 @@ type CustomerCheckResponse = {
 
 const DesktopCheckoutPage = () => {
   const navigate = useNavigate();
-  const { cart } = useShopContext();
+  const { cart, wishlist } = useShopContext();
   const { searchQuery, setSearchQuery, setCurrentSlug } = useCategoryContext();
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('sameday');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('ramburs');

@@ -25,7 +25,7 @@ const DesktopProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showPersonalizare, setShowPersonalizare] = useState(false);
+  const [showPersonalizare, setShowPersonalizare] = useState(true);
   const [personalizareValues, setPersonalizareValues] = useState<Record<string, string | string[]>>({});
   const [personalizareFiles, setPersonalizareFiles] = useState<Record<string, string>>({});
   const [openSection, setOpenSection] = useState<'personalizare' | 'descriere' | 'detalii'>('personalizare');
@@ -472,7 +472,7 @@ const DesktopProductPage = () => {
             />
 
             <div className="flex-1 overflow-hidden px-2 pb-6">
-              <div className="h-full overflow-y-auto pr-2">
+              <div className="h-full overflow-hidden pr-2">
                 {loading ? (
                   <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                     Se incarca produsul...
@@ -482,73 +482,90 @@ const DesktopProductPage = () => {
                     {error || 'Nu am putut incarca produsul.'}
                   </div>
                 ) : (
-                  <div className="space-y-8 pb-6">
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-muted">
-              {hasDiscount && (
-                <span className="absolute left-4 top-4 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
-                  -{discountPercent}%
-                </span>
-              )}
-              {galleryImages[activeImageIndex] ? (
-                <img
-                  src={galleryImages[activeImageIndex]}
-                  alt={productTitle}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-[420px] items-center justify-center text-sm text-muted-foreground">
-                  Fara imagine
-                </div>
-              )}
-            </div>
-            {galleryImages.length > 1 && (
-              <div className="grid grid-cols-5 gap-2">
-                {galleryImages.map((img, idx) => (
-                  <button
-                    key={`${img}-${idx}`}
-                    type="button"
-                    onClick={() => setActiveImageIndex(idx)}
-                    data-track-action={`A selectat imaginea ${idx + 1} din produs.`}
-                    className={`relative overflow-hidden rounded-2xl border ${
-                      activeImageIndex === idx ? 'border-amber-500' : 'border-border'
-                    }`}
-                  >
-                    <img src={img} alt={productTitle} className="h-20 w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
+                  <div className="flex h-full flex-col gap-8 pb-6">
+        <div className="grid h-full min-h-0 flex-1 grid-cols-2 gap-8">
 
-            <div className="rounded-2xl border border-border bg-white p-5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-foreground">{t('product.photoReviews')}</h2>
-                <div className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
-                  {t('product.photoCount', { count: reviewPhotos.length })}
-                </div>
+
+          <div className="flex min-h-0 flex-col gap-4">
+            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-3xl border border-border bg-muted pozaRecenzii [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="relative">
+                {hasDiscount && (
+                  <span className="absolute left-4 top-4 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
+                    -{discountPercent}%
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isInWishlist) {
+                      removeFromWishlist(product.id);
+                    } else {
+                      addToWishlist({
+                        id: product.id,
+                        slug: product.slug,
+                        title: productTitle,
+                        image: product.imagine_principala['300x300'] || product.imagine_principala.full,
+                      });
+                    }
+                  }}
+                  data-track-action={`A apasat pe wishlist pentru ${productTitle}.`}
+                  aria-label={isInWishlist ? 'Scoate din wishlist' : 'Adauga in wishlist'}
+                  className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border bg-white/90 shadow-sm ${
+                    isInWishlist ? 'border-red-300 text-red-600' : 'border-border text-foreground'
+                  }`}
+                >
+                  <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} />
+                </button>
+                {dimensionValue && (
+                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                    {dimensionValue}
+                  </span>
+                )}
+                {galleryImages[activeImageIndex] ? (
+                  <img
+                    src={galleryImages[activeImageIndex]}
+                    alt={productTitle}
+                    className="h-auto w-full object-contain"
+                  />
+                ) : (
+                  <div className="flex min-h-[320px] items-center justify-center text-sm text-muted-foreground">
+                    Fara imagine
+                  </div>
+                )}
               </div>
 
-              {reviewPhotos.length > 0 ? (
-                <div className="mt-4 grid grid-cols-4 gap-3">
-                  {reviewPhotos.map((photo, idx) => (
+              {galleryImages.length > 1 && (
+                <div className="grid grid-cols-5 gap-2">
+                  {galleryImages.map((img, idx) => (
                     <button
-                      key={`${photo.url}-${idx}`}
+                      key={`${img}-${idx}`}
                       type="button"
-                      onClick={() => setZoomReviewIndex(idx)}
-                      className="overflow-hidden rounded-2xl border border-border bg-muted"
+                      onClick={() => setActiveImageIndex(idx)}
+                      data-track-action={`A selectat imaginea ${idx + 1} din produs.`}
+                      className={`relative overflow-hidden rounded-2xl border ${
+                        activeImageIndex === idx ? 'border-amber-500' : 'border-border'
+                      }`}
                     >
-                      <img src={photo.url} alt="Recenzie" className="h-28 w-full object-cover" />
+                      <img src={img} alt={productTitle} className="h-20 w-full object-cover" />
                     </button>
                   ))}
                 </div>
-              ) : (
-                <p className="mt-4 text-sm text-muted-foreground">Nu exista fotografii din recenzii.</p>
               )}
+
+              {reviewPhotos.map((photo, idx) => (
+                <button
+                  key={`${photo.url}-${idx}`}
+                  type="button"
+                  onClick={() => setZoomReviewIndex(idx)}
+                  className="relative text-left"
+                >
+                  <img src={photo.url} alt={`Recenzie ${idx + 1}`} className="h-auto w-full object-contain" />
+                </button>
+              ))}
             </div>
           </div>
 
-          <aside className="space-y-4">
+          <aside className="flex min-h-0 flex-col gap-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="rounded-2xl border border-border bg-white p-6">
               <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                 {getCategoryTitle(product.categorii?.[0]) || t('product.category')}
@@ -578,11 +595,6 @@ const DesktopProductPage = () => {
                     {originalPrice.toFixed(2)} lei
                   </span>
                 )}
-                {dimensionValue && (
-                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                    {dimensionValue}
-                  </span>
-                )}
               </div>
 
               {product.descriere_scurta && locale !== 'en' && (
@@ -592,53 +604,7 @@ const DesktopProductPage = () => {
                 />
               )}
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  data-track-action={showPersonalizare || personalizareFields.length === 0 ? 'A adaugat produsul in cos.' : 'A deschis personalizarea produsului.'}
-                  className="flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
-                >
-                  <Plus className="h-4 w-4" />
-                  {showPersonalizare || personalizareFields.length === 0 ? t('product.addToCart') : t('product.customize')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isInWishlist) {
-                      removeFromWishlist(product.id);
-                    } else {
-                      addToWishlist({
-                        id: product.id,
-                        slug: product.slug,
-                        title: productTitle,
-                        image: product.imagine_principala['300x300'] || product.imagine_principala.full,
-                      });
-                    }
-                  }}
-                  data-track-action={`A apasat pe wishlist pentru ${productTitle}.`}
-                  className={`flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold ${
-                    isInWishlist ? 'border-red-300 bg-red-50 text-red-600' : 'border-border text-foreground'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} />
-                  {isInWishlist ? 'In wishlist' : 'Adauga la wishlist'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentSlug(product.categorii?.[0]?.slug || 'gifts-factory');
-                    navigate(withLocalePath('/cos'));
-                    window.setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 50);
-                  }}
-                  data-track-action="A mers la cos din produs."
-                  className="rounded-full border border-border px-4 py-3 text-sm font-semibold text-foreground"
-                >
-                  Vezi cos ({cart.length})
-                </button>
-              </div>
+              <div className="mt-5 flex flex-wrap items-center gap-3" />
             </div>
 
             <div id="personalizare-desktop" className="rounded-2xl border border-border bg-white p-6">
@@ -657,9 +623,17 @@ const DesktopProductPage = () => {
                   </p>
                   <h2 className="mt-1 text-xl font-semibold text-foreground">{t('product.startPersonalization')}</h2>
                 </div>
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
-                  {showPersonalizare ? t('common.hide') : t('common.show')}
-                </span>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOpenSection('personalizare');
+                    setShowPersonalizare((prev) => !prev);
+                  }}
+                  className="rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+                >
+                  {t('product.customize')}
+                </button>
               </button>
 
               {showPersonalizare && personalizareFields.length > 0 && (
@@ -791,6 +765,20 @@ const DesktopProductPage = () => {
                 </div>
               )}
             </div>
+
+            {showPersonalizare && (
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  data-track-action="A adaugat produsul in cos."
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t('product.addToCart')}
+                </button>
+              </div>
+            )}
 
             <div className="rounded-2xl border border-border bg-white p-6">
               <button

@@ -705,7 +705,7 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     document.title = `Finalizare comanda | ${defaultTitle}`;
   }, []);
 

@@ -151,7 +151,7 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
     if (path !== '/' && !path.startsWith('/categorie')) {
       return;
     }
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = '';
     const locale = getLocale();
     const titleValue =
       locale === 'en' ? data.info.title_en ?? data.title_en : data.info.titlu;
@@ -159,7 +159,7 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
       locale === 'en'
         ? data.info.desc_en ?? data.desc_en
         : data.info.descriere;
-    const title = titleValue ? `${titleValue} | ${defaultTitle}` : defaultTitle;
+    const title = titleValue;
     document.title = title;
 
     const rawDescription = descriptionValue || '';

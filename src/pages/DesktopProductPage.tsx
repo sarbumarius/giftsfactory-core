@@ -116,7 +116,7 @@ const DesktopProductPage = () => {
 
   useEffect(() => {
     if (!data) return;
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     const localizedTitle = locale === 'en' ? data.title_en ?? data.titlu ?? '' : data.titlu;
     const title = localizedTitle ? `${localizedTitle} | ${defaultTitle}` : defaultTitle;
     document.title = title;

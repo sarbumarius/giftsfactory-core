@@ -53,7 +53,7 @@ const CartPage = () => {
   );
 
   useEffect(() => {
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     document.title = `${t('cart.title')} | ${defaultTitle}`;
   }, []);
 

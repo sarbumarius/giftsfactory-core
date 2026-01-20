@@ -26,7 +26,7 @@ const DesktopAboutPage = () => {
   const locale = getLocale();
 
   useEffect(() => {
-    document.title = 'Despre mine | Daruri Alese Catalog';
+    document.title = 'Despre mine | Gifts Factory Catalog';
   }, []);
 
   useEffect(() => {

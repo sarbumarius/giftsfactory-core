@@ -28,7 +28,7 @@ const DesktopWishlistPage = () => {
   const locale = getLocale();
 
   useEffect(() => {
-    document.title = 'Wishlist | Daruri Alese Catalog';
+    document.title = 'Wishlist | Gifts Factory Catalog';
   }, []);
 
   useEffect(() => {

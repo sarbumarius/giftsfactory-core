@@ -112,7 +112,7 @@ const ThankYouPage = () => {
   }, [location.state]);
 
   useEffect(() => {
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     document.title = `Comanda primita | ${defaultTitle}`;
   }, []);
 

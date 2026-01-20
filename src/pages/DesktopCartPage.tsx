@@ -111,7 +111,7 @@ const DesktopCartPage = () => {
   const orderDateLabel = isSameDay(orderDate, todayDate) ? t('cart.orderDateToday') : t('cart.orderDateCustom');
 
   useEffect(() => {
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     document.title = `${t('cart.title')} | ${defaultTitle}`;
   }, []);
 

@@ -26,7 +26,7 @@ const DesktopCreateUniqueProductPage = () => {
   const locale = getLocale();
 
   useEffect(() => {
-    document.title = 'Creeaza produs | Daruri Alese Catalog';
+    document.title = 'Creeaza produs | Gifts Factory Catalog';
   }, []);
 
   useEffect(() => {

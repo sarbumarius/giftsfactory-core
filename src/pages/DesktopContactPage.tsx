@@ -28,7 +28,7 @@ const DesktopContactPage = () => {
   const locale = getLocale();
 
   useEffect(() => {
-    document.title = 'Contact | Daruri Alese Catalog';
+    document.title = 'Contact | Gifts Factory';
   }, []);
 
   useEffect(() => {

@@ -826,7 +826,7 @@ const DesktopCheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     document.title = `${t('checkout.pageTitle')} | ${defaultTitle}`;
   }, []);
 

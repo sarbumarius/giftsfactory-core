@@ -178,7 +178,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     if (!data) return;
-    const defaultTitle = 'Daruri Alese Catalog';
+    const defaultTitle = 'Gifts Factory Catalog';
     const locale = getLocale();
     const displayTitle = locale === 'en' ? data.title_en ?? data.titlu ?? '' : data.titlu;
     const title = displayTitle ? `${displayTitle} | ${defaultTitle}` : defaultTitle;

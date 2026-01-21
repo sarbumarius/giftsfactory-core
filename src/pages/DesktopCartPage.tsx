@@ -324,14 +324,14 @@ const DesktopCartPage = () => {
       className="h-screen overflow-hidden"
       style={{
         backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
+          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.35 * (100% - 120px)), #f7e0e8 calc(60px + 0.35 * (100% - 120px)), #f7e0e8 100%)',
       }}
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_55%_30%] gap-0 overflow-hidden rounded-2xl">
+        <div className="mx-auto grid h-[calc(100vh-120px)] w-[60%] grid-cols-[25%_75%] gap-0 overflow-hidden rounded-2xl">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col relative ">
+          <section className="min-h-full border-r border-border bg-white flex flex-col relative rounded-r-2xl ">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -722,168 +722,7 @@ const DesktopCartPage = () => {
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
-            <div className="flex h-full flex-col p-4">
-              <div className="flex-1 overflow-y-auto pr-1">
-              <div className="rounded-2xl border border-border bg-white p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {t('cart.nextTitle')}
-                </p>
-                <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#d0c6eb]" />
-                    {t('cart.nextConfirm')}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#d0c6eb]" />
-                    {t('cart.nextProduction')}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#2e9e5b]" />
-                    {t('cart.nextDelivery')}
-                  </div>
-                </div>
-              </div>
 
-              <div className="rounded-2xl border border-border bg-white p-4 mt-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {t('cart.deliveryScenarioTitle')}
-                </p>
-
-                <div className="mt-3 rounded-2xl bg-[#d0c6eb] px-3 py-3 ">
-                  <div className="flex justify-center">
-                    <button
-                      type="button"
-                      onClick={() => setShowOrderDateModal(true)}
-                      className="w-full text-center rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-[#5e4b37] shadow-sm"
-                    >
-                      {t('cart.orderPlaced')} &bull; {formatRoDate(orderDate)} ({orderDateLabel})
-                    </button>
-                  </div>
-
-                  <div className="mt-4 space-y-4 text-[12px] font-semibold text-[#6844c1]">
-                    {[
-                      {
-                        title: t('cart.confirmation'),
-                        subtitle: t('cart.confirmationPhone'),
-                        date: formatRoDate(orderDate),
-                        badge: weekendBetweenOrderAndProduction ? t('cart.freeDay') : null,
-                      },
-                      {
-                        title: t('cart.production'),
-                        subtitle: t('cart.bindery'),
-                        date: formatRoDate(productionDate),
-                        badge: weekendBetweenProductionAndDelivery ? t('cart.freeDay') : null,
-                      },
-                    ].map((step) => (
-                      <div key={step.title} className="flex items-start gap-3">
-                        <span className="mt-1 h-3 w-3 rounded-full bg-[#6844c1]" />
-                        <div className="flex-1 text-left">
-                          <div className="flex items-center gap-2">
-                            <span>{step.title}</span>
-                            {step.badge && (
-                              <span className="rounded-full bg-[#e45757] px-2 py-[2px] text-[9px] text-white shadow-sm">
-                                {step.badge}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-[#6844c1]">{step.subtitle}</div>
-                          <div className="text-[10px] text-[#6844c1]">{step.date}</div>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex items-start gap-3">
-                      <span className="mt-1 h-3 w-3 rounded-full bg-[#2e9e5b]" />
-                      <div className="flex-1 text-left">
-                        <span className="text-xs font-semibold text-[#2e9e5b]">
-                          {t('product.estimatedDelivery')}
-                        </span>
-                        <div className="text-[10px] text-[#fff] bg-[#2e9e5b] p-2">
-                          {t('cart.delivery24h', { date: formatRoDate(deliveryStart) })}
-                          <br />
-                          {t('cart.delivery48h', { date: formatRoDate(deliveryEnd) })}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-white p-2 px-3 mt-2">
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-between rounded-md py-2"
-                  id="btn-simulare"
-                  aria-expanded={isGraphicOpen}
-                  aria-controls="panel-simulare"
-                  onClick={() => setIsGraphicOpen((prev) => !prev)}
-                  data-track-action="A deschis simularea grafica."
-                >
-                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t('product.graphicPreview')}
-                  </span>
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform duration-300 ${isGraphicOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                <div
-                  id="panel-simulare"
-                  role="region"
-                  aria-labelledby="btn-simulare"
-                  style={{
-                    maxHeight: isGraphicOpen ? '1000px' : '0',
-                    opacity: isGraphicOpen ? 1 : 0,
-                    transition: 'max-height 0.35s, opacity 0.25s',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div className="py-2">
-                    <img
-                      src="https://darurialese.ro/wp-content/themes/woodmart-child/img/simulare_grafica-01.png"
-                      alt={t('product.graphicPreview')}
-                      className="w-full h-auto rounded-lg border border-border border-[#f5e3d2]"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-white p-2 px-3 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsShippingOpen((prev) => !prev)}
-                  data-track-action="A deschis livrare & retur din sidebar cart."
-                  className="flex w-full items-center justify-between rounded-md py-2"
-                >
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t('product.shippingReturn')}
-                  </span>
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${isShippingOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                <div
-                  className="mt-2 space-y-2 text-xs text-muted-foreground"
-                  style={{
-                    maxHeight: isShippingOpen ? '520px' : '0',
-                    opacity: isShippingOpen ? 1 : 0,
-                    overflow: 'hidden',
-                    transition: 'max-height 0.3s ease, opacity 0.2s ease',
-                  }}
-                >
-                  <p>{t('product.fastDelivery')}</p>
-                  <p>{t('product.supportContact')}</p>
-                  <img
-                    src="https://darurialese.ro/wp-content/themes/woodmart-child/img/popup_expediere.svg"
-                    alt={t('product.shippingReturn')}
-                    className="mt-2 w-full rounded-lg border border-border border-[#f5e3d2]"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-              </div>
-            </div>
-          </aside>
         </div>
       </main>
       <DesktopSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

@@ -60,6 +60,7 @@ const DesktopReviewsPage = () => {
   const [activeTab, setActiveTab] = useState<ReviewTab>('photos');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
+  const [expandedReviewIds, setExpandedReviewIds] = useState<Set<string>>(new Set());
   const productScrollTimerRef = useRef<number | null>(null);
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -72,6 +73,17 @@ const DesktopReviewsPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
   const locale = getLocale();
+  const toggleReviewExpanded = (reviewId: string) => {
+    setExpandedReviewIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(reviewId)) {
+        next.delete(reviewId);
+      } else {
+        next.add(reviewId);
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     document.title = t('reviews.pageTitle');
@@ -134,6 +146,15 @@ const DesktopReviewsPage = () => {
       const bCount = counts.get(String(b.id)) || 0;
       return bCount - aCount;
     });
+  }, [data]);
+
+  const reviewCounts = useMemo(() => {
+    if (!data) return new Map<string, number>();
+    const counts = new Map<string, number>();
+    [...data.recenzii_cu_poza, ...data.recenzii_text].forEach((review) => {
+      counts.set(review.id_produs, (counts.get(review.id_produs) || 0) + 1);
+    });
+    return counts;
   }, [data]);
 
   useEffect(() => {
@@ -214,6 +235,14 @@ const DesktopReviewsPage = () => {
     const [year, month, day] = datePart.split('-');
     if (!year || !month || !day) return value;
     return `${day}.${month}.${year}`;
+  };
+  const getDateParts = (value: string) => {
+    const [datePart] = value.split(' ');
+    const [year, month, day] = datePart.split('-');
+    if (!year || !month || !day) {
+      return { day: value, month: '', year: '' };
+    }
+    return { day, month, year };
   };
 
   const renderStars = (value: string) => {
@@ -419,27 +448,42 @@ const DesktopReviewsPage = () => {
                       >
                         <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden">
                           <div className="flex gap-4 snap-x snap-mandatory">
-                            {reviews.map((review) => {
+                            {[...reviews]
+                              .sort((a, b) => (b.continut?.length || 0) - (a.continut?.length || 0))
+                              .map((review) => {
                               const hasImages = review.imagini && review.imagini.length > 0;
                               const imageUrl = hasImages
                                 ? review.imagini![0].full || review.imagini![0].thumbnail
                                 : '';
+                              const reviewId = String(review.id_recenzie);
+                              const isExpanded = expandedReviewIds.has(reviewId);
+                              const content = review.continut || '';
+                              const shouldTruncate = content.length > 120;
+                              const displayText = !shouldTruncate || isExpanded
+                                ? content
+                                : `${content.slice(0, 120).trimEnd()}...`;
+                              const dateParts = getDateParts(review.data);
 
                               return (
                                 <div
                                   key={review.id_recenzie}
-                                  className="w-[360px] shrink-0 snap-center rounded-2xl border border-border bg-white p-4 shadow-sm"
+                                  className="w-56 shrink-0 snap-center rounded-2xl border border-border bg-white p-2 shadow-sm"
                                 >
                                   <div className="flex items-start justify-between gap-3">
-                                    <div>
+                                    <div className="min-w-0">
                                       <p className="text-sm font-semibold text-foreground font-serif">{review.autor}</p>
-                                      <p className="mt-1 text-xs text-muted-foreground">{formatDate(review.data)}</p>
+                                      <div className="mt-2">{renderStars(review.rating)}</div>
                                     </div>
-                                    {renderStars(review.rating)}
+                                    <div className="flex shrink-0 flex-col items-end gap-2">
+                                      <div className="flex h-12 w-10 flex-col items-center justify-center rounded-md border border-border bg-white text-[10px] leading-none text-muted-foreground">
+                                        <span className="block font-semibold text-foreground">{dateParts.day}</span>
+                                        {dateParts.month && (
+                                          <span className="block font-semibold text-foreground">{dateParts.month}</span>
+                                        )}
+                                        {dateParts.year && <span className="block">{dateParts.year}</span>}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <p className="mt-3 text-sm text-foreground whitespace-pre-line font-serif">
-                                    {review.continut}
-                                  </p>
                                   {hasImages && (
                                     <button
                                       type="button"
@@ -452,15 +496,27 @@ const DesktopReviewsPage = () => {
                                         }
                                       }}
                                       data-track-action="A deschis poza din recenzie."
-                                      className="mt-3 overflow-hidden rounded-xl border border-border bg-muted/20"
+                                      className="mt-3 aspect-square w-full overflow-hidden rounded-xl border border-border bg-muted/20"
                                       aria-label="Deschide poza recenzie"
                                     >
                                       <img
                                         src={imageUrl}
                                         alt={review.autor}
-                                        className="w-full object-cover"
+                                        className="h-full w-full object-cover object-center"
                                         loading="lazy"
                                       />
+                                    </button>
+                                  )}
+                                  <p className="mt-3 text-sm text-foreground whitespace-pre-line font-serif">
+                                    {displayText}
+                                  </p>
+                                  {shouldTruncate && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleReviewExpanded(reviewId)}
+                                      className="mt-2 text-xs font-semibold text-amber-700 hover:text-amber-800"
+                                    >
+                                      {isExpanded ? t('common.hide') : t('product.showMore')}
                                     </button>
                                   )}
                                 </div>
@@ -520,6 +576,7 @@ const DesktopReviewsPage = () => {
                         product.imagine_principala.full ||
                         product.imagine_principala['100x100'];
                       const isSelected = selectedProductId === String(product.id);
+                      const reviewCount = reviewCounts.get(String(product.id)) || 0;
                       return (
                         <button
                           key={product.id}
@@ -533,11 +590,14 @@ const DesktopReviewsPage = () => {
                             }
                           }}
                           data-track-action={`A selectat produsul ${product.titlu} din recenzii.`}
-                          className={`flex w-24 shrink-0 flex-col overflow-hidden rounded-2xl border bg-white text-left transition-transform hover:-translate-y-1 ${
+                          className={`relative flex w-24 shrink-0 flex-col overflow-hidden rounded-2xl border bg-white text-left transition-transform hover:-translate-y-1 ${
                             isSelected ? 'border-emerald-500 ring-2 ring-emerald-200' : 'border-border'
                           }`}
                         >
                           <img src={imageUrl} alt={product.titlu} className="h-28 w-full object-cover" loading="lazy" />
+                          <span className="absolute right-1 top-1 rounded-full bg-amber-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                            {reviewCount}
+                          </span>
                         </button>
                       );
                     })}

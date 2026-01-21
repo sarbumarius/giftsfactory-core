@@ -23,10 +23,17 @@ export const stripLocalePrefix = (path: string) => {
 
 export const withLocalePath = (path: string, locale?: LocaleCode) => {
   const lang = locale || getLocale();
-  if (lang !== 'en') {
-    return stripLocalePrefix(path);
-  }
   const normalized = stripLocalePrefix(path);
+  if (lang !== 'en') {
+    if (normalized === '/create-unique-product') return '/creeaza-produs';
+    if (normalized === '/reviews') return '/recenzii';
+    if (normalized === '/faq') return '/intrebari-frecvente';
+    if (normalized === '/discounts') return '/reduceri';
+    if (normalized === '/about-me') return '/despre-noi';
+    if (normalized === '/cart') return '/cos';
+    if (normalized === '/checkout') return '/plata-cos';
+    return normalized;
+  }
   const productPrefix = '/produs/';
   const categoryPrefix = '/categorie/';
   let mappedPath = normalized;
@@ -38,6 +45,20 @@ export const withLocalePath = (path: string, locale?: LocaleCode) => {
     mappedPath = '/category';
   } else if (normalized.startsWith(categoryPrefix)) {
     mappedPath = `/category/${normalized.slice(categoryPrefix.length)}`;
+  } else if (normalized === '/creeaza-produs') {
+    mappedPath = '/create-unique-product';
+  } else if (normalized === '/recenzii') {
+    mappedPath = '/reviews';
+  } else if (normalized === '/intrebari-frecvente') {
+    mappedPath = '/faq';
+  } else if (normalized === '/reduceri') {
+    mappedPath = '/discounts';
+  } else if (normalized === '/despre-noi') {
+    mappedPath = '/about-me';
+  } else if (normalized === '/cos') {
+    mappedPath = '/cart';
+  } else if (normalized === '/plata-cos') {
+    mappedPath = '/checkout';
   }
   if (mappedPath === '/') return '/en';
   if (path.startsWith('/en/')) return mappedPath.startsWith('/en/') ? mappedPath : `/en${mappedPath}`;

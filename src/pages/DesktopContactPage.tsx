@@ -28,8 +28,8 @@ const DesktopContactPage = () => {
   const locale = getLocale();
 
   useEffect(() => {
-    document.title = 'Contact | Gifts Factory';
-  }, []);
+    document.title = t('contact.pageTitle');
+  }, [locale]);
 
   useEffect(() => {
     if (treeData) return;
@@ -169,16 +169,14 @@ const DesktopContactPage = () => {
               <div className="mx-4 rounded-2xl border border-border bg-white p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Contact</p>
-                    <h1 className="mt-2 text-3xl font-semibold text-foreground">Suntem aici sa te ajutam rapid.</h1>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Scrie-ne, suna-ne sau viziteaza-ne. Raspundem rapid in programul de lucru.
-                    </p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{t('contact.title')}</p>
+                    <h1 className="mt-2 text-3xl font-semibold text-foreground">{t('contact.headline')}</h1>
+                    <p className="mt-2 text-sm text-muted-foreground">{t('contact.subheadline')}</p>
                   </div>
                   <div className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Program</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">Luni-Vineri 10:00 - 18:00</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Revenim in cel mai scurt timp posibil.</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('contact.scheduleTitle')}</p>
+                    <p className="mt-2 text-sm font-semibold text-foreground">{t('contact.scheduleValue')}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{t('contact.scheduleNote')}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -217,28 +215,28 @@ const DesktopContactPage = () => {
                     </div>
                     <div className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-foreground">
                       <MapPin className="h-4 w-4 text-amber-700" />
-                      Zetarilor 52B, sediul Daruri Alese
+                      {t('contact.mapLabel')}
                     </div>
                   </div>
 
                   <div className="rounded-3xl border border-border bg-white p-6">
-                    <p className="text-sm font-semibold text-foreground">Formular de contact</p>
+                    <p className="text-sm font-semibold text-foreground">{t('contact.formTitle')}</p>
                     <div className="mt-4 grid grid-cols-2 gap-4">
                       <input
                         type="email"
-                        placeholder="Adresa de email"
+                        placeholder={t('contact.formEmailPlaceholder')}
                         defaultValue="office@darurialese.ro"
                         data-track-action="A completat emailul in contact desktop."
                         className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
                       />
                       <input
                         type="text"
-                        placeholder="Subiect"
+                        placeholder={t('contact.formSubjectPlaceholder')}
                         data-track-action="A completat subiectul in contact desktop."
                         className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
                       />
                       <textarea
-                        placeholder="Mesaj"
+                        placeholder={t('contact.formMessagePlaceholder')}
                         rows={6}
                         data-track-action="A completat mesajul in contact desktop."
                         className="col-span-2 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
@@ -248,7 +246,7 @@ const DesktopContactPage = () => {
                         data-track-action="A trimis formularul de contact desktop."
                         className="col-span-2 rounded-full bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500"
                       >
-                        Trimite mesajul
+                        {t('contact.formSubmit')}
                       </button>
                     </div>
                   </div>
@@ -261,7 +259,7 @@ const DesktopContactPage = () => {
                         <Phone className="h-6 w-6" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Contact customer</p>
+                        <p className="text-sm font-semibold text-foreground">{t('contact.customerContact')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">0748.777.776</p>
                       </div>
                     </div>
@@ -270,7 +268,7 @@ const DesktopContactPage = () => {
                         <Phone className="h-6 w-6" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Telefon suplimentar</p>
+                        <p className="text-sm font-semibold text-foreground">{t('contact.secondaryPhone')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">0757.665.555</p>
                       </div>
                     </div>
@@ -279,7 +277,7 @@ const DesktopContactPage = () => {
                         <Phone className="h-6 w-6" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Contact manager</p>
+                        <p className="text-sm font-semibold text-foreground">{t('contact.managerContact')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">0799.807.999 - Sarbu Marius</p>
                       </div>
                     </div>
@@ -291,7 +289,7 @@ const DesktopContactPage = () => {
                         <MapPin className="h-6 w-6" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Adresa sediului social</p>
+                        <p className="text-sm font-semibold text-foreground">{t('contact.headOfficeAddress')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">Aleea Livezilor nr.23 bl.12 ap.3</p>
                       </div>
                     </div>
@@ -300,28 +298,30 @@ const DesktopContactPage = () => {
                         <MapPin className="h-6 w-6" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">Punct de lucru</p>
+                        <p className="text-sm font-semibold text-foreground">{t('contact.workPoint')}</p>
                         <p className="mt-1 text-sm text-muted-foreground">Zetarilor 52B, Sector 5, Bucuresti</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-3xl border border-border bg-white p-6 space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Date identificare firma</p>
+                    <p className="text-sm font-semibold text-foreground">{t('contact.companyDetails')}</p>
                     <p className="text-sm text-muted-foreground">CUI RO37811834</p>
                     <p className="text-sm text-muted-foreground">J40/9997/2017</p>
-                    <p className="text-sm text-muted-foreground">Administrator: Sarbu Marius Dumitru</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('contact.adminLabel', { name: 'Sarbu Marius Dumitru' })}
+                    </p>
                   </div>
 
                   <div className="rounded-3xl border border-border bg-white p-6 space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Documente legale</p>
+                    <p className="text-sm font-semibold text-foreground">{t('contact.legalDocs')}</p>
                     <button
                       type="button"
                       onClick={() => setActiveLegalModal('terms')}
                       data-track-action="A deschis termenii si conditiile din contact desktop."
                       className="w-full rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
                     >
-                      Termeni si conditii
+                      {t('contact.terms')}
                     </button>
                     <button
                       type="button"
@@ -329,7 +329,7 @@ const DesktopContactPage = () => {
                       data-track-action="A deschis politica de confidentialitate din contact desktop."
                       className="w-full rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
                     >
-                      Politica de confidentialitate
+                      {t('contact.privacy')}
                     </button>
                   </div>
                 </div>

@@ -1508,7 +1508,7 @@ const DesktopCheckoutPage = () => {
       }}
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+        <div className="mx-auto grid h-[calc(100vh-120px)] w-[70%]  grid-cols-[20%_45%_30%] gap-0 overflow-hidden rounded-2xl">
 
           <DesktopSidebar />
 
@@ -1524,7 +1524,7 @@ const DesktopCheckoutPage = () => {
               cartCount={cart.length}
             />
 
-            <div className="flex-1 overflow-y-auto pb-6">
+            <div className="flex-1 -mt-8 overflow-y-auto pb-6">
               <div className="px-4 pb-6">
         <button
           type="button"
@@ -1639,7 +1639,7 @@ const DesktopCheckoutPage = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-border p-4">
+          <div className="rounded-2xl border border-border p-2">
             <p className="text-sm font-semibold text-foreground">{t('checkout.billingTitle')}</p>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
               <div className="space-y-1">
@@ -1916,7 +1916,7 @@ const DesktopCheckoutPage = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border p-4">
+          <div className="rounded-2xl border border-border p-2">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold text-foreground">{t('checkout.shipToDifferent')}</p>
               <button
@@ -2472,82 +2472,13 @@ const DesktopCheckoutPage = () => {
             )}
           </div>
 
-            <div className="rounded-2xl border border-border p-4">
-              <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
-              <input type="hidden" name="payment_method" value={paymentMethodId} />
-              <div className="mt-3 space-y-2">
-                <button
-                  type="button"
-                  data-payment-id="cod"
-                  onClick={() => setPaymentMethod('ramburs')}
-                  data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentCod')}`}
-                  className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
-                    paymentMethod === 'ramburs'
-                      ? 'border-amber-300 bg-amber-50 text-amber-900'
-                      : 'border-border bg-white text-foreground'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
-                    <div>
-                      <div>{t('checkout.paymentCod')}</div>
-                      <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentCodHint')}</div>
-                    </div>
-                  </div>
-                  <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
-                    paymentMethod === 'ramburs' ? 'bg-amber-500' : 'bg-muted'
-                  }`}>
-                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                      paymentMethod === 'ramburs' ? 'translate-x-5' : 'translate-x-1'
-                    }`} />
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  data-payment-id="bacs"
-                  onClick={() => setPaymentMethod('transfer')}
-                  data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentBank')}`}
-                  className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
-                    paymentMethod === 'transfer'
-                      ? 'border-amber-300 bg-amber-50 text-amber-900'
-                      : 'border-border bg-white text-foreground'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
-                    <div>
-                      <div>{t('checkout.paymentBank')}</div>
-                      <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentBankHint')}</div>
-                    </div>
-                  </div>
-                  <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
-                    paymentMethod === 'transfer' ? 'bg-amber-500' : 'bg-muted'
-                  }`}>
-                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                      paymentMethod === 'transfer' ? 'translate-x-5' : 'translate-x-1'
-                    }`} />
-                  </span>
-                </button>
-              </div>
-              {paymentMethod === 'transfer' && (
-                <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-                  <p className="font-semibold text-foreground">{t('checkout.paymentBankPrimary')}</p>
-                  <p>RO74INGB0000999906973879</p>
-                  <p className="font-semibold text-foreground">{t('checkout.paymentBankSecondary')}</p>
-                  <p>RO65TREZ7055069XXX012556</p>
-                  <p>{t('checkout.paymentBankInfo')}</p>
-                </div>
-              )}
-            </div>
-
           </div>
         </div>
               </div>
             </div>
           </section>
 
-          <aside className="sidebar2 min-h-full border-l border-border bg-white relative">
+          <aside className="sidebar2 min-h-full border-l border-border bg-white relative rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-40">
               <div className="rounded-2xl border border-border p-4">
@@ -2608,6 +2539,74 @@ const DesktopCheckoutPage = () => {
                       </div>
                     );
                   })}
+                </div>
+                <div className="mt-4 rounded-xl border border-border p-3">
+                  <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
+                  <input type="hidden" name="payment_method" value={paymentMethodId} />
+                  <div className="mt-3 space-y-2">
+                    <button
+                      type="button"
+                      data-payment-id="cod"
+                      onClick={() => setPaymentMethod('ramburs')}
+                      data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentCod')}`}
+                      className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
+                        paymentMethod === 'ramburs'
+                          ? 'border-amber-300 bg-amber-50 text-amber-900'
+                          : 'border-border bg-white text-foreground'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4" />
+                        <div>
+                          <div>{t('checkout.paymentCod')}</div>
+                          <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentCodHint')}</div>
+                        </div>
+                      </div>
+                      <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
+                        paymentMethod === 'ramburs' ? 'bg-amber-500' : 'bg-muted'
+                      }`}>
+                        <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          paymentMethod === 'ramburs' ? 'translate-x-5' : 'translate-x-1'
+                        }`} />
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      data-payment-id="bacs"
+                      onClick={() => setPaymentMethod('transfer')}
+                      data-track-action={`${t('checkout.paymentMethod')}: ${t('checkout.paymentBank')}`}
+                      className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-xs font-semibold ${
+                        paymentMethod === 'transfer'
+                          ? 'border-amber-300 bg-amber-50 text-amber-900'
+                          : 'border-border bg-white text-foreground'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4" />
+                        <div>
+                          <div>{t('checkout.paymentBank')}</div>
+                          <div className="text-[11px] font-medium text-muted-foreground">{t('checkout.paymentBankHint')}</div>
+                        </div>
+                      </div>
+                      <span className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
+                        paymentMethod === 'transfer' ? 'bg-amber-500' : 'bg-muted'
+                      }`}>
+                        <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          paymentMethod === 'transfer' ? 'translate-x-5' : 'translate-x-1'
+                        }`} />
+                      </span>
+                    </button>
+                  </div>
+                  {paymentMethod === 'transfer' && (
+                    <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+                      <p className="font-semibold text-foreground">{t('checkout.paymentBankPrimary')}</p>
+                      <p>RO74INGB0000999906973879</p>
+                      <p className="font-semibold text-foreground">{t('checkout.paymentBankSecondary')}</p>
+                      <p>RO65TREZ7055069XXX012556</p>
+                      <p>{t('checkout.paymentBankInfo')}</p>
+                    </div>
+                  )}
                 </div>
                 {SHOW_PROMO_CODE && (
                   <div className="mt-4">
@@ -2706,9 +2705,11 @@ const DesktopCheckoutPage = () => {
                 <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
                   {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
                 </div>
-                <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
-                  {t('cart.advanceIntroPrefix')} <b>30%</b> {t('cart.advanceIntroSuffix')} {t('cart.advanceMore')}.
-                </div>
+                {totals.total >= 400 && (
+                  <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+                    {t('cart.advanceIntroPrefix')} <b>30%</b> {t('cart.advanceIntroSuffix')} {t('cart.advanceMore')}.
+                  </div>
+                )}
                 <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
                 <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center justify-between">

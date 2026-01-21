@@ -4,6 +4,7 @@ import MobileProductHeader from '@/components/mobile/MobileProductHeader';
 import { useCategoryContext } from '@/contexts/CategoryContext';
 import { useShopContext } from '@/contexts/ShopContext';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
+import { withLocalePath } from '@/utils/locale';
 import { t } from '@/utils/translations';
 
 const CreateUniqueProductPage = () => {
@@ -25,12 +26,12 @@ const CreateUniqueProductPage = () => {
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => {
           setCurrentSlug('gifts-factory');
-          navigate('/');
+          navigate(withLocalePath('/'));
         }}
         cartCount={cart.length}
         wishlistCount={wishlist.length}
-        onCartClick={() => navigate('/cos')}
-        onWishlistClick={() => navigate('/wishlist')}
+        onCartClick={() => navigate(withLocalePath('/cos'))}
+        onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
       />
 
       <div className="px-4 pt-4">

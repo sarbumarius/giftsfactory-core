@@ -139,7 +139,7 @@ const ReviewsPage = () => {
         {
           '@type': 'CollectionPage',
           name: 'Recenzii clienti',
-          url: `${origin}/recenzii`,
+          url: `${origin}${withLocalePath('/recenzii')}`,
           mainEntity: {
             '@type': 'ItemList',
             itemListElement: reviewItems.map((review, index) => ({

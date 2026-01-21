@@ -28,7 +28,7 @@ const DesktopProductPage = () => {
   const [showPersonalizare, setShowPersonalizare] = useState(true);
   const [personalizareValues, setPersonalizareValues] = useState<Record<string, string | string[]>>({});
   const [personalizareFiles, setPersonalizareFiles] = useState<Record<string, string>>({});
-  const [openSection, setOpenSection] = useState<'personalizare' | 'descriere' | 'detalii'>('personalizare');
+  const [openSection, setOpenSection] = useState<'personalizare' | 'descriere' | 'detalii'>('descriere');
   const [zoomReviewIndex, setZoomReviewIndex] = useState<number | null>(null);
   const [treeData, setTreeData] = useState<SubcategoriesResponse | null>(null);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
@@ -567,10 +567,10 @@ const DesktopProductPage = () => {
 
           <aside className="flex min-h-0 flex-col gap-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="rounded-2xl border border-border bg-white p-6">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground font-serif">
                 {getCategoryTitle(product.categorii?.[0]) || t('product.category')}
               </div>
-              <h1 className="mt-2 text-3xl font-semibold text-foreground">{productTitle}</h1>
+              <h1 className="mt-2 text-3xl font-semibold text-foreground font-serif">{productTitle}</h1>
 
               <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1 text-amber-500">
@@ -586,7 +586,7 @@ const DesktopProductPage = () => {
                 </span>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-end gap-3">
+              <div className="mt-4 flex flex-wrap items-end gap-3 font-serif">
                 <span className="text-3xl font-semibold text-amber-700">
                   {discountedPrice.toFixed(2)} lei
                 </span>
@@ -607,6 +607,24 @@ const DesktopProductPage = () => {
               <div className="mt-5 flex flex-wrap items-center gap-3" />
             </div>
 
+            <div className="rounded-2xl  bg-white ">
+              <h2 className="text-lg font-semibold text-foreground font-serif">{t('product.details')}</h2>
+              <div className="mt-4 overflow-hidden rounded-xl border border-border">
+                <table className="w-full text-sm">
+                  <tbody className="divide-y divide-border">
+                    {attributes.map((attr) => (
+                      <tr key={attr.label}>
+                        <th className="w-1/2 px-3 py-2 text-left text-xs font-semibold text-muted-foreground font-serif">
+                          {attr.label}
+                        </th>
+                        <td className="px-3 py-2 text-sm font-semibold text-foreground">{attr.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div id="personalizare-desktop" className="rounded-2xl border border-border bg-white p-6">
               <button
                 type="button"
@@ -618,10 +636,10 @@ const DesktopProductPage = () => {
                 className="flex w-full items-center justify-between text-left"
               >
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 font-serif">
                     {t('attr.personalization')}
                   </p>
-                  <h2 className="mt-1 text-xl font-semibold text-foreground">{t('product.startPersonalization')}</h2>
+                  <h2 className="mt-1 text-xl font-semibold text-foreground  font-serif">{t('product.startPersonalization')}</h2>
                 </div>
                 <button
                   type="button"
@@ -786,37 +804,16 @@ const DesktopProductPage = () => {
                 onClick={() => setOpenSection(openSection === 'descriere' ? 'personalizare' : 'descriere')}
                 className="flex w-full items-center justify-between"
               >
-                <h2 className="text-lg font-semibold text-foreground">{t('product.description')}</h2>
+                <h2 className="text-lg font-semibold text-foreground  font-serif">{t('product.description')}</h2>
                 <ArrowRight className={`h-4 w-4 transition-transform ${openSection === 'descriere' ? 'rotate-90' : ''}`} />
               </button>
               {openSection === 'descriere' && (
                 <div
-                  className="mt-4 text-sm text-muted-foreground prose max-w-none"
+                  className="mt-4 text-sm text-muted-foreground prose max-w-none  font-serif"
                   dangerouslySetInnerHTML={{
                     __html: locale === 'en' ? product.descriere_en || product.descriere : product.descriere,
                   }}
                 />
-              )}
-            </div>
-
-            <div className="rounded-2xl border border-border bg-white p-6">
-              <button
-                type="button"
-                onClick={() => setOpenSection(openSection === 'detalii' ? 'personalizare' : 'detalii')}
-                className="flex w-full items-center justify-between"
-              >
-                <h2 className="text-lg font-semibold text-foreground">{t('product.details')}</h2>
-                <ArrowRight className={`h-4 w-4 transition-transform ${openSection === 'detalii' ? 'rotate-90' : ''}`} />
-              </button>
-              {openSection === 'detalii' && (
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-foreground">
-                  {attributes.map((attr) => (
-                    <div key={attr.label} className="rounded-xl border border-border px-3 py-2">
-                      <p className="text-xs text-muted-foreground">{attr.label}</p>
-                      <p className="text-sm font-semibold text-foreground">{attr.value}</p>
-                    </div>
-                  ))}
-                </div>
               )}
             </div>
 

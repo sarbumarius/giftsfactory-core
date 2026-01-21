@@ -1638,7 +1638,7 @@ const DesktopCheckoutPage = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
           <div className="rounded-2xl border border-border p-2">
             <p className="text-sm font-semibold text-foreground">{t('checkout.billingTitle')}</p>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
@@ -2480,7 +2480,7 @@ const DesktopCheckoutPage = () => {
 
           <aside className="sidebar2 min-h-full border-l border-border bg-white relative rounded-r-2xl">
             <div className="relative flex h-full flex-col">
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-40">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-60">
               <div className="rounded-2xl border border-border p-4">
                 <div className="flex w-full items-center justify-between">
                   <span className="text-sm font-semibold text-foreground">{t('checkout.productsTitle')}</span>
@@ -2741,7 +2741,7 @@ const DesktopCheckoutPage = () => {
                 </div>
               </div>
             </div>
-              <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border border-1">
                 <div
                   className={`rounded-2xl border p-4 text-xs text-muted-foreground ${
                     attemptedSubmit && !termsAccepted ? 'border-red-400' : 'border-border'

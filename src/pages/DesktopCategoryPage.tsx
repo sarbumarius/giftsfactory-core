@@ -309,7 +309,7 @@ const DesktopCategoryPage = () => {
       }}
     >
       <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl ">
+        <div className="grid h-[calc(100vh-120px)]  grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl ">
           <DesktopSidebar
             locale={locale}
             onLocaleChange={handleLocaleChange}

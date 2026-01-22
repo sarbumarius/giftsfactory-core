@@ -821,15 +821,12 @@ const DesktopProductPage = () => {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Informatii rapide
               </p>
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-muted-foreground">
+              <div className="mt-4 grid grid-cols-1 gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
                   <Check className="h-4 w-4 text-amber-600" />
                   Productie rapida 2-3 zile
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
-                  <Check className="h-4 w-4 text-amber-600" />
-                  Retur 14 zile
-                </div>
+
                 <div className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
                   <Check className="h-4 w-4 text-amber-600" />
                   {t('product.securePayment')}

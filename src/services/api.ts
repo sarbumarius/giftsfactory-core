@@ -188,12 +188,12 @@ export const searchMeili = async (
 
   try {
     const [categoriesResponse, productsResponse] = await Promise.all([
-      fetch(`${MEILI_HOST}/indexes/categories/search`, {
+      fetch(`${MEILI_HOST}/indexes/categories_custom/search`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ q: term, limit: categoriesLimit }),
       }),
-      fetch(`${MEILI_HOST}/indexes/products/search`, {
+      fetch(`${MEILI_HOST}/indexes/products_custom/search`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ q: term, limit: productsLimit }),

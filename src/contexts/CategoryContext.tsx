@@ -370,11 +370,9 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
       searchMeili(term)
         .then((results) => {
           if (!isActive) return;
-          const existingTitles = new Set(filteredProducts.map((product) => product.titlu));
-          const dedupedProducts = results.products.filter((product) => !existingTitles.has(product.title));
           setSearchResults({
             categories: results.categories,
-            products: dedupedProducts,
+            products: results.products,
           });
           setSearchLoading(false);
 
@@ -393,7 +391,7 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
       isActive = false;
       clearTimeout(debounceTimer);
     };
-  }, [searchQuery, filteredProducts]);
+  }, [searchQuery]);
 
   const getActiveProducts = () => {
     if (!data) return [];

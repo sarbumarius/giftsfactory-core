@@ -11,6 +11,7 @@ import DesktopSearchModal from '@/components/desktop/DesktopSearchModal';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
 import DesktopSidebar from '@/components/desktop/DesktopSidebar';
 import DesktopTopBar from '@/components/desktop/DesktopTopBar';
+import { Slider } from '@/components/ui/slider';
 import { getLocale, LocaleCode, setLocale, stripLocalePrefix, withLocalePath } from '@/utils/locale';
 import { getSortLabel, t } from '@/utils/translations';
 
@@ -32,14 +33,19 @@ const DesktopCategoryPage = () => {
     setSearchQuery,
     setCurrentSlug,
   } = useCategoryContext();
-  const [minInput, setMinInput] = useState(priceFilterMin.toString());
-  const [maxInput, setMaxInput] = useState(priceFilterMax.toString());
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    priceFilterMin || priceBounds.min,
+    priceFilterMax || priceBounds.max,
+  ]);
   const [treeData, setTreeData] = useState<SubcategoriesResponse | null>(null);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [categorySearch, setCategorySearch] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [layoutPadding, setLayoutPadding] = useState(60);
+  const layoutMaxWidth = 1500;
+  const layoutMaxHeight = 1081;
   const [locale, setLocaleState] = useState<LocaleCode>(getLocale());
   const subcategoryScrollRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -89,13 +95,6 @@ const DesktopCategoryPage = () => {
     window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
   };
 
-  const applyPriceFilters = () => {
-    const nextMin = Number(minInput);
-    const nextMax = Number(maxInput);
-    if (!Number.isNaN(nextMin)) setPriceFilterMin(nextMin);
-    if (!Number.isNaN(nextMax)) setPriceFilterMax(nextMax);
-  };
-
   useEffect(() => {
     if (treeData) return;
     let isActive = true;
@@ -137,13 +136,21 @@ const DesktopCategoryPage = () => {
   }, [subcategories.length]);
 
   useEffect(() => {
-    if (priceFilterMin === 0 && priceBounds.min > 0) {
-      setMinInput(priceBounds.min.toString());
-    }
-    if (priceFilterMax === 0 && priceBounds.max > 0) {
-      setMaxInput(priceBounds.max.toString());
-    }
+    const nextMin = priceFilterMin || priceBounds.min;
+    const nextMaxRaw = priceFilterMax || priceBounds.max;
+    const nextMax = nextMaxRaw < nextMin ? nextMin : nextMaxRaw;
+    setPriceRange([nextMin, nextMax]);
   }, [priceBounds.min, priceBounds.max, priceFilterMin, priceFilterMax]);
+
+  useEffect(() => {
+    const updatePadding = () => {
+      if (typeof window === 'undefined') return;
+      setLayoutPadding(window.innerHeight < 1000 ? 30 : 60);
+    };
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   const getLevelBgClass = (level: number) => {
     if (level === 0) return 'bg-white';
@@ -303,13 +310,28 @@ const DesktopCategoryPage = () => {
   return (
     <div
       className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
+      style={{ backgroundColor: '#c7bae8' }}
     >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)]  grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl ">
+      <main
+        className="mx-auto h-full w-full flex items-center justify-center"
+        style={{
+          padding: `${layoutPadding}px`,
+          maxWidth: `${layoutMaxWidth}px`,
+          backgroundImage: `linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(${layoutPadding}px + 0.15 * (100% - ${
+            layoutPadding * 2
+          }px)), #f7e0e8 calc(${layoutPadding}px + 0.15 * (100% - ${
+            layoutPadding * 2
+          }px)), #f7e0e8 100%)`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% 100%',
+        }}
+      >
+        <div
+          className="grid grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl "
+          style={{
+            height: `min(calc(100vh - ${layoutPadding * 2}px), ${layoutMaxHeight}px)`,
+          }}
+        >
           <DesktopSidebar
             locale={locale}
             onLocaleChange={handleLocaleChange}
@@ -332,7 +354,7 @@ const DesktopCategoryPage = () => {
             />
 
 
-            <div className="relative mb-6 rounded-2xl border border-border bg-white p-6 mx-4 overflow-hidden">
+            <div className="relative mb-6 -mt-6  bg-white p-6 pt-2 pb-2 overflow-hidden ">
             {data?.info?.imagine && (
               <img
                 src={data.info.imagine}
@@ -473,13 +495,13 @@ const DesktopCategoryPage = () => {
             )}
           </div>
 
-          <div className="w-full border-t border-border bg-white px-4 py-3">
+          <div className="w-full border-t border-border bg-white px-4 py-3 filtrare">
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
               <select
                 value={currentSort}
                 onChange={(event) => setCurrentSort(event.target.value as typeof currentSort)}
                 data-track-action="Sortare desktop."
-                className="rounded-full border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
+                className="rounded-md border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
               >
                 <option value="popularitate">{getSortLabel('popularitate')}</option>
                 <option value="cele-mai-noi">{getSortLabel('cele-mai-noi')}</option>
@@ -487,37 +509,36 @@ const DesktopCategoryPage = () => {
                 <option value="pret-descrescator">{getSortLabel('pret-descrescator')}</option>
                 <option value="reduceri">{getSortLabel('reduceri')}</option>
               </select>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
+              <div className="flex flex-col gap-2 min-w-[260px] max-w-sm">
+                <div className="flex items-center justify-between text-[11px] font-semibold text-foreground">
+                  <span>
+                    {t('filters.minPlaceholder')}: {priceRange[0]}
+                  </span>
+                  <span>
+                    {t('filters.maxPlaceholder')}: {priceRange[1]}
+                  </span>
+                </div>
+                <Slider
                   min={priceBounds.min}
                   max={priceBounds.max}
-                  value={minInput}
-                  onChange={(event) => setMinInput(event.target.value)}
-                  data-track-action="Filtru pret minim desktop."
-                  className="w-20 rounded-full border border-border px-2 py-2 text-xs text-foreground"
-                  placeholder={t('filters.minPlaceholder')}
-                />
-                <span>-</span>
-                <input
-                  type="number"
-                  min={priceBounds.min}
-                  max={priceBounds.max}
-                  value={maxInput}
-                  onChange={(event) => setMaxInput(event.target.value)}
-                  data-track-action="Filtru pret maxim desktop."
-                  className="w-20 rounded-full border border-border px-2 py-2 text-xs text-foreground"
-                  placeholder={t('filters.maxPlaceholder')}
+                  step={1}
+                  value={priceRange}
+                  onValueChange={(value) => {
+                    if (value.length === 2) {
+                      const nextMin = Math.max(priceBounds.min, value[0]);
+                      const nextMax = Math.min(priceBounds.max, value[1]);
+                      const clamped: [number, number] = [
+                        Math.min(nextMin, nextMax),
+                        Math.max(nextMin, nextMax),
+                      ];
+                      setPriceRange(clamped);
+                      setPriceFilterMin(clamped[0]);
+                      setPriceFilterMax(clamped[1]);
+                    }
+                  }}
+                  data-track-action="Filtru pret slider desktop."
                 />
               </div>
-              <button
-                type="button"
-                onClick={applyPriceFilters}
-                data-track-action="A aplicat filtrul de pret desktop."
-                className="rounded-full bg-amber-600 px-3 py-2 text-xs font-semibold text-white"
-              >
-                {t('filters.apply')}
-              </button>
             </div>
           </div>
 

@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useCategoryContext, SortType } from '@/contexts/CategoryContext';
 import { getSortLabel, t } from '@/utils/translations';
 import MobileCategoryIcons from './MobileCategoryIcons';
+import { Slider } from '@/components/ui/slider';
 
 interface MobileFilterSheetProps {
   isOpen: boolean;
@@ -22,6 +24,10 @@ const MobileFilterSheet = ({ isOpen, onClose }: MobileFilterSheetProps) => {
     setSelectedTypeSlug,
     data,
   } = useCategoryContext();
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    priceFilterMin || priceBounds.min,
+    priceFilterMax || priceBounds.max,
+  ]);
 
   const sortOptions: SortType[] = [
     'popularitate',
@@ -31,15 +37,12 @@ const MobileFilterSheet = ({ isOpen, onClose }: MobileFilterSheetProps) => {
     'reduceri',
   ];
 
-  const handleMinChange = (value: number) => {
-    const nextValue = Math.min(value, priceFilterMax);
-    setPriceFilterMin(nextValue);
-  };
-
-  const handleMaxChange = (value: number) => {
-    const nextValue = Math.max(value, priceFilterMin);
-    setPriceFilterMax(nextValue);
-  };
+  useEffect(() => {
+    const nextMin = priceFilterMin || priceBounds.min;
+    const nextMaxRaw = priceFilterMax || priceBounds.max;
+    const nextMax = nextMaxRaw < nextMin ? nextMin : nextMaxRaw;
+    setPriceRange([nextMin, nextMax]);
+  }, [priceBounds.min, priceBounds.max, priceFilterMin, priceFilterMax]);
 
   if (!isOpen) return null;
 
@@ -64,31 +67,35 @@ const MobileFilterSheet = ({ isOpen, onClose }: MobileFilterSheetProps) => {
 
         <div className="mb-6">
           <h3 className="mb-3 font-semibold text-foreground">{t('filters.priceRange')}</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              {t('filters.minPrice')}
-              <input
-                type="number"
-                min={priceBounds.min}
-                max={priceBounds.max}
-                value={priceFilterMin}
-                onChange={(event) => handleMinChange(Number(event.target.value))}
-                data-track-action="A modificat pretul minim in filtre."
-                className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              {t('filters.maxPrice')}
-              <input
-                type="number"
-                min={priceBounds.min}
-                max={priceBounds.max}
-                value={priceFilterMax}
-                onChange={(event) => handleMaxChange(Number(event.target.value))}
-                data-track-action="A modificat pretul maxim in filtre."
-                className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </label>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-foreground">
+              <span>
+                {t('filters.minPrice')}: {priceRange[0]}
+              </span>
+              <span>
+                {t('filters.maxPrice')}: {priceRange[1]}
+              </span>
+            </div>
+            <Slider
+              min={priceBounds.min}
+              max={priceBounds.max}
+              step={1}
+              value={priceRange}
+              onValueChange={(value) => {
+                if (value.length === 2) {
+                  const nextMin = Math.max(priceBounds.min, value[0]);
+                  const nextMax = Math.min(priceBounds.max, value[1]);
+                  const clamped: [number, number] = [
+                    Math.min(nextMin, nextMax),
+                    Math.max(nextMin, nextMax),
+                  ];
+                  setPriceRange(clamped);
+                  setPriceFilterMin(clamped[0]);
+                  setPriceFilterMax(clamped[1]);
+                }
+              }}
+              data-track-action="A modificat sliderul de pret in filtre."
+            />
           </div>
           <p className="mt-3 text-xs text-muted-foreground text-center">
             {t('filters.productsShown', { count: filteredProducts.length })}

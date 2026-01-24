@@ -25,6 +25,7 @@ const DesktopProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [compareValue, setCompareValue] = useState(50);
   const [showPersonalizare, setShowPersonalizare] = useState(true);
   const [personalizareValues, setPersonalizareValues] = useState<Record<string, string | string[]>>({});
   const [personalizareFiles, setPersonalizareFiles] = useState<Record<string, string>>({});
@@ -357,6 +358,16 @@ const DesktopProductPage = () => {
         author: review.autor,
       }))
     );
+  const formatReviewDate = (value?: string) => {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString(locale === 'en' ? 'en-GB' : 'ro-RO', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
 
   const sortCategories = (nodes: SubcategoryTreeNode[]) => {
     return [...nodes].sort((a, b) => {
@@ -471,7 +482,7 @@ const DesktopProductPage = () => {
               cartCount={cart.length}
             />
 
-            <div className="flex-1 overflow-hidden px-2 pb-6">
+            <div className="flex-1 overflow-hidden px-2 pb-0">
               <div className="h-full overflow-hidden pr-2">
                 {loading ? (
                   <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -482,7 +493,7 @@ const DesktopProductPage = () => {
                     {error || 'Nu am putut incarca produsul.'}
                   </div>
                 ) : (
-                  <div className="flex h-full flex-col gap-8 pb-6">
+                  <div className="flex h-full flex-col gap-8 pb-0">
         <div className="grid h-full min-h-0 flex-1 grid-cols-2 gap-8">
 
 
@@ -490,7 +501,7 @@ const DesktopProductPage = () => {
             <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-3xl border border-border bg-muted pozaRecenzii [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div className="relative">
                 {hasDiscount && (
-                  <span className="absolute left-4 top-4 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
+                  <span className="absolute left-4 top-4 z-20 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white">
                     -{discountPercent}%
                   </span>
                 )}
@@ -510,23 +521,62 @@ const DesktopProductPage = () => {
                   }}
                   data-track-action={`A apasat pe wishlist pentru ${productTitle}.`}
                   aria-label={isInWishlist ? 'Scoate din wishlist' : 'Adauga in wishlist'}
-                  className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border bg-white/90 shadow-sm ${
+                  className={`absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-white/90 shadow-sm ${
                     isInWishlist ? 'border-red-300 text-red-600' : 'border-border text-foreground'
                   }`}
                 >
                   <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} />
                 </button>
                 {dimensionValue && (
-                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                  <span className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
                     {dimensionValue}
                   </span>
                 )}
                 {galleryImages[activeImageIndex] ? (
-                  <img
-                    src={galleryImages[activeImageIndex]}
-                    alt={productTitle}
-                    className="h-auto w-full object-contain"
-                  />
+                  product.clean_image ? (
+                    <div className="relative w-full overflow-hidden rounded-br-3xl">
+                      <img
+                        src={galleryImages[activeImageIndex]}
+                        alt={productTitle}
+                        className="w-full object-cover"
+                        loading="lazy"
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{ clipPath: `inset(0 ${100 - compareValue}% 0 0)` }}
+                      >
+                        <img
+                          src={product.clean_image}
+                          alt={productTitle}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div
+                        className="pointer-events-none absolute inset-y-0 z-10"
+                        style={{ left: `calc(${compareValue}% - 1px)` }}
+                      >
+                        <div className="h-full w-[2px] bg-white/80 shadow" />
+                        <div className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/70 bg-white/90 shadow" />
+                      </div>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={compareValue}
+                        onChange={(event) => setCompareValue(Number(event.target.value))}
+                        aria-label="Before after slider"
+                        className="absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={galleryImages[activeImageIndex]}
+                      alt={productTitle}
+                      className="h-auto w-full object-contain rounded-br-3xl"
+                      loading="lazy"
+                    />
+                  )
                 ) : (
                   <div className="flex min-h-[320px] items-center justify-center text-sm text-muted-foreground">
                     Fara imagine
@@ -598,10 +648,7 @@ const DesktopProductPage = () => {
               </div>
 
               {product.descriere_scurta && locale !== 'en' && (
-                <div
-                  className="mt-4 text-sm text-muted-foreground prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: product.descriere_scurta }}
-                />
+                <ShortDescription content={product.descriere_scurta} locale={locale} />
               )}
 
               <div className="mt-5 flex flex-wrap items-center gap-3" />
@@ -838,6 +885,60 @@ const DesktopProductPage = () => {
               </div>
             </div>
 
+            {product.recenzii?.length > 0 && (
+              <div className="rounded-2xl border border-border bg-white p-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    {t('product.reviews')}
+                  </p>
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {product.nr_recenzii} {t('product.reviewsShort') ?? 'recenzii'}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {product.recenzii.map((review, index) => {
+                    const rating = Math.round(Number(review.rating));
+                    const content = review.continut?.trim() || '';
+                    const isLong = content.length > 220;
+                    const display = isLong ? `${content.slice(0, 220)}...` : content;
+                    const firstImage = review.imagini?.[0]?.full || review.imagini?.[0]?.thumbnail;
+                    return (
+                      <div
+                        key={`${review.autor}-${index}`}
+                        className="rounded-xl border border-border bg-white px-3 py-2"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-foreground">{review.autor}</p>
+                            <span className="text-[11px] text-muted-foreground">{formatReviewDate(review.data)}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-amber-500">
+                            {[...Array(5)].map((_, starIdx) => (
+                              <Star
+                                key={`review-star-${index}-${starIdx}`}
+                                className={`h-3.5 w-3.5 ${starIdx < rating ? 'fill-amber-500' : ''}`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        {display && <p className="mt-2 text-sm text-muted-foreground leading-snug">{display}</p>}
+                        {firstImage && (
+                          <div className="mt-3">
+                            <img
+                              src={firstImage}
+                              alt={`Recenzie ${review.autor}`}
+                              className="h-28 w-full rounded-lg object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {product.categorii?.length > 0 && (
               <div className="rounded-2xl border border-border bg-white p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -856,18 +957,21 @@ const DesktopProductPage = () => {
                           const targetPath =
                             locale === 'en' ? `/en/category/${categorySlug}` : `/categorie/${categorySlug}`;
                           navigate(targetPath);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        data-track-action={`A deschis categoria ${categoryTitle} din produs.`}
+                        data-track-action={`A deschis categoria ${categoryTitle} din produs (tags).`}
                         className="flex w-full items-center gap-3 rounded-xl border border-border bg-white px-3 py-2 text-left text-sm font-semibold text-foreground"
                       >
                         <img src={category.imagine} alt={categoryTitle} className="h-8 w-8 object-contain" />
-                        <span>{categoryTitle}</span>
+                        <span className="line-clamp-1">{categoryTitle}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
             )}
+
+            {/* categories repeated lower removed in favor of section above Informatii rapide */}
           </aside>
         </div>
         {product.categorii?.[0]?.produse?.length ? (
@@ -1006,3 +1110,32 @@ const DesktopProductPage = () => {
 };
 
 export default DesktopProductPage;
+
+interface ShortDescriptionProps {
+  content: string;
+  locale: LocaleCode;
+}
+
+const ShortDescription = ({ content, locale }: ShortDescriptionProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const MAX_LENGTH = 200;
+
+  const plainText = content.replace(/<[^>]+>/g, '').trim();
+  const isLong = plainText.length > MAX_LENGTH;
+  const displayContent = expanded || !isLong ? plainText : `${plainText.slice(0, MAX_LENGTH)}...`;
+
+  return (
+    <div className="mt-4 text-sm text-muted-foreground prose max-w-none">
+      <p>{displayContent}</p>
+      {isLong && (
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="mt-2 text-xs font-semibold text-amber-700"
+        >
+          {expanded ? t('product.showLess') : locale === 'en' ? 'View more' : 'Vezi mai mult'}
+        </button>
+      )}
+    </div>
+  );
+};

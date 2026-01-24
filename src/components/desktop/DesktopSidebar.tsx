@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, HelpCircle, Mail, MessageCircle, Phone, Plus, Store, Tag, Users } from 'lucide-react';
 import logo from '@/assets/factorygifts.svg';
@@ -50,6 +50,17 @@ const DesktopSidebar = ({
   const flagSize = 'h-5 w-5';
   const items = menuItems ?? DEFAULT_MENU_ITEMS;
   const allowPhone = currentLocale !== 'en' || showPhoneOnEn;
+  const [showQuote, setShowQuote] = useState(true);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      if (typeof window === 'undefined') return;
+      setShowQuote(window.innerHeight >= 971);
+    };
+    updateVisibility();
+    window.addEventListener('resize', updateVisibility);
+    return () => window.removeEventListener('resize', updateVisibility);
+  }, []);
 
   const handleLocaleChange = (nextLocale: LocaleCode) => {
     if (nextLocale === currentLocale) return;
@@ -112,10 +123,12 @@ const DesktopSidebar = ({
         </div>
       </div>
 
-      <div className="px-6 pt-5 text-center text-base italic text-white/90 font-[cursive]">
-        {quote}
-        <div className="mt-3 text-xs uppercase tracking-[0.3em] text-white/70">{t('sidebar.signature')}</div>
-      </div>
+      {showQuote && (
+        <div className="px-6 pt-5 text-center text-base italic text-white/90 font-[cursive] quoteZone">
+          {quote}
+          <div className="mt-3 text-xs uppercase tracking-[0.3em] text-white/70">{t('sidebar.signature')}</div>
+        </div>
+      )}
 
       <div className="flex flex-1 items-center">
         <nav className="w-full divide-y divide-white/15">

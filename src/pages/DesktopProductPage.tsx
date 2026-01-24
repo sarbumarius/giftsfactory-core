@@ -921,17 +921,29 @@ const DesktopProductPage = () => {
                             ))}
                           </div>
                         </div>
-                        {display && <p className="mt-2 text-sm text-muted-foreground leading-snug">{display}</p>}
-                        {firstImage && (
-                          <div className="mt-3">
-                            <img
-                              src={firstImage}
-                              alt={`Recenzie ${review.autor}`}
-                              className="h-28 w-full rounded-lg object-cover"
-                              loading="lazy"
-                            />
-                          </div>
-                        )}
+                        <div className="mt-2 flex items-start gap-3">
+                          {display && (
+                            <p className="flex-1 text-sm text-muted-foreground leading-snug">{display}</p>
+                          )}
+                          {firstImage && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const idx = reviewPhotos.findIndex((photo) => photo.url === firstImage);
+                                if (idx >= 0) setZoomReviewIndex(idx);
+                              }}
+                              className="group relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-muted"
+                              aria-label={`Zoom recenzie ${review.autor}`}
+                            >
+                              <img
+                                src={firstImage}
+                                alt={`Recenzie ${review.autor}`}
+                                className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}

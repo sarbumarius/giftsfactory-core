@@ -44,7 +44,7 @@ const DesktopCategoryPage = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [layoutPadding, setLayoutPadding] = useState(60);
-  const layoutMaxWidth = 1500;
+  const layoutMaxWidth = 1800;
   const layoutMaxHeight = 1081;
   const [locale, setLocaleState] = useState<LocaleCode>(getLocale());
   const subcategoryScrollRef = useRef<HTMLDivElement | null>(null);
@@ -310,7 +310,9 @@ const DesktopCategoryPage = () => {
   return (
     <div
       className="h-screen overflow-hidden"
-      style={{ backgroundColor: '#c7bae8' }}
+      style={{
+        backgroundImage: 'linear-gradient(90deg, #c7bae8 0%, #c7bae8 50%, #f7e0e8 50%, #f7e0e8 100%)',
+      }}
     >
       <main
         className="mx-auto h-full w-full flex items-center justify-center"

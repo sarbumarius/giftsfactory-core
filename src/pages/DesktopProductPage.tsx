@@ -37,6 +37,9 @@ const DesktopProductPage = () => {
   const [categorySearch, setCategorySearch] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [layoutPadding, setLayoutPadding] = useState(60);
+  const layoutMaxWidth = 1800;
+  const layoutMaxHeight = 1081;
   const locale = getLocale();
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
   const getCategoryTitle = (category?: { titlu?: string; title_en?: string }) =>
@@ -114,6 +117,16 @@ const DesktopProductPage = () => {
       isActive = false;
     };
   }, [treeData]);
+
+  useEffect(() => {
+    const updatePadding = () => {
+      if (typeof window === 'undefined') return;
+      setLayoutPadding(window.innerHeight < 1000 ? 30 : 60);
+    };
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   useEffect(() => {
     if (!data) return;
@@ -462,12 +475,29 @@ const DesktopProductPage = () => {
     <div
       className="h-screen overflow-hidden"
       style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
+        backgroundImage: 'linear-gradient(90deg, #c7bae8 0%, #c7bae8 50%, #f7e0e8 50%, #f7e0e8 100%)',
       }}
     >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+      <main
+        className="mx-auto h-full w-full flex items-center justify-center"
+        style={{
+          padding: `${layoutPadding}px`,
+          maxWidth: `${layoutMaxWidth}px`,
+          backgroundImage: `linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(${layoutPadding}px + 0.15 * (100% - ${
+            layoutPadding * 2
+          }px)), #f7e0e8 calc(${layoutPadding}px + 0.15 * (100% - ${
+            layoutPadding * 2
+          }px)), #f7e0e8 100%)`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% 100%',
+        }}
+      >
+        <div
+          className="grid grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl"
+          style={{
+            height: `min(calc(100vh - ${layoutPadding * 2}px), ${layoutMaxHeight}px)`,
+          }}
+        >
           <DesktopSidebar locale={locale} onLocaleChange={handleLocaleChange} />
 
           <section className="min-h-full border-r border-border bg-white flex flex-col">

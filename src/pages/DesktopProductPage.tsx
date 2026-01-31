@@ -486,35 +486,15 @@ const DesktopProductPage = () => {
   };
 
   return (
-    <div
-      className="h-screen overflow-hidden"
-      style={{
-        backgroundImage: 'linear-gradient(90deg, #c7bae8 0%, #c7bae8 50%, #f7e0e8 50%, #f7e0e8 100%)',
-      }}
-    >
-      <main
-        className="mx-auto h-full w-full flex items-center justify-center"
-        style={{
-          padding: `${layoutPadding}px`,
-          maxWidth: `${layoutMaxWidth}px`,
-          backgroundImage: `linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(${layoutPadding}px + 0.15 * (100% - ${
-            layoutPadding * 2
-          }px)), #f7e0e8 calc(${layoutPadding}px + 0.15 * (100% - ${
-            layoutPadding * 2
-          }px)), #f7e0e8 100%)`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: '100% 100%',
-        }}
+      <div
+          className="h-screen overflow-hidden"
+
       >
-        <div
-          className="grid grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl"
-          style={{
-            height: `min(calc(100vh - ${layoutPadding * 2}px), ${layoutMaxHeight}px)`,
-          }}
-        >
+        <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+          <div className=" grid h-[calc(100vh-120px)] px-12 max-w-[1800px]  grid-cols-[15%_65%_20%] gap-0 overflow-hidden ">
           <DesktopSidebar locale={locale} onLocaleChange={handleLocaleChange} />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
+          <section className="overflow-hidden min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -1069,7 +1049,7 @@ const DesktopProductPage = () => {
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className=" overflow-hidden min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

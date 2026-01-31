@@ -342,7 +342,7 @@ const DesktopCartPage = () => {
 
       >
         <div
-          className="grid grid-cols-[25%_75%] gap-0  "
+          className="grid grid-cols-[25%_75%] max-w-[1300px] gap-0  "
           style={{
             height: `min(calc(100vh - ${layoutPadding * 2}px), ${layoutMaxHeight}px)`,
           }}

@@ -323,7 +323,7 @@ const DesktopCategoryPage = () => {
             }}
           />
 
-          <section className="contentmijloc min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
+          <section className="overflow-hidden contentmijloc min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -525,7 +525,7 @@ const DesktopCategoryPage = () => {
           </div>
 
           </section>
-          <aside className="sidebar2 min-h-full border-l border-border bg-white rounded-r-2xl">
+          <aside className="overflow-hidden sidebar2 min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

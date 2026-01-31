@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Info, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Info, Sparkles, TicketPercent, X } from 'lucide-react';
 import productImage from '@/assets/product-image.jpg';
 import DesktopSearchModal from '@/components/desktop/DesktopSearchModal';
 import MobileMenuModal from '@/components/mobile/MobileMenuModal';
@@ -40,6 +40,9 @@ const DesktopCartPage = () => {
   const [isGraphicOpen, setIsGraphicOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [layoutPadding, setLayoutPadding] = useState(60);
+  const layoutMaxWidth = 1800;
+  const layoutMaxHeight = 1081;
   const locale = getLocale();
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const hasItems = cart.length > 0;
@@ -113,6 +116,16 @@ const DesktopCartPage = () => {
   useEffect(() => {
     const defaultTitle = 'Gifts Factory Catalog';
     document.title = `${t('cart.title')} | ${defaultTitle}`;
+  }, []);
+
+  useEffect(() => {
+    const updatePadding = () => {
+      if (typeof window === 'undefined') return;
+      setLayoutPadding(window.innerHeight < 1000 ? 30 : 60);
+    };
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
   }, []);
 
 
@@ -322,28 +335,24 @@ const DesktopCartPage = () => {
   return (
     <div
       className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.35 * (100% - 120px)), #f7e0e8 calc(60px + 0.35 * (100% - 120px)), #f7e0e8 100%)',
-      }}
+
     >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="mx-auto grid h-[calc(100vh-120px)] w-[60%] grid-cols-[25%_75%] gap-0 overflow-hidden rounded-2xl">
+      <main
+        className="mx-auto h-full w-full flex items-center justify-center gold-gradient"
+
+      >
+        <div
+          className="grid grid-cols-[25%_75%] gap-0  "
+          style={{
+            height: `min(calc(100vh - ${layoutPadding * 2}px), ${layoutMaxHeight}px)`,
+          }}
+        >
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col relative rounded-r-2xl ">
-            <DesktopTopBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onSearchOpen={() => setIsSearchOpen(true)}
-              onMenuClick={() => setIsMenuOpen(true)}
-              onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
-              onCartClick={() => navigate(withLocalePath('/cos'))}
-              wishlistCount={wishlist.length}
-              cartCount={cart.length}
-            />
+          <section className="min-h-full border-r border-border bg-white flex flex-col relative rounded-2xl overflow-hidden">
 
-            <div className="flex-1 -mt-6 ">
+
+            <div className="flex-1 -mt-0 ">
               {hasItems && (
                 <div className=" mb-3 ">
                   {bannerIndex === 0 && totals.discountedProducts < 200 && (
@@ -408,13 +417,16 @@ const DesktopCartPage = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/')}
-                  data-track-action="A mers la categorii din cos."
-                  className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground"
-                >
+                data-track-action="A mers la categorii din cos."
+                className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground"
+              >
+                <span className="flex items-center gap-2">
                   {t('cart.continueShopping')}
-                </button>
-              </div>
+                  <ChevronRight className="h-4 w-4" />
+                </span>
+              </button>
             </div>
+          </div>
 
             <div className="flex overflow-y-auto w-full flex-col max-h-[calc(100vh-350px)] pb-56 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <section className="space-y-6">
@@ -617,23 +629,27 @@ const DesktopCartPage = () => {
                 <div className="absolute bottom-0 left-0 right-0 mt-auto border border-l-0 border-r-0 border-b-0 border-t-1 bg-white p-4 shadow-lg" id="cart-summary">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-foreground">{t('cart.summaryTitle')}</p>
-                    <div className="flex flex-1 items-center justify-end gap-2">
+                    <div className="flex flex-1 items-center justify-end gap-3">
                       <span className="text-[11px] font-semibold text-muted-foreground">{t('cart.promoCodeTitle')}</span>
-                      <div className="flex min-w-[220px] max-w-[320px] flex-1 gap-2">
-                        <input
+                      <div className="flex min-w-[240px] max-w-[360px] flex-1 items-stretch overflow-hidden rounded-full border border-border bg-white shadow-sm">
+                        <div className="relative flex-1">
+                          <TicketPercent className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-600" />
+                          <input
                             type="text"
                             value={promoCode}
                             onChange={(event) => setPromoCode(event.target.value)}
                             data-track-action="A completat cuponul in cos."
                             placeholder={t('cart.promoCodePlaceholder')}
-                            className="flex-1 rounded-lg border border-border px-3 py-2 text-xs"
-                        />
+                            className="h-full w-full rounded-none border-0 bg-transparent pl-9 pr-3 text-xs focus:outline-none"
+                          />
+                        </div>
                         <button
-                            type="button"
-                            onClick={handleApplyCoupon}
-                            data-track-action="A aplicat cuponul in cos."
-                            className="rounded-full bg-amber-600 px-4 py-2 text-[11px] font-semibold text-white"
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          data-track-action="A aplicat cuponul in cos."
+                          className="flex items-center gap-2 bg-amber-600 px-4 text-[11px] font-semibold text-white transition-colors hover:bg-amber-700"
                         >
+                          <Sparkles className="h-4 w-4" />
                           {t('cart.applyCoupon')}
                         </button>
                       </div>
@@ -714,7 +730,10 @@ const DesktopCartPage = () => {
                       className="mt-4 w-full rounded-full py-3 text-sm font-semibold text-white shadow-lg"
                       style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
                   >
-                    {t('cart.continue')}
+                    <span className="flex items-center justify-center gap-2">
+                      {t('cart.continue')}
+                      <ChevronRight className="h-4 w-4" />
+                    </span>
                   </button>
                 </div>
 

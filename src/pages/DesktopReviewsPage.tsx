@@ -353,30 +353,18 @@ const DesktopReviewsPage = () => {
   }, [treeData]);
 
   return (
-    <div
-      className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
-    >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+      <div
+          className="h-screen overflow-hidden"
+
+      >
+        <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+          <div className=" grid h-[calc(100vh-120px)] max-w-[1500px]  grid-cols-[20%_60%_20%] gap-0 overflow-hidden ">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
-            <DesktopTopBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onSearchOpen={() => setIsSearchOpen(true)}
-              onMenuClick={() => setIsMenuOpen(true)}
-              onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
-              onCartClick={() => navigate(withLocalePath('/cos'))}
-              wishlistCount={wishlist.length}
-              cartCount={cart.length}
-            />
+          <section className="min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
 
-            <div className="flex-1 overflow-y-auto pb-24">
+
+            <div className="flex-1 overflow-y-auto pb-24 mt-4">
               <div className="mx-4 rounded-2xl border border-border bg-white px-5 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -408,13 +396,7 @@ const DesktopReviewsPage = () => {
                       );
                     })}
                   </div>
-                  <div className="flex items-center gap-3 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-foreground">
-                    <Star className="h-4 w-4 text-amber-500" />
-                    {summary.avg ? summary.avg.toFixed(2) : '0.00'} / 5
-                    <span className="text-xs text-muted-foreground">
-                      ({summary.total} {t('reviews.countLabel')})
-                    </span>
-                  </div>
+
                 </div>
               </div>
 
@@ -607,7 +589,7 @@ const DesktopReviewsPage = () => {
             )}
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

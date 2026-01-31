@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, ChevronUp, CreditCard, Mail, Phone, Search, Truck } from 'lucide-react';
+import { ArrowLeft, Building2, ChevronRight, ChevronUp, CreditCard, Loader2, Mail, Phone, Search, Send, Truck, X } from 'lucide-react';
 import DesktopSidebar from '@/components/desktop/DesktopSidebar';
 import DesktopTopBar from '@/components/desktop/DesktopTopBar';
 import DesktopSearchModal from '@/components/desktop/DesktopSearchModal';
@@ -166,7 +166,7 @@ type CustomerCheckResponse = {
 
 const DesktopCheckoutPage = () => {
   const navigate = useNavigate();
-  const { cart, wishlist } = useShopContext();
+  const { cart, wishlist, removeFromCart, updateCartItem } = useShopContext();
   const { searchQuery, setSearchQuery, setCurrentSlug } = useCategoryContext();
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('sameday');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('ramburs');
@@ -189,6 +189,8 @@ const DesktopCheckoutPage = () => {
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const isHydratedRef = useRef(false);
   const [orderNote, setOrderNote] = useState('');
+  const [isOrderNoteOpen, setIsOrderNoteOpen] = useState(false);
+  const [showLockerOverlay, setShowLockerOverlay] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customerCheck, setCustomerCheck] = useState<{
     loading: boolean;
@@ -209,6 +211,7 @@ const DesktopCheckoutPage = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const mapSectionRef = useRef<HTMLDivElement | null>(null);
   const locale = getLocale();
 
   useEffect(() => {
@@ -860,6 +863,7 @@ const DesktopCheckoutPage = () => {
     ? `${mapComuna || mapLocality}, ${mapCountyName}`
     : mapCountyName;
   const mapZoom = mapLocality ? 14 : 10;
+  const canUseEasybox = cart.reduce((sum, item) => sum + (item.quantity ?? 1), 0) <= 5;
 
   const lockerOptions = useMemo(() => {
     if (deliveryMethod !== 'easybox') return [];
@@ -897,8 +901,23 @@ const DesktopCheckoutPage = () => {
     );
   }, [lockerOptions, selectedLockerId]);
 
+  useEffect(() => {
+    if (deliveryMethod !== 'easybox' || !canUseEasybox) {
+      setShowLockerOverlay(false);
+      return;
+    }
+    if (!showLockerOverlay) return;
+
+    const timer = window.setTimeout(() => {
+      setShowLockerOverlay(false);
+      mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, selectedLocker ? 1200 : 2200);
+
+    return () => window.clearTimeout(timer);
+  }, [deliveryMethod, canUseEasybox, selectedLocker, showLockerOverlay]);
+
   const shouldShowMap = Boolean(
-    (deliveryMethod === 'easybox' && (selectedLocker || mapQuery.trim().length > 0)) ||
+    (deliveryMethod === 'easybox' && canUseEasybox && (selectedLocker || mapQuery.trim().length > 0)) ||
       mapQuery.trim().length > 0
   );
   const mapKm = useDifferentShipping ? shippingKm : billingKm;
@@ -957,7 +976,7 @@ const DesktopCheckoutPage = () => {
   }, [deliveryMethod, lockerOptions, isLockerLoading, selectedLockerId]);
 
   useEffect(() => {
-    if (!selectedLocker) return;
+    if (!selectedLocker || !canUseEasybox) return;
     setLockerQuery(getLockerLabel(selectedLocker));
   }, [selectedLocker, getLockerLabel]);
 
@@ -1118,7 +1137,7 @@ const DesktopCheckoutPage = () => {
   useEffect(() => {
     const currentAddress2 = shippingData.address2;
     const easyboxPattern = /^\s*\d+\s*-\s*.+/;
-    if (deliveryMethod !== 'easybox') {
+    if (deliveryMethod !== 'easybox' || !canUseEasybox) {
       if (easyboxPattern.test(currentAddress2)) {
         setShippingData((prev) => ({ ...prev, address2: '' }));
       }
@@ -1183,6 +1202,19 @@ const DesktopCheckoutPage = () => {
         return null;
     }
   })();
+
+  const handleDeliveryMethodChange = (method: DeliveryMethod) => {
+    setDeliveryMethod(method);
+    if (method === 'easybox' && canUseEasybox) {
+      setUseDifferentShipping(true);
+      setShowLockerOverlay(true);
+      requestAnimationFrame(() => {
+        mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } else {
+      setShowLockerOverlay(false);
+    }
+  };
 
   const slugifyMetaKey = (value: string) =>
     value
@@ -1502,29 +1534,17 @@ const DesktopCheckoutPage = () => {
   return (
     <div
       className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
+
     >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="mx-auto grid h-[calc(100vh-120px)] w-[70%]  grid-cols-[20%_45%_30%] gap-0 overflow-hidden rounded-2xl">
+      <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+        <div className=" grid h-[calc(100vh-120px)] max-w-[1500px]  grid-cols-[20%_50%_30%] gap-0 overflow-hidden ">
 
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
-            <DesktopTopBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onSearchOpen={() => setIsSearchOpen(true)}
-              onMenuClick={() => setIsMenuOpen(true)}
-              onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
-              onCartClick={() => navigate(withLocalePath('/cos'))}
-              wishlistCount={wishlist.length}
-              cartCount={cart.length}
-            />
+          <section className="min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
 
-            <div className="flex-1 -mt-8 overflow-y-auto pb-6">
+
+            <div className="flex-1 -mt-4 overflow-y-auto pb-6">
               <div className="px-4 pb-6">
         <button
           type="button"
@@ -1537,39 +1557,13 @@ const DesktopCheckoutPage = () => {
 
         <div className="mt-6 grid grid-cols-1 gap-8">
           <div className="space-y-4">
-            <div className="mt-0">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => navigate('/cos')}
-                  className="flex flex-1 items-center gap-2 rounded-xl px-3 py-3"
-                >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-white text-[11px] font-semibold text-muted-foreground">
-                    1
-                  </span>
-                  <div className="text-[11px] font-semibold text-muted-foreground text-left">
-                    <div>{t('checkout.step', { step: 1 })}</div>
-                    <div className="text-[10px] font-medium text-muted-foreground">{t('checkout.stepCart')}</div>
-                  </div>
-                </button>
 
-                <div
-                  className="flex flex-1 items-center gap-2 rounded-xl px-3 py-3 text-white"
-                  style={{ backgroundImage: 'linear-gradient(45deg, #fae3ca, #fff)' }}
-                >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-[#c89b59]">
-                    2
-                  </span>
-                  <div className="text-[11px] font-semibold text-amber-900">
-                    <div>{t('checkout.step', { step: 2 })}</div>
-                    <div className="text-[10px] font-medium text-amber-900/60">{t('checkout.stepBilling')}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
           <div className="rounded-2xl border border-border p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold font-serif text-foreground">{t('checkout.companyQuestion')}</span>
+              <span className="flex items-center gap-2 text-sm font-semibold font-serif text-foreground">
+                <Building2 className="h-4 w-4 text-amber-600" />
+                {t('checkout.companyQuestion')}
+              </span>
               <button
                 type="button"
                 role="switch"
@@ -1637,7 +1631,11 @@ const DesktopCheckoutPage = () => {
               </>
             )}
           </div>
-
+            {customerCheck.response?.verificari?.email?.found && (
+                <div className="col-span-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700">
+                  {t('checkout.emailAttached')}
+                </div>
+            )}
           <div className="grid grid-cols-1 gap-4">
           <div className="rounded-2xl border border-border p-2">
             <p className="text-sm font-semibold text-foreground">{t('checkout.billingTitle')}</p>
@@ -1687,11 +1685,7 @@ const DesktopCheckoutPage = () => {
                   <p className="text-[11px] font-semibold text-emerald-600">{t('checkout.emailExists')}</p>
                 )}
               </div>
-              {customerCheck.response?.verificari?.email?.found && (
-                  <div className="col-span-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700">
-                    {t('checkout.emailAttached')}
-                  </div>
-              )}
+
 
               <div className="space-y-1">
                 <label className="font-semibold text-foreground">{t('checkout.phone')}</label>
@@ -1953,14 +1947,9 @@ const DesktopCheckoutPage = () => {
               </p>
             )}
 
-                <div className="rounded-2xl mt-4">
-
-
-                  <div
-                    className={`mt-3 grid grid-cols-2 gap-3 text-xs ${
-                      useDifferentShipping ? '' : 'pointer-events-none opacity-60'
-                    }`}
-                  >
+            {useDifferentShipping && (
+              <div className="rounded-2xl mt-4">
+                <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                     <div className="space-y-1">
                       <label className="font-semibold text-foreground">{t('checkout.firstName')}</label>
                   <input
@@ -2203,6 +2192,7 @@ const DesktopCheckoutPage = () => {
                     </div>
                   </div>
                 </div>
+            )}
           </div>
           </div>
 
@@ -2272,7 +2262,7 @@ const DesktopCheckoutPage = () => {
               </select>
             </div>
           </div>
-          <div className="rounded-2xl border border-border p-4">
+          <div className="">
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">
                 {mapLocality ? t('checkout.shippingMethodFor', { locality: mapLocality }) : t('checkout.shippingMethod')}
@@ -2285,27 +2275,32 @@ const DesktopCheckoutPage = () => {
             {deliveryInstanceId !== null && (
               <input type="hidden" name="shipping_instance_id" value={deliveryInstanceId} />
             )}
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {[
+            {(() => {
+              const methods = [
                 ...(SHOW_SAMEDAY
                   ? [{ key: 'sameday', label: t('checkout.shippingSameday'), logo: '/sameday.jpg', price: 17, instanceId: 4 }]
                   : []),
                 ...(SHOW_DPD
                   ? [{ key: 'dpd', label: t('checkout.shippingDpd'), logo: '/dpd.jpg', price: 20, instanceId: 2 }]
                   : []),
-                ...(SHOW_EASYBOX
+                ...(SHOW_EASYBOX && canUseEasybox
                   ? [{ key: 'easybox', label: t('checkout.shippingEasybox'), logo: '/sameday.jpg', price: 13, instanceId: 3 }]
                   : []),
                 ...(isLocalPickupEligible
                   ? [{ key: 'pickup', label: t('checkout.shippingPickup'), logo: '/logo-gold.svg', price: 0, instanceId: 1 }]
                   : []),
-              ].map((method) => {
-                const active = deliveryMethod === method.key;
-                return (
-                  <button
-                    key={method.key}
-                    type="button"
-                    onClick={() => setDeliveryMethod(method.key as DeliveryMethod)}
+              ];
+              const hasEasybox = methods.some((m) => m.key === 'easybox');
+              const gridCols = hasEasybox ? 'grid-cols-3' : 'grid-cols-2';
+              return (
+                <div className={`mt-3 grid ${gridCols} gap-2`}>
+                  {methods.map((method) => {
+                    const active = deliveryMethod === method.key;
+                    return (
+                      <button
+                        key={method.key}
+                        type="button"
+                    onClick={() => handleDeliveryMethodChange(method.key as DeliveryMethod)}
                     data-track-action={`${t('checkout.shippingMethod')}: ${method.label}`}
                     data-instance-id={method.instanceId ?? undefined}
                     className={`flex w-full items-center justify-between rounded-xl border px-2 py-3 text-left text-xs font-semibold ${
@@ -2313,7 +2308,7 @@ const DesktopCheckoutPage = () => {
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <img src={method.logo} alt={method.label} className="h-12 w-24 object-contain" />
+                      <img src={method.logo} alt={method.label} className="h-12 w-18 object-contain" />
                       <div>
                         <div>{method.label}</div>
                         <div className="text-[11px] font-medium text-muted-foreground">
@@ -2328,10 +2323,12 @@ const DesktopCheckoutPage = () => {
                           ? t('cart.free')
                           : `${method.price} lei`}
                     </span>
-                  </button>
-                );
-              })}
-            </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
             {deliveryMethod === 'easybox' && (
               <div className="mt-3 rounded-xl border border-border bg-white p-3 text-xs">
                 <p className="font-semibold text-foreground">{t('checkout.selectLocker')}</p>
@@ -2442,7 +2439,7 @@ const DesktopCheckoutPage = () => {
               </div>
             )}
             {shouldShowMap && (
-              <div className="mt-3 space-y-2">
+              <div ref={mapSectionRef} className="mt-3 space-y-2">
                 {mapKm > 0 && deliveryMethod === 'sameday' && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">
                     {t('checkout.extraKm', { km: mapKm })}
@@ -2496,12 +2493,43 @@ const DesktopCheckoutPage = () => {
                     return (
                       <div key={itemKey} className="rounded-xl border border-border p-3">
                         <div className="flex gap-3">
-                          <img src={item.image} alt={item.title} className="h-16 w-16 rounded-lg object-cover" />
+                          <div className="relative h-16 w-16">
+                            <img src={item.image} alt={item.title} className="h-16 w-16 rounded-lg object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeFromCart(itemKey)}
+                              data-track-action={`A sters produsul ${item.title} din checkout.`}
+                              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-muted-foreground shadow hover:text-rose-600"
+                              aria-label={t('cart.removeProduct')}
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
                           <div className="flex-1">
                             <p className="text-xs font-semibold text-foreground">{item.title}</p>
                             <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                              <span>{t('checkout.quantity')}: {item.quantity ?? 1}</span>
-                              <span>
+                              <div className="inline-flex items-center overflow-hidden rounded-full border border-border bg-white">
+                                <button
+                                  type="button"
+                                  onClick={() => updateCartItem(itemKey, { quantity: Math.max(1, (item.quantity ?? 1) - 1) })}
+                                  className="flex h-7 w-7 items-center justify-center text-sm"
+                                  aria-label={t('cart.removeProduct')}
+                                >
+                                  -
+                                </button>
+                                <span className="px-3 text-xs font-semibold text-foreground">
+                                  {item.quantity ?? 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateCartItem(itemKey, { quantity: (item.quantity ?? 1) + 1 })}
+                                  className="flex h-7 w-7 items-center justify-center text-sm"
+                                  aria-label={t('cart.addProduct')}
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <span className="text-right">
                                 {parseFloat(item.priceReduced ?? item.price).toFixed(2)} lei
                               </span>
                             </div>
@@ -2540,7 +2568,7 @@ const DesktopCheckoutPage = () => {
                     );
                   })}
                 </div>
-                <div className="mt-4 rounded-xl border border-border p-3">
+                <div className="mt-4 rounded-xl ">
                   <p className="text-sm font-semibold text-foreground">{t('checkout.paymentMethod')}</p>
                   <input type="hidden" name="payment_method" value={paymentMethodId} />
                   <div className="mt-3 space-y-2">
@@ -2691,18 +2719,38 @@ const DesktopCheckoutPage = () => {
 
               <div className="rounded-2xl border border-border p-4">
                 <div className="rounded-2xl mb-3" id="checkout-summary">
-                  <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
-                  <div className="mt-3">
-                  <textarea
-                      value={orderNote}
-                      onChange={(event) => setOrderNote(event.target.value)}
-                      data-track-action={t('checkout.orderNotes')}
-                      className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
-                      placeholder={t('checkout.orderNotesPlaceholder')}
-                  />
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{t('checkout.orderNotes')}</p>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isOrderNoteOpen}
+                      onClick={() => setIsOrderNoteOpen((prev) => !prev)}
+                      data-track-action="A schimbat nota de comanda."
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border border-border transition-colors ${
+                        isOrderNoteOpen ? 'bg-amber-500' : 'bg-muted'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          isOrderNoteOpen ? 'translate-x-5' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
+                  {isOrderNoteOpen && (
+                    <div className="mt-3">
+                      <textarea
+                        value={orderNote}
+                        onChange={(event) => setOrderNote(event.target.value)}
+                        data-track-action={t('checkout.orderNotes')}
+                        className="min-h-[120px] w-full rounded-lg border border-border px-3 py-2 text-sm"
+                        placeholder={t('checkout.orderNotesPlaceholder')}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
+                <div className="hidden mb-4 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-900">
                   {t('checkout.pointsInfo', { points: Math.round(totals.total) })}
                 </div>
                 {totals.total >= 400 && (
@@ -2741,14 +2789,14 @@ const DesktopCheckoutPage = () => {
                 </div>
               </div>
             </div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border border-1">
+              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white border border-1">
                 <div
-                  className={`rounded-2xl border p-4 text-xs text-muted-foreground ${
+                  className={` text-xs text-muted-foreground ${
                     attemptedSubmit && !termsAccepted ? 'border-red-400' : 'border-border'
                   }`}
                   data-invalid={attemptedSubmit && !termsAccepted}
                 >
-                  <p>
+                  <p className="hidden">
                     {t('checkout.privacyIntro')}{' '}
                     <a
                       href="https://darurialese.ro/politica-de-confidentialitate/"
@@ -2762,7 +2810,7 @@ const DesktopCheckoutPage = () => {
                     </a>
                     .
                   </p>
-                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2">
+                  <div className="mt-1 flex items-center justify-between gap-2 rounded-xl  px-3 ">
                     <span className="text-xs font-semibold text-foreground">
                       {t('checkout.termsAccept')}{' '}
                       <a
@@ -2804,7 +2852,10 @@ const DesktopCheckoutPage = () => {
                     className="mt-4 w-full rounded-full py-3 text-xs font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                     style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
                   >
-                    {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
+                    <span className="flex items-center justify-center gap-2">
+                      {isSubmitting ? t('checkout.submitting') : t('checkout.submit')}
+                      <Send className="h-4 w-4" />
+                    </span>
                   </button>
                 </div>
               </div>
@@ -2812,6 +2863,21 @@ const DesktopCheckoutPage = () => {
           </aside>
         </div>
       </main>
+      {showLockerOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="rounded-2xl bg-white px-6 py-5 text-center shadow-2xl">
+            <div className="flex items-center justify-center gap-3 text-amber-700">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm font-semibold">
+                {t('checkout.selectLocker') || 'Selecteaza locker-ul preferat'}
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t('checkout.selectLockerHint') || 'Pregatim harta lockerelor pentru tine.'}
+            </p>
+          </div>
+        </div>
+      )}
       <DesktopSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <MobileMenuModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       {activeLegalModal && (

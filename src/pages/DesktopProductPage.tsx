@@ -42,6 +42,7 @@ const DesktopProductPage = () => {
   const layoutMaxHeight = 1081;
   const locale = getLocale();
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const personalizareRef = useRef<HTMLDivElement | null>(null);
   const getCategoryTitle = (category?: { titlu?: string; title_en?: string }) =>
     locale === 'en' ? category?.title_en ?? category?.titlu ?? '' : category?.titlu ?? '';
   const getProductTitle = (product?: { titlu?: string; title_en?: string }) =>
@@ -471,6 +472,19 @@ const DesktopProductPage = () => {
     return sortCategories(treeData.subcategorii);
   }, [treeData]);
 
+  const handleTogglePersonalizare = (forceOpen?: boolean) => {
+    setOpenSection('personalizare');
+    setShowPersonalizare((prev) => {
+      const next = forceOpen ?? !prev;
+      if (!prev && next) {
+        requestAnimationFrame(() => {
+          personalizareRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+      return next;
+    });
+  };
+
   return (
     <div
       className="h-screen overflow-hidden"
@@ -702,12 +716,15 @@ const DesktopProductPage = () => {
               </div>
             </div>
 
-            <div id="personalizare-desktop" className="rounded-2xl border border-border bg-white p-6">
+            <div
+              id="personalizare-desktop"
+              ref={personalizareRef}
+              className="rounded-2xl border border-border bg-white p-6"
+            >
               <button
                 type="button"
                 onClick={() => {
-                  setOpenSection('personalizare');
-                  setShowPersonalizare((prev) => !prev);
+                  handleTogglePersonalizare();
                 }}
                 data-track-action="A deschis personalizarea produsului desktop."
                 className="flex w-full items-center justify-between text-left"
@@ -722,8 +739,7 @@ const DesktopProductPage = () => {
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation();
-                    setOpenSection('personalizare');
-                    setShowPersonalizare((prev) => !prev);
+                    handleTogglePersonalizare(true);
                   }}
                   className="rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700"
                 >

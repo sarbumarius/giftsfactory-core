@@ -142,164 +142,101 @@ const DesktopContactPage = () => {
   }, [treeData]);
 
   return (
-    <div
-      className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
-    >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+      <div
+          className="h-screen overflow-hidden"
+
+      >
+        <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+          <div className=" grid h-[calc(100vh-120px)] max-w-[1500px]  grid-cols-[20%_55%_25%] gap-0 overflow-hidden ">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
-            <DesktopTopBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onSearchOpen={() => setIsSearchOpen(true)}
-              onMenuClick={() => setIsMenuOpen(true)}
-              onWishlistClick={() => navigate(withLocalePath('/wishlist'))}
-              onCartClick={() => navigate(withLocalePath('/cos'))}
-              wishlistCount={wishlist.length}
-              cartCount={cart.length}
-            />
+          <section className="min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
 
-            <div className="flex-1 overflow-y-auto pb-6">
-              <div className="mx-4 rounded-2xl border border-border bg-white p-6">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{t('contact.title')}</p>
-                    <h1 className="mt-2 text-3xl font-semibold text-foreground">{t('contact.headline')}</h1>
-                    <p className="mt-2 text-sm text-muted-foreground">{t('contact.subheadline')}</p>
-                  </div>
-                  <div className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('contact.scheduleTitle')}</p>
-                    <p className="mt-2 text-sm font-semibold text-foreground">{t('contact.scheduleValue')}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{t('contact.scheduleNote')}</p>
-                  </div>
+
+            <div className="flex-1 overflow-y-auto pb-6 mt-4 ">
+              <div className="mx-4 relative overflow-hidden rounded-2xl border border-border bg-white p-6">
+                <div className="pointer-events-none absolute inset-0 opacity-10">
+                  <Search className="absolute -right-6 -top-4 h-40 w-40 text-amber-900" />
                 </div>
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => window.open('tel:0748777776', '_self')}
-                    data-track-action="A apasat pe suna din contact desktop."
-                    className="flex items-center gap-2 rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white"
-                  >
-                    <Phone className="h-4 w-4" />
-                    0748.777.776
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => window.open('mailto:office@darurialese.ro', '_self')}
-                    data-track-action="A apasat pe email din contact desktop."
-                    className="flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-foreground"
-                  >
-                    <Mail className="h-4 w-4" />
-                    office@darurialese.ro
-                  </button>
+                <div className="relative grid gap-4 md:grid-cols-[1.2fr_auto] md:items-center">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{t('contact.title')}</p>
+                    <h1 className="text-3xl font-semibold text-foreground">{t('contact.headline')}</h1>
+                    <p className="text-sm text-muted-foreground">{t('contact.subheadline')}</p>
+                  </div>
+                  <div className="flex flex-col gap-3 md:items-end">
+                    <button
+                      type="button"
+                      onClick={() => window.open('tel:0748777776', '_self')}
+                      data-track-action="A apasat pe suna din contact desktop."
+                      className="flex items-center justify-center gap-3 rounded-full bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-amber-600 whitespace-nowrap"
+                    >
+                      <Phone className="h-4 w-4" />
+                      0748.777.776
+                    </button>
+                    <div className="flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50/70 px-5 py-3 shadow-sm whitespace-nowrap">
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t('contact.scheduleTitle')}
+                      </span>
+                      <span className="text-sm font-semibold text-foreground">{t('contact.scheduleValue')}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-8 mx-4 grid grid-cols-[1.2fr_0.8fr] gap-8">
-                <div className="space-y-6">
-                  <div className="overflow-hidden rounded-3xl border border-border bg-white">
-                    <div className="relative h-[360px] w-full">
-                      <iframe
-                        title="Harta Daruri Alese"
-                        src="https://www.google.com/maps?q=Zetarilor%2052B%2C%20Bucuresti&output=embed"
-                        className="h-full w-full border-0"
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-foreground">
-                      <MapPin className="h-4 w-4 text-amber-700" />
-                      {t('contact.mapLabel')}
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-border bg-white p-6">
-                    <p className="text-sm font-semibold text-foreground">{t('contact.formTitle')}</p>
-                    <div className="mt-4 grid grid-cols-2 gap-4">
-                      <input
-                        type="email"
-                        placeholder={t('contact.formEmailPlaceholder')}
-                        defaultValue="office@darurialese.ro"
-                        data-track-action="A completat emailul in contact desktop."
-                        className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
-                      />
-                      <input
-                        type="text"
-                        placeholder={t('contact.formSubjectPlaceholder')}
-                        data-track-action="A completat subiectul in contact desktop."
-                        className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
-                      />
-                      <textarea
-                        placeholder={t('contact.formMessagePlaceholder')}
-                        rows={6}
-                        data-track-action="A completat mesajul in contact desktop."
-                        className="col-span-2 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
-                      />
-                      <button
-                        type="button"
-                        data-track-action="A trimis formularul de contact desktop."
-                        className="col-span-2 rounded-full bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500"
-                      >
-                        {t('contact.formSubmit')}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
+              <div className="mt-8 mx-4 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div className="rounded-3xl border border-border bg-white p-6 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                        <Phone className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{t('contact.customerContact')}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">0748.777.776</p>
+                    <p className="text-sm font-semibold text-foreground">{t('contact.customerContact')}</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                          <Phone className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground">{t('contact.customerContact')}</p>
+                          <p className="text-sm font-semibold text-foreground">0748.777.776</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                        <Phone className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{t('contact.secondaryPhone')}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">0757.665.555</p>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                          <Phone className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground">{t('contact.secondaryPhone')}</p>
+                          <p className="text-sm font-semibold text-foreground">0757.665.555</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                        <Phone className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{t('contact.managerContact')}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">0799.807.999 - Sarbu Marius</p>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                          <Phone className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground">{t('contact.managerContact')}</p>
+                          <p className="text-sm font-semibold text-foreground">0799.807.999 - Sarbu Marius</p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-3xl border border-border bg-white p-6 space-y-4">
+                    <p className="text-sm font-semibold text-foreground">{t('contact.headOfficeAddress')}</p>
                     <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                        <MapPin className="h-6 w-6" />
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                        <MapPin className="h-5 w-5" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">{t('contact.headOfficeAddress')}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">Aleea Livezilor nr.23 bl.12 ap.3</p>
+                        <p className="text-xs font-semibold text-muted-foreground">{t('contact.headOfficeAddress')}</p>
+                        <p className="text-sm font-semibold text-foreground">Aleea Livezilor nr.23 bl.12 ap.3</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                        <MapPin className="h-6 w-6" />
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                        <MapPin className="h-5 w-5" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">{t('contact.workPoint')}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">Zetarilor 52B, Sector 5, Bucuresti</p>
+                        <p className="text-xs font-semibold text-muted-foreground">{t('contact.workPoint')}</p>
+                        <p className="text-sm font-semibold text-foreground">Zetarilor 52B, Sector 5, Bucuresti</p>
                       </div>
                     </div>
                   </div>
@@ -333,11 +270,59 @@ const DesktopContactPage = () => {
                     </button>
                   </div>
                 </div>
+
+                <div className="overflow-hidden rounded-3xl border border-border bg-white">
+                  <div className="relative h-[360px] w-full">
+                    <iframe
+                      title="Harta Daruri Alese"
+                      src="https://www.google.com/maps?q=Zetarilor%2052B%2C%20Bucuresti&output=embed"
+                      className="h-full w-full border-0"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-foreground">
+                    <MapPin className="h-4 w-4 text-amber-700" />
+                    {t('contact.mapLabel')}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-border bg-white p-6">
+                  <p className="text-sm font-semibold text-foreground">{t('contact.formTitle')}</p>
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="email"
+                      placeholder={t('contact.formEmailPlaceholder')}
+                      defaultValue="office@darurialese.ro"
+                      data-track-action="A completat emailul in contact desktop."
+                      className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    />
+                    <input
+                      type="text"
+                      placeholder={t('contact.formSubjectPlaceholder')}
+                      data-track-action="A completat subiectul in contact desktop."
+                      className="w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    />
+                    <textarea
+                      placeholder={t('contact.formMessagePlaceholder')}
+                      rows={6}
+                      data-track-action="A completat mesajul in contact desktop."
+                      className="md:col-span-2 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
+                    />
+                    <button
+                      type="button"
+                      data-track-action="A trimis formularul de contact desktop."
+                      className="md:col-span-2 rounded-full bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500"
+                    >
+                      {t('contact.formSubmit')}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

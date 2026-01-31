@@ -222,18 +222,15 @@ const DesktopFAQPage = () => {
   }, [treeData]);
 
   return (
-    <div
-      className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
-    >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+      <div
+          className="h-screen overflow-hidden"
+
+      >
+        <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+          <div className=" grid h-[calc(100vh-120px)] max-w-[1500px]  grid-cols-[20%_55%_25%] gap-0 overflow-hidden ">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
+          <section className="min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl relative">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -245,8 +242,8 @@ const DesktopFAQPage = () => {
               cartCount={cart.length}
             />
 
-            <div className="flex-1 overflow-y-auto pb-6">
-              <div className="mx-4 grid grid-cols-[1.3fr_0.7fr] gap-8">
+            <div className="flex-1 overflow-y-auto pb-24">
+              <div className="mx-4 grid grid-cols-1 gap-8">
                 <div className="space-y-6">
                   <div className="rounded-3xl border border-border bg-amber-50/40 p-6">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
@@ -365,46 +362,37 @@ const DesktopFAQPage = () => {
                   )}
                 </div>
 
-                <div className="space-y-6">
-                  <div className="rounded-3xl border border-border bg-white p-6">
-                    <p className="text-sm font-semibold text-foreground">{t('faq.noAnswerTitle')}</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {t('faq.noAnswerBody')}
-                    </p>
+                <div className="space-y-6" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 z-30 border-t border-border bg-white/95 backdrop-blur-sm px-4 py-3">
+                <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 text-sm text-foreground">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                      <Phone className="h-5 w-5" />
+                    </span>
+                    <div className="space-y-1">
+                      <p className="font-semibold">Intreaba Agentul AI informatii suplimentare.</p>
+
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={askAi}
-                      data-track-action="A cautat cu AI in FAQ."
-                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white"
-                      style={{ backgroundImage: 'linear-gradient(90deg,#faca8c 0%,#e0a35c 50%,#cf843b 100%)' }}
+                      data-track-action="A cautat cu AI din bara fixa FAQ."
+                      className="hidden md:flex items-center gap-2 rounded-full border border-amber-200 px-4 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-50"
                     >
                       <Sparkles className="h-4 w-4" />
-                      {t('faq.askBoss')}
+                      {t('faq.askAi')}
                     </button>
-                  </div>
 
-                  <div className="rounded-3xl border border-border bg-white p-6">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {t('faq.quickContact')}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => window.open('tel:0748777776', '_self')}
-                      data-track-action="A apasat pe contact telefonic in FAQ."
-                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
-                      style={{ backgroundImage: 'linear-gradient(135deg, #c89b59, #f5d5a8)' }}
-                    >
-                      <Phone className="h-4 w-4" />
-                      {t('faq.phoneCta', { phone: '0748.777.776' })}
-                    </button>
-                    <p className="mt-2 text-xs text-muted-foreground">{t('faq.hours')}</p>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

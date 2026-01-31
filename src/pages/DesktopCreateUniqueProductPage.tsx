@@ -140,18 +140,15 @@ const DesktopCreateUniqueProductPage = () => {
   }, [treeData]);
 
   return (
-    <div
-      className="h-screen overflow-hidden"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, #c7bae8 0%, #c7bae8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 calc(60px + 0.15 * (100% - 120px)), #f7e0e8 100%)',
-      }}
-    >
-      <main className="mx-auto h-full w-full px-[60px] py-[60px]">
-        <div className="grid h-[calc(100vh-120px)] grid-cols-[15%_65%_20%] gap-0 overflow-hidden rounded-2xl">
+      <div
+          className="h-screen overflow-hidden"
+
+      >
+        <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
+          <div className=" grid h-[calc(100vh-120px)] max-w-[1500px]  grid-cols-[20%_55%_25%] gap-0 overflow-hidden ">
           <DesktopSidebar />
 
-          <section className="min-h-full border-r border-border bg-white flex flex-col">
+          <section className="min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -174,7 +171,7 @@ const DesktopCreateUniqueProductPage = () => {
             </div>
           </section>
 
-          <aside className="min-h-full border-l border-border bg-white">
+          <aside className="min-h-full border-l border-border bg-white rounded-r-2xl">
             <div className="relative flex h-full flex-col">
               <div className="border-b border-border p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

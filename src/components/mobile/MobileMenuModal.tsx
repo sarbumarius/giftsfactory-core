@@ -13,11 +13,11 @@ interface MobileMenuModalProps {
 
 const menuItems = [
   { labelKey: 'menu.categories', href: '#', icon: Store, isDefaultCategory: true },
-  { labelKey: 'menu.discounts', href: '/reduceri', icon: Tag },
+  // { labelKey: 'menu.discounts', href: '/reduceri', icon: Tag },
   // { labelKey: 'menu.calendar', href: '#', icon: Calendar },
   { labelKey: 'menu.reviews', href: '/recenzii', icon: MessageCircle },
   { labelKey: 'menu.faq', href: '/intrebari-frecvente', icon: HelpCircle },
-  { labelKey: 'menu.about', href: '/despre-mine', hrefEn: '/about-me', icon: Users },
+  // { labelKey: 'menu.about', href: '/despre-mine', hrefEn: '/about-me', icon: Users },
   { labelKey: 'menu.createProduct', href: '/creeaza-produs', hrefEn: '/create-unique-product', icon: Plus },
   { labelKey: 'menu.contact', href: '/contact', icon: Phone },
 ];

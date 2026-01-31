@@ -44,6 +44,13 @@ interface CategoryProviderProps {
 
 export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: CategoryProviderProps) => {
   const slugMapKey = 'slug_en_map';
+  const slugify = (value: string) =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   const [pathname, setPathname] = useState(() => {
     if (typeof window === 'undefined') return '/';
     return window.location.pathname;
@@ -129,8 +136,18 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
 
   useEffect(() => {
     if (!data || !selectedTypeSlug) return;
-    const isValid = data.info.tipuri?.some((tip) => tip.slug === selectedTypeSlug);
-    if (!isValid) {
+    const hasApiType = data.info.tipuri?.some((tip) => tip.slug === selectedTypeSlug);
+    if (hasApiType) return;
+
+    const hasAttributeType = (data.produse || []).some((product) =>
+      product.attributes?.some(
+        (attr) =>
+          attr.name?.toLowerCase() === 'tip' &&
+          attr.options?.some((opt) => slugify(opt) === selectedTypeSlug)
+      )
+    );
+
+    if (!hasAttributeType) {
       setSelectedTypeSlug(null);
     }
   }, [data, selectedTypeSlug]);
@@ -323,10 +340,18 @@ export const CategoryProvider = ({ children, initialSlug = 'gifts-factory' }: Ca
 
     if (selectedTypeSlug) {
       const selectedType = data.info.tipuri?.find((tip) => tip.slug === selectedTypeSlug);
-      if (!selectedType || selectedType.produse_slugs.length === 0) return [];
-
-      const allowedSlugs = new Set(selectedType.produse_slugs);
-      products = products.filter((product) => allowedSlugs.has(product.slug));
+      if (selectedType && selectedType.produse_slugs.length > 0) {
+        const allowedSlugs = new Set(selectedType.produse_slugs);
+        products = products.filter((product) => allowedSlugs.has(product.slug));
+      } else {
+        products = products.filter((product) =>
+          product.attributes?.some(
+            (attr) =>
+              attr.name?.toLowerCase() === 'tip' &&
+              attr.options?.some((opt) => slugify(opt) === selectedTypeSlug)
+          )
+        );
+      }
     }
 
     const normalizedQuery = searchQuery.trim().toLowerCase();

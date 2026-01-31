@@ -258,6 +258,16 @@ a.tag:active {
   transform: translateY(-2px);
 }
 
+/* Force gray scrollbars for category lists */
+.category-scroll::-webkit-scrollbar-thumb,
+.subcategory-scroll::-webkit-scrollbar-thumb {
+  background: #9ca3af !important;
+}
+.category-scroll::-webkit-scrollbar-track,
+.subcategory-scroll::-webkit-scrollbar-track {
+  background: #ffffff !important;
+}
+
 .expandTagsBtn:active {
   transform: translateY(0);
 }

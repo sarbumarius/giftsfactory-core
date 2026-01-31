@@ -491,10 +491,74 @@ const DesktopProductPage = () => {
 
       >
         <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
-          <div className=" grid h-[calc(100vh-120px)] px-12 max-w-[1800px]  grid-cols-[15%_65%_20%] gap-0 overflow-hidden ">
+          <div className=" grid h-[calc(100vh-120px)] px-12  grid-cols-[15%_20%_65%] gap-0 overflow-hidden ">
           <DesktopSidebar locale={locale} onLocaleChange={handleLocaleChange} />
+            <aside className="overflow-hidden sidebar2 min-h-full border-r border-border bg-white rounded-l-2xl">
+              <div className="relative flex h-full flex-col">
+                <div className="border-b border-border p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('nav.categories')}
+                  </p>
+                  <div className="relative mt-3">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder={t('search.categoriesPlaceholder')}
+                        value={categorySearch}
+                        onChange={(event) => setCategorySearch(event.target.value)}
+                        data-track-action="A folosit cautarea in categorii."
+                        className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                </div>
+                <div
+                    ref={categoryScrollRef}
+                    className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/60 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]/80"
+                    style={{ scrollbarColor: '#6844c1 #ffffff', scrollbarWidth: 'thin' }}
+                >
+                  {isLoadingCategories ? (
+                      <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                        {t('category.loadingCategories')}
+                      </div>
+                  ) : categoryError ? (
+                      <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                        {categoryError}
+                      </div>
+                  ) : categorySearch.trim() ? (
+                      searchResults.nodes.length === 0 ? (
+                          <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                            {t('search.noCategories')}
+                          </div>
+                      ) : (
+                          <div>
+                            {sortCategories(searchResults.nodes).map((cat) => renderCategory(cat))}
+                          </div>
+                      )
+                  ) : (
+                      <div>
+                        {sortCategories(orderedCategories).map((cat) => renderCategory(cat))}
+                      </div>
+                  )}
+                </div>
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#6844c1]/20 via-white/80 to-transparent" />
+                <button
+                    type="button"
+                    data-track-action="A apasat pe scroll in categorii."
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
+                    aria-label="Scroll in jos"
+                    onClick={(event) => {
+                      const container = (event.currentTarget.parentElement?.querySelector('.category-scroll') as HTMLElement | null);
+                      if (container) {
+                        container.scrollBy({ top: 240, behavior: 'smooth' });
+                      }
+                    }}
+                >
+                  v
+                </button>
+              </div>
+            </aside>
 
-          <section className="overflow-hidden min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
+          <section className="overflow-hidden contentmijloc min-h-full border-r border-border bg-white flex flex-col rounded-r-2xl">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -1049,70 +1113,6 @@ const DesktopProductPage = () => {
             </div>
           </section>
 
-          <aside className=" overflow-hidden min-h-full border-l border-border bg-white rounded-r-2xl">
-            <div className="relative flex h-full flex-col">
-              <div className="border-b border-border p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('nav.categories')}
-                </p>
-                <div className="relative mt-3">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder={t('search.categoriesPlaceholder')}
-                    value={categorySearch}
-                    onChange={(event) => setCategorySearch(event.target.value)}
-                    data-track-action="A folosit cautarea in categorii."
-                    className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
-                  />
-                </div>
-              </div>
-              <div
-                ref={categoryScrollRef}
-                className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/60 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]/80"
-                style={{ scrollbarColor: '#6844c1 #ffffff', scrollbarWidth: 'thin' }}
-              >
-                {isLoadingCategories ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {t('category.loadingCategories')}
-                  </div>
-                ) : categoryError ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {categoryError}
-                  </div>
-                ) : categorySearch.trim() ? (
-                  searchResults.nodes.length === 0 ? (
-                    <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                      {t('search.noCategories')}
-                    </div>
-                  ) : (
-                    <div>
-                      {sortCategories(searchResults.nodes).map((cat) => renderCategory(cat))}
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {sortCategories(orderedCategories).map((cat) => renderCategory(cat))}
-                  </div>
-                )}
-              </div>
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#6844c1]/20 via-white/80 to-transparent" />
-              <button
-                type="button"
-                data-track-action="A apasat pe scroll in categorii."
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
-                aria-label="Scroll in jos"
-                onClick={(event) => {
-                  const container = (event.currentTarget.parentElement?.querySelector('.category-scroll') as HTMLElement | null);
-                  if (container) {
-                    container.scrollBy({ top: 240, behavior: 'smooth' });
-                  }
-                }}
-              >
-                v
-              </button>
-            </div>
-          </aside>
         </div>
       </main>
       <DesktopSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

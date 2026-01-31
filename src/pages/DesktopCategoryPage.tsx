@@ -24,6 +24,8 @@ const DesktopCategoryPage = () => {
     filteredProducts,
     currentSort,
     setCurrentSort,
+    selectedTypeSlug,
+    setSelectedTypeSlug,
     priceBounds,
     priceFilterMin,
     priceFilterMax,
@@ -50,6 +52,40 @@ const DesktopCategoryPage = () => {
   const subcategoryScrollRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const slugify = (value: string) =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const productTypes = useMemo(() => {
+    if (data?.info?.tipuri?.length) return data.info.tipuri;
+
+    const sourceProducts =
+      data?.produse ??
+      (filteredProducts.length ? filteredProducts : []);
+
+    const counts = new Map<string, { slug: string; nume: string; count: number }>();
+
+    sourceProducts.forEach((product) => {
+      product.attributes?.forEach((attr) => {
+        const name = attr.name?.toLowerCase() || '';
+        if (name !== 'tip') return;
+        attr.options?.forEach((opt) => {
+          const clean = opt.trim();
+          if (!clean) return;
+          const slug = slugify(clean);
+          const entry = counts.get(slug) || { slug, nume: clean, count: 0 };
+          entry.count += 1;
+          counts.set(slug, entry);
+        });
+      });
+    });
+
+    return Array.from(counts.values()).sort((a, b) => b.count - a.count);
+  }, [data?.info?.tipuri, data?.produse, filteredProducts, slugify]);
 
   const categoryTitle = data?.info?.titlu ?? 'Categoria';
   const categoryDescription = (data?.info?.descriere || '')
@@ -169,10 +205,14 @@ const DesktopCategoryPage = () => {
     const displayTitle = getCategoryTitle(category);
     const isHighlighted = highlightSlugs?.has(displaySlug);
 
+    const selectedClasses = isCurrent
+      ? 'bg-[linear-gradient(90deg,#6844c1,#7a56d4)] text-white rounded-r-2xl w-[98%]'
+      : `${getLevelBgClass(level)} hover:bg-[#d2c8ec] text-foreground`;
+
     return (
       <div key={category.id}>
         <button
-          className={`w-full min-w-0 flex items-center gap-3 p-3 ${getLevelBgClass(level)} hover:bg-[#d2c8ec] transition-colors ${indentClass}`}
+          className={`w-full min-w-0 flex items-center gap-3 p-3 transition-colors ${indentClass} ${selectedClasses}`}
           data-track-action={`A apasat pe categoria ${displayTitle}.`}
           onClick={() => {
             setCurrentSlug(category.slug);
@@ -184,16 +224,18 @@ const DesktopCategoryPage = () => {
           <img
             src={category.imagine}
             alt={displayTitle}
-            className="h-8 w-8 object-contain flex-shrink-0"
+            className={`h-8 w-8 object-contain flex-shrink-0 ${isCurrent ? 'invert' : ''}`}
           />
           <div className="min-w-0 flex-1 text-left">
-            <h3 className={`text-sm ${isHighlighted || isCurrent ? 'font-bold' : 'font-medium'} text-foreground`}>
+            <h3 className={`text-sm ${isHighlighted || isCurrent ? 'font-bold' : 'font-medium'} ${isCurrent ? 'text-white' : 'text-foreground'}`}>
               {displayTitle}
             </h3>
-            <p className="text-xs text-muted-foreground">{category.nr_produse} {t('category.products')}</p>
+            <p className={`text-xs ${isCurrent ? 'text-white/90' : 'text-muted-foreground'}`}>
+              {category.nr_produse} {t('category.products')}
+            </p>
           </div>
           {hasChildren && (
-            <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0" />
+            <ChevronRight className={`h-4 w-4 ${isCurrent ? 'text-white/80' : 'text-muted-foreground'} opacity-0`} />
           )}
         </button>
 
@@ -313,7 +355,7 @@ const DesktopCategoryPage = () => {
 
       >
         <main className="mx-auto h-full w-full flex items-center justify-center gold-gradient">
-          <div className=" grid h-[calc(100vh-120px)] px-12  grid-cols-[15%_65%_20%] gap-0 overflow-hidden ">
+          <div className=" grid h-[calc(100vh-120px)] px-12  grid-cols-[15%_20%_65%] gap-0 overflow-hidden ">
           <DesktopSidebar
             locale={locale}
             onLocaleChange={handleLocaleChange}
@@ -322,8 +364,72 @@ const DesktopCategoryPage = () => {
               navigate(withLocalePath('/'));
             }}
           />
+            <aside className="sidebar2 min-h-full border-r border-border bg-white rounded-l-2xl sidebarCategorii overflow-hidden">
+              <div className="relative flex h-full flex-col">
+                <div className="border-b border-border p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('nav.categories')}
+                  </p>
+                  <div className="relative mt-3">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder={t('search.categoriesPlaceholder')}
+                        value={categorySearch}
+                        onChange={(event) => setCategorySearch(event.target.value)}
+                        data-track-action="A folosit cautarea in categorii."
+                        className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                </div>
+                <div
+                    className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
+                  {isLoadingCategories ? (
+                      <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                        {t('category.loadingCategories')}
+                      </div>
+                  ) : categoryError ? (
+                      <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                        {categoryError}
+                      </div>
+                  ) : categorySearch.trim() ? (
+                      searchResults.nodes.length === 0 ? (
+                          <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
+                            {t('search.noCategories')}
+                          </div>
+                      ) : (
+                          <div>
+                            {sortCategories(searchResults.nodes).map((cat) =>
+                                renderCategory(cat, 0, searchResults.highlightedSlugs)
+                            )}
+                          </div>
+                      )
+                  ) : (
+                      <div>
+                        {sortCategories(orderedCategories).map((cat) => renderCategory(cat))}
+                      </div>
+                  )}
+                </div>
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-400/25 via-white/80 to-transparent" />
+                <button
+                    type="button"
+                    data-track-action="A apasat pe scroll in categorii."
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-gray-600 px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
+                    aria-label="Scroll in jos"
+                    onClick={(event) => {
+                      const container = (event.currentTarget.parentElement?.querySelector('.category-scroll') as HTMLElement | null);
+                      if (container) {
+                        container.scrollBy({ top: 240, behavior: 'smooth' });
+                      }
+                    }}
+                >
+                  v
+                </button>
+              </div>
+            </aside>
 
-          <section className="overflow-hidden contentmijloc min-h-full border-r border-border bg-white flex flex-col rounded-l-2xl">
+          <section className="overflow-hidden contentmijloc min-h-full border-r border-border bg-white flex flex-col rounded-r-2xl">
             <DesktopTopBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -336,7 +442,7 @@ const DesktopCategoryPage = () => {
             />
 
 
-            <div className="relative mb-6 -mt-6  bg-white p-6 pt-2 pb-2 overflow-hidden ">
+            <div className="relative mb-4 -mt-6  bg-white p-6 pt-2 pb-2 overflow-hidden  border-b ">
             {data?.info?.imagine && (
               <img
                 src={data.info.imagine}
@@ -345,7 +451,7 @@ const DesktopCategoryPage = () => {
                 loading="lazy"
               />
             )}
-            <div className="flex items-start justify-between gap-6 ">
+            <div className="flex items-start justify-between gap-6  ">
               <div>
                 <h1 className="text-3xl font-semibold text-foreground font-serif">{localeCategoryTitle}</h1>
                 {parentCategory && (
@@ -369,11 +475,11 @@ const DesktopCategoryPage = () => {
             </div>
           </div>
           {subcategories.length > 0 && (
-            <div className="mb-6 mx-4">
+            <div className="mb-6 mx-4 ">
               <div className="relative">
                 <div
                   ref={subcategoryScrollRef}
-                  className="subcategory-scroll flex gap-3 overflow-x-auto pb-3 pr-16 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#f3edf9] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/70 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]"
+                  className="subcategory-scroll flex gap-3 overflow-x-auto pb-3 pr-16 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   style={{ scrollbarColor: '#6844c1 #f3edf9', scrollbarWidth: 'thin' }}
                 >
                 {subcategories.map((subcategory) => {
@@ -446,7 +552,7 @@ const DesktopCategoryPage = () => {
 
 
 
-          <div className="flex-1 overflow-y-auto pb-20">
+          <div className="flex-1 overflow-y-auto">
             {loading && (
               <div className="rounded-2xl border border-border bg-white p-6 text-sm text-muted-foreground mx-4">
                 {t('category.loadingProducts')}
@@ -477,119 +583,76 @@ const DesktopCategoryPage = () => {
             )}
           </div>
 
-          <div className="w-full border-t border-border bg-white px-4 py-3 filtrare">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <select
-                value={currentSort}
-                onChange={(event) => setCurrentSort(event.target.value as typeof currentSort)}
-                data-track-action="Sortare desktop."
-                className="rounded-md border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
-              >
-                <option value="popularitate">{getSortLabel('popularitate')}</option>
-                <option value="cele-mai-noi">{getSortLabel('cele-mai-noi')}</option>
-                <option value="pret-crescator">{getSortLabel('pret-crescator')}</option>
-                <option value="pret-descrescator">{getSortLabel('pret-descrescator')}</option>
-                <option value="reduceri">{getSortLabel('reduceri')}</option>
-              </select>
-              <div className="flex flex-col gap-2 min-w-[260px] max-w-sm">
-                <div className="flex items-center justify-between text-[11px] font-semibold text-foreground">
-                  <span>
+          <div className="w-full bg-gradient-to-t from-white via-white/80 to-transparent px-4 py-3 filtrare">
+            <div className="grid grid-cols-1 gap-3 text-xs font-semibold text-muted-foreground md:grid-cols-3 md:items-center">
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] text-muted-foreground font-semibold">{t('filters.types') || 'Tip produs'}</label>
+                <select
+                  value={selectedTypeSlug || ''}
+                  onChange={(event) => setSelectedTypeSlug(event.target.value || null)}
+                  data-track-action="Filtru tip produs desktop."
+                  className="w-full rounded-md border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
+                >
+                  <option value="">{t('filters.allTypes') || 'Toate tipurile'}</option>
+                  {productTypes.map((tip) => (
+                    <option key={tip.slug} value={tip.slug}>
+                      {tip.nume}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] text-muted-foreground font-semibold">{t('filters.sort') || 'Sortare'}</label>
+                <select
+                  value={currentSort}
+                  onChange={(event) => setCurrentSort(event.target.value as typeof currentSort)}
+                  data-track-action="Sortare desktop."
+                  className="w-full rounded-md border border-border bg-white px-3 py-2 text-xs font-semibold text-foreground"
+                >
+                  <option value="popularitate">{getSortLabel('popularitate')}</option>
+                  <option value="cele-mai-noi">{getSortLabel('cele-mai-noi')}</option>
+                  <option value="pret-crescator">{getSortLabel('pret-crescator')}</option>
+                  <option value="pret-descrescator">{getSortLabel('pret-descrescator')}</option>
+                  <option value="reduceri">{getSortLabel('reduceri')}</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] text-muted-foreground font-semibold">{t('filters.priceRange')}</label>
+                <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+                  <span className="text-[11px] font-semibold text-foreground whitespace-nowrap">
                     {t('filters.minPlaceholder')}: {priceRange[0]}
                   </span>
-                  <span>
+                  <Slider
+                    min={priceBounds.min}
+                    max={priceBounds.max}
+                    step={1}
+                    value={priceRange}
+                    onValueChange={(value) => {
+                      if (value.length === 2) {
+                        const nextMin = Math.max(priceBounds.min, value[0]);
+                        const nextMax = Math.min(priceBounds.max, value[1]);
+                        const clamped: [number, number] = [
+                          Math.min(nextMin, nextMax),
+                          Math.max(nextMin, nextMax),
+                        ];
+                        setPriceRange(clamped);
+                        setPriceFilterMin(clamped[0]);
+                        setPriceFilterMax(clamped[1]);
+                      }
+                    }}
+                    data-track-action="Filtru pret slider desktop."
+                  />
+                  <span className="text-[11px] font-semibold text-foreground whitespace-nowrap">
                     {t('filters.maxPlaceholder')}: {priceRange[1]}
                   </span>
                 </div>
-                <Slider
-                  min={priceBounds.min}
-                  max={priceBounds.max}
-                  step={1}
-                  value={priceRange}
-                  onValueChange={(value) => {
-                    if (value.length === 2) {
-                      const nextMin = Math.max(priceBounds.min, value[0]);
-                      const nextMax = Math.min(priceBounds.max, value[1]);
-                      const clamped: [number, number] = [
-                        Math.min(nextMin, nextMax),
-                        Math.max(nextMin, nextMax),
-                      ];
-                      setPriceRange(clamped);
-                      setPriceFilterMin(clamped[0]);
-                      setPriceFilterMax(clamped[1]);
-                    }
-                  }}
-                  data-track-action="Filtru pret slider desktop."
-                />
               </div>
             </div>
           </div>
 
           </section>
-          <aside className="overflow-hidden sidebar2 min-h-full border-l border-border bg-white rounded-r-2xl">
-            <div className="relative flex h-full flex-col">
-              <div className="border-b border-border p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('nav.categories')}
-                </p>
-                <div className="relative mt-3">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder={t('search.categoriesPlaceholder')}
-                    value={categorySearch}
-                    onChange={(event) => setCategorySearch(event.target.value)}
-                    data-track-action="A folosit cautarea in categorii."
-                    className="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground"
-                  />
-                </div>
-              </div>
-              <div
-                className="category-scroll flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#6844c1]/60 [&::-webkit-scrollbar-thumb]:hover:bg-[#6844c1]/80"
-                style={{ scrollbarColor: '#6844c1 #ffffff', scrollbarWidth: 'thin' }}
-              >
-                {isLoadingCategories ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {t('category.loadingCategories')}
-                  </div>
-                ) : categoryError ? (
-                  <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                    {categoryError}
-                  </div>
-                ) : categorySearch.trim() ? (
-                  searchResults.nodes.length === 0 ? (
-                    <div className="flex items-center justify-center p-6 text-sm text-muted-foreground">
-                      {t('search.noCategories')}
-                    </div>
-                  ) : (
-                    <div>
-                      {sortCategories(searchResults.nodes).map((cat) =>
-                        renderCategory(cat, 0, searchResults.highlightedSlugs)
-                      )}
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    {sortCategories(orderedCategories).map((cat) => renderCategory(cat))}
-                  </div>
-                )}
-              </div>
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#6844c1]/20 via-white/80 to-transparent" />
-              <button
-                type="button"
-                data-track-action="A apasat pe scroll in categorii."
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/30 bg-[#6844c1] px-3 py-2 text-xs font-semibold text-white shadow-md transition-transform hover:scale-105"
-                aria-label="Scroll in jos"
-                onClick={(event) => {
-                  const container = (event.currentTarget.parentElement?.querySelector('.category-scroll') as HTMLElement | null);
-                  if (container) {
-                    container.scrollBy({ top: 240, behavior: 'smooth' });
-                  }
-                }}
-              >
-                v
-              </button>
-            </div>
-          </aside>
         </div>
       </main>
       <DesktopSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

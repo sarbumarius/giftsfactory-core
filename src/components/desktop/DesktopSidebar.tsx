@@ -26,7 +26,7 @@ interface DesktopSidebarProps {
 }
 
 const DEFAULT_MENU_ITEMS: MenuItem[] = [
-  { labelKey: 'menu.categories', href: '/', icon: Store, isDefaultCategory: true },
+  { labelKey: 'menu.categories', href: '/categorie/gifts-factory', icon: Store, isDefaultCategory: true },
   // { labelKey: 'menu.discounts', href: '/reduceri', icon: Tag },
   { labelKey: 'menu.reviews', href: '/recenzii', icon: MessageCircle },
   { labelKey: 'menu.faq', href: '/intrebari-frecvente', icon: HelpCircle },
@@ -78,7 +78,7 @@ const DesktopSidebar = ({
   const quote = useMemo(() => t('sidebar.quote'), [currentLocale]);
 
   return (
-    <aside className="sidebar1 flex min-h-full flex-col border-r border-white/20 bg-[#6844c1]">
+    <aside className="sidebar1 flex min-h-full flex-col  bg-[#6844c1]">
       <div className="border-b border-white/20 p-4">
         <button
           type="button"

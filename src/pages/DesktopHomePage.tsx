@@ -62,35 +62,10 @@ const DesktopHomePage = () => {
           />
         </div>
 
-        <div className="relative z-10 flex h-full w-full max-w-[1500px] flex-col items-center px-6 pt-10 pb-4 mx-auto pointer-events-none">
-          <div className="flex flex-col items-center gap-3 drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] pointer-events-auto">
-            <img src={logo} alt="Gifts Factory" className="h-40 w-auto object-contain" />
-            <div className="flex items-center gap-2 rounded-full border border-white/40 bg-white/20 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
-              <button
-                type="button"
-                onClick={() => handleLocaleChange('ro')}
-                className={`flex items-center gap-1 rounded-full px-2 py-1 ${locale === "ro" ? "bg-white/30" : ""}`}
-              >
-                <img src="/flags/ro.png" alt="RO" className="h-4 w-4" />
-                RO
-              </button>
-              <button
-                type="button"
-                onClick={() => handleLocaleChange('en')}
-                className={`flex items-center gap-1 rounded-full px-2 py-1 ${locale === "en" ? "bg-white/30" : ""}`}
-              >
-                <img src="/flags/en.png" alt="EN" className="h-4 w-4" />
-                EN
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center w-full pointer-events-auto">
-            <CategorySlider />
-          </div>
-
-          <div className="w-full max-w-[1100px] pointer-events-auto">
-            <div className="flex items-center justify-between gap-2 rounded-t-2xl px-4 py-2 text-[11px] font-semibold text-white backdrop-blur">
+        <div className="relative z-10 flex h-full w-full max-w-[1500px] flex-col items-center px-6 pt-4 pb-4 mx-auto pointer-events-none">
+          {/* Top Menu */}
+          <div className="w-full max-w-[1100px] pointer-events-auto mb-4">
+            <div className="flex items-center justify-between gap-2 px-4 py-2 text-[11px] font-semibold text-white">
               <button
                 type="button"
                 onClick={() => (window.location.href = 'mailto:office@darurialese.ro')}
@@ -120,6 +95,34 @@ const DesktopHomePage = () => {
                 <span className="text-[11px] font-semibold text-white">by Daruri Alese</span>
               </div>
             </div>
+          </div>
+
+          {/* Logo & Language */}
+          <div className="flex flex-col items-center gap-3 drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] pointer-events-auto">
+            <img src={logo} alt="Gifts Factory" className="h-32 w-auto object-contain" />
+            <div className="flex items-center gap-2 rounded-full border border-white/40 bg-white/20 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
+              <button
+                type="button"
+                onClick={() => handleLocaleChange('ro')}
+                className={`flex items-center gap-1 rounded-full px-2 py-1 ${locale === "ro" ? "bg-white/30" : ""}`}
+              >
+                <img src="/flags/ro.png" alt="RO" className="h-4 w-4" />
+                RO
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLocaleChange('en')}
+                className={`flex items-center gap-1 rounded-full px-2 py-1 ${locale === "en" ? "bg-white/30" : ""}`}
+              >
+                <img src="/flags/en.png" alt="EN" className="h-4 w-4" />
+                EN
+              </button>
+            </div>
+          </div>
+
+          {/* Category Slider */}
+          <div className="flex-1 flex items-end justify-center w-full pointer-events-auto pb-8">
+            <CategorySlider />
           </div>
         </div>
       </main>

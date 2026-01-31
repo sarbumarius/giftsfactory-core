@@ -1,7 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { withLocalePath } from '@/utils/locale';
+
+type Product = {
+  id: number;
+  titlu: string;
+  slug: string;
+  imagine_principala: {
+    full: string;
+    '300x300': string;
+    '100x100': string;
+  };
+};
 
 type Subcategory = {
   id: number;
@@ -13,21 +24,22 @@ type Subcategory = {
 };
 
 type CategoryData = {
-  parent: {
-    id: number;
-    titlu: string;
-    slug: string;
-  };
   subcategorii: Subcategory[];
+};
+
+type CategoryProducts = {
+  produse: Product[];
 };
 
 const CategorySlider = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Subcategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Subcategory | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [activeCategory, setActiveCategory] = useState<Subcategory | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<Subcategory | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
+  // Load categories
   useEffect(() => {
     fetch('/cache_app/subcategorii.json')
       .then((res) => res.json())
@@ -37,129 +49,146 @@ const CategorySlider = () => {
       .catch((err) => console.error('Error loading categories:', err));
   }, []);
 
-  const visibleCount = 4;
-  const maxIndex = Math.max(0, categories.length - visibleCount);
+  // Load products when category/subcategory changes
+  useEffect(() => {
+    const slug = activeSubcategory?.slug || activeCategory?.slug;
+    if (!slug) {
+      setProducts([]);
+      return;
+    }
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
-  };
+    setLoadingProducts(true);
+    fetch(`/cache_app/categorii/${slug}.json`)
+      .then((res) => res.json())
+      .then((data: CategoryProducts) => {
+        setProducts(data.produse?.slice(0, 5) || []);
+      })
+      .catch(() => {
+        setProducts([]);
+      })
+      .finally(() => {
+        setLoadingProducts(false);
+      });
+  }, [activeCategory, activeSubcategory]);
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
-  };
-
-  const handleCategoryClick = (category: Subcategory) => {
-    if (category.subcategorii && category.subcategorii.length > 0) {
-      setSelectedCategory(category);
+  const handleCategoryClick = (cat: Subcategory) => {
+    if (activeCategory?.id === cat.id) {
+      // Deselect
+      setActiveCategory(null);
+      setActiveSubcategory(null);
     } else {
-      navigate(withLocalePath(`/categorie/${category.slug}`));
+      setActiveCategory(cat);
+      setActiveSubcategory(null);
     }
   };
 
-  const handleSubcategoryClick = (subcategory: Subcategory) => {
-    navigate(withLocalePath(`/categorie/${subcategory.slug}`));
+  const handleSubcategoryClick = (sub: Subcategory) => {
+    if (activeSubcategory?.id === sub.id) {
+      setActiveSubcategory(null);
+    } else {
+      setActiveSubcategory(sub);
+    }
   };
+
+  const currentSlug = activeSubcategory?.slug || activeCategory?.slug;
+
+  // Purple gradient colors for categories (dark to light)
+  const categoryColors = [
+    'bg-[#4a2c91]',
+    'bg-[#5533a1]',
+    'bg-[#6844c1]',
+    'bg-[#7a55d1]',
+    'bg-[#8c66e1]',
+    'bg-[#9e77f1]',
+  ];
 
   if (categories.length === 0) return null;
 
   return (
-    <div className="w-full">
-      {/* Main Categories Slider */}
-      <div className="relative">
-        {/* Navigation Buttons */}
-        {currentIndex > 0 && (
+    <div className="w-full flex flex-col items-center gap-5 mt-auto mb-8">
+      {/* Categories */}
+      <div className="flex items-center justify-center gap-3 flex-wrap">
+        {categories.map((cat, index) => (
           <button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur border border-white/30 text-white hover:bg-white/30 transition-colors"
+            key={cat.id}
+            onClick={() => handleCategoryClick(cat)}
+            className={`flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-medium transition-all text-white hover:opacity-90 ${
+              activeCategory?.id === cat.id
+                ? 'bg-gradient-to-r from-[#c9a962] to-[#e8d5a3]'
+                : categoryColors[index % categoryColors.length]
+            }`}
           >
-            <ChevronLeft className="w-5 h-5" />
+            <img
+              src={cat.imagine}
+              alt=""
+              className={`w-6 h-6 object-contain ${activeCategory?.id === cat.id ? '' : 'filter brightness-0 invert'}`}
+            />
+            {cat.titlu}
           </button>
-        )}
-
-        {currentIndex < maxIndex && (
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur border border-white/30 text-white hover:bg-white/30 transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        )}
-
-        {/* Slider Container */}
-        <div className="overflow-hidden">
-          <div
-            ref={sliderRef}
-            className="flex transition-transform duration-300 ease-out gap-1"
-            style={{ transform: `translateX(-${currentIndex * (100 / visibleCount)}%)` }}
-          >
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryClick(category)}
-                className={`flex-shrink-0 flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all duration-200 hover:bg-white/10 ${
-                  selectedCategory?.id === category.id ? 'bg-white/15' : ''
-                }`}
-                style={{ width: `calc(${100 / visibleCount}% - 4px)` }}
-              >
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center p-2">
-                  <img
-                    src={category.imagine}
-                    alt={category.titlu}
-                    className="w-7 h-7 object-contain filter brightness-0 invert"
-                  />
-                </div>
-                <span className="text-white text-[11px] font-medium text-center leading-tight line-clamp-2">
-                  {category.titlu}
-                </span>
-                <span className="text-white/50 text-[9px]">
-                  {category.nr_produse} produse
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Subcategories Panel */}
-      {selectedCategory && selectedCategory.subcategorii && selectedCategory.subcategorii.length > 0 && (
-        <div className="mt-2 rounded-xl bg-white/10 backdrop-blur p-3 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-white text-xs font-semibold">{selectedCategory.titlu}</h3>
+      {/* Subcategories */}
+      {activeCategory?.subcategorii && activeCategory.subcategorii.length > 0 && (
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          {activeCategory.subcategorii.map((sub) => (
             <button
-              onClick={() => setSelectedCategory(null)}
-              className="w-5 h-5 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
+              key={sub.id}
+              onClick={() => handleSubcategoryClick(sub)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all ${
+                activeSubcategory?.id === sub.id
+                  ? 'border border-[#6844c1] text-white'
+                  : 'border-transparent text-white/70 hover:text-white'
+              }`}
             >
-              <X className="w-3 h-3" />
+              <img
+                src={sub.imagine}
+                alt=""
+                className="w-5 h-5 object-contain filter brightness-0 invert"
+              />
+              {sub.titlu}
             </button>
-          </div>
-          <div className="flex flex-wrap gap-1 justify-center">
-            {selectedCategory.subcategorii.slice(0, 8).map((sub) => (
-              <button
-                key={sub.id}
-                onClick={() => handleSubcategoryClick(sub)}
-                className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-white/10 transition-colors"
-                style={{ width: '80px' }}
-              >
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center p-1">
+          ))}
+        </div>
+      )}
+
+      {/* Product Circles Slider */}
+      {(activeCategory || activeSubcategory) && (
+        <div className="flex items-center justify-center gap-5 mt-2">
+          {loadingProducts ? (
+            // Loading skeleton circles
+            Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-36 h-36 rounded-full bg-white/10 animate-pulse"
+              />
+            ))
+          ) : (
+            <>
+              {products.map((product) => (
+                <button
+                  key={product.id}
+                  onClick={() => navigate(withLocalePath(`/produs/${product.slug}`))}
+                  className="w-36 h-36 rounded-full overflow-hidden bg-white shadow-lg hover:scale-110 transition-transform ring-4 ring-[#6844c1]"
+                >
                   <img
-                    src={sub.imagine}
-                    alt={sub.titlu}
-                    className="w-5 h-5 object-contain filter brightness-0 invert"
+                    src={product.imagine_principala['300x300']}
+                    alt={product.titlu}
+                    className="w-full h-full object-cover"
                   />
-                </div>
-                <span className="text-white text-[9px] font-medium text-center leading-tight line-clamp-2">
-                  {sub.titlu}
-                </span>
-              </button>
-            ))}
-          </div>
-          {selectedCategory.subcategorii.length > 8 && (
-            <button
-              onClick={() => navigate(withLocalePath(`/categorie/${selectedCategory.slug}`))}
-              className="w-full mt-2 py-1 text-white/70 text-[10px] hover:text-white transition-colors"
-            >
-              Vezi toate ({selectedCategory.subcategorii.length}) →
-            </button>
+                </button>
+              ))}
+              {/* View All Circle */}
+              {currentSlug && (
+                <button
+                  onClick={() => navigate(withLocalePath(`/categorie/${currentSlug}`))}
+                  className="w-36 h-36 rounded-full border-4 border-[#6844c1] hover:bg-[#6844c1]/20 flex flex-col items-center justify-center gap-1 transition-all hover:scale-110"
+                >
+                  <ArrowRight className="w-8 h-8 text-white" />
+                  <span className="text-white text-xs font-medium">Vezi toate</span>
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

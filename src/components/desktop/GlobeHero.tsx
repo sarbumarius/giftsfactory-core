@@ -41,7 +41,6 @@ const GlobeHero = ({ data, className = '', height }: GlobeHeroProps) => {
         .height(containerHeight)
         .backgroundColor('rgba(0,0,0,0)')
         .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
-        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
         .hexBinPointWeight('count')
         .hexBinResolution(4)
         .hexMargin(0.2)
@@ -58,18 +57,18 @@ const GlobeHero = ({ data, className = '', height }: GlobeHeroProps) => {
         .pointColor(() => '#f4f2ff')
         .pointAltitude(() => 0.01)
         .pointRadius(({ count }) => 0.4 + Math.min(count, 20) / 40)
-        // Romania highlight ring
+        // Romania highlight - static ring (no animation)
         .ringsData(romaniaHighlight)
         .ringLat('lat')
         .ringLng('lng')
         .ringColor(() => '#c9a962')
-        .ringMaxRadius(6)
-        .ringPropagationSpeed(2)
-        .ringRepeatPeriod(1500);
+        .ringMaxRadius(4)
+        .ringPropagationSpeed(0)
+        .ringRepeatPeriod(0);
 
       globe(rendererEl);
 
-      globe.controls().autoRotate = false;
+      globe.controls().autoRotate = true;
       globe.controls().enableZoom = true;
       globe.controls().enableRotate = true;
       globe.controls().enabled = true;
